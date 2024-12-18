@@ -1,0 +1,196 @@
+name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yy)$(DayOfYear).$(BuildCounter)
+
+parameters:
+  - name: ContinueEvenIfResourcesAreGettingDestroyed
+    displayName: "Continue even if resources are getting destroyed"
+    type: boolean
+    default: false
+ 
+    - name: disableStryker
+    displayName: "Disable Stryker"
+    type: boolean
+    default: false
+
+  - name: DisableDependencyCheck
+    displayName: "Disable OWASP dependency checking"
+    type: boolean
+    default: false
+
+trigger:
+  - main
+  - release/*
+  - develop
+
+schedules:
+- cron: "0 4 * * 1"
+  displayName: "Weekly NVD Check Build"
+  branches:
+    include:
+    - main
+  always: true
+
+pool: 
+    name: NautilusBuild
+    demands: vs_16 -equals 1 #exclude agents 13 and 14 as code coverage report fails
+
+variables:
+  - name: BuildConfiguration
+    value: "release"
+  - name: BuildPlatform
+    value: "any cpu"
+  - name: BuildCounter
+    value: $[counter(format('{0:yyyyMMdd}', pipeline.startTime), 1)]
+  - name: UKHOAssemblyCompany
+    value: "UK Hydrographic Office"
+  - name: UKHOAssemblyVersionPrefix
+    value: "1.0."
+  - name: UKHOAssemblyProduct
+    value: "Exchange Set Service"
+  - name: UKHOAssemblyCopyright
+    value: "Copyright © UK Hydrographic Office"
+  - name: Container
+    value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.9.6"
+  - name: DeploymentPool
+    value: "Mare Nectaris"
+  - name: SdkVersion
+    value: "8.0.x"
+  - name: WindowPool
+    value: "NautilusBuild"
+
+resources:
+  repositories:
+  - repository: UKHOTemplates
+    type: github
+    name: UKHO/devops-pipelinetemplates
+    endpoint: UKHO
+    ref: refs/heads/main
+
+stages:
+  - stage: Stryker_Mutator
+    displayName: "Stryker Mutator"
+    condition: ${{ eq(parameters.disableStryker, false) }}
+    dependsOn: []
+    jobs:
+    - job: Stryker
+      workspace:
+        clean: all
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Use .NET SDK'
+          inputs:
+            packageType: sdk
+            version: $(SdkVersion)
+
+        - task: UseDotNet@2
+          displayName: 'Use .NET SDK for Stryker'
+          inputs:
+            packageType: sdk
+            version: $(SdkVersion)
+
+        - task: DotNetCoreCLI@2
+          displayName: "Install Stryker"
+          inputs:
+            command: custom
+            custom: tool
+            workingDirectory: $(Agent.TempDirectory)
+            arguments: install dotnet-stryker --tool-path $(Agent.BuildDirectory)/tools
+
+        - task: Powershell@2
+          displayName: "Run Stryker"
+          inputs:
+            workingDirectory: '$(Build.SourcesDirectory)\UKHO.ExchangeSetService.API'
+            targetType: 'inline'
+            pwsh: true
+            script: $(Agent.BuildDirectory)/tools/dotnet-stryker
+
+        - task: PublishMutationReport@1
+          displayName: 'Publish Stryker Mutator Report'
+          inputs:
+            reportPattern: '**/mutation-report.html'
+
+  - stage: BuildTestPublish
+    displayName: "Build, test and publish"
+    dependsOn: []
+    jobs:
+    - template: Deployment/templates/build-test-publish.yml  
+      parameters:
+        DisableDependencyCheck: ${{ parameters.DisableDependencyCheck }}
+        DotNetVersion: '8.0.x'
+ 
+  - stage: Devdeploy
+    dependsOn:
+    - BuildTestPublish
+    displayName: "Dev deploy (inc terraform, webapp deploy)"
+    jobs:
+      - template: Deployment/templates/app-deploy.yml
+        parameters:
+          Environment: "dev"
+          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+          AzureSubscription: ""
+          Container: ${{variables.Container}} 
+          RunTests: true
+
+  - stage: vNextIatdeploy
+    dependsOn:
+    - Devdeploy
+    displayName: "vNextIat Deploy (inc terraform, webapp deploy)"
+    jobs:
+      - template: Deployment/templates/app-deploy.yml
+        parameters:
+          Environment: "vnextiat"
+          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+          AzureSubscription: ""
+          Container: ${{variables.Container}} 
+          RunTests: false
+
+  - stage: vNextE2Edeploy
+    dependsOn:
+    - vNextIatdeploy
+    displayName: "vNextE2E Deploy (inc terraform, webapp deploy)"
+    jobs:
+      - template: Deployment/templates/app-deploy.yml
+        parameters:
+          Environment: "vnexte2e"
+          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+          AzureSubscription: ""
+          Container: ${{variables.Container}} 
+          RunTests: false
+
+  - stage: IATdeploy
+    dependsOn:
+    - Devdeploy
+    displayName: "IAT Deploy (inc terraform, webapp deploy)"
+    jobs:
+      - template: Deployment/templates/app-deploy.yml
+        parameters:
+          Environment: "iat"
+          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+          AzureSubscription: ""
+          Container: ${{variables.Container}} 
+          RunTests: false
+
+  - stage: PreProddeploy
+    dependsOn:
+    - IATdeploy
+    displayName: "PreProd Deploy (inc terraform, webapp deploy)"
+    jobs:
+      - template: Deployment/templates/app-deploy.yml
+        parameters:
+          Environment: "iat"
+          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+          AzureSubscription: ""
+          Container: ${{variables.Container}} 
+          RunTests: false
+
+  - stage: Livedeploy
+    dependsOn:
+    - PreProddeploy
+    displayName: "Live Deploy (inc terraform, webapp deploy)"
+    jobs:
+      - template: Deployment/templates/app-deploy.yml
+        parameters:
+          Environment: "iat"
+          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+          AzureSubscription: ""
+          Container: ${{variables.Container}} 
+          RunTests: false
