@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35514.174
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E82252E7-E4F3-4D0B-A8FC-AE93C3B01D6D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{3A291465-A94F-4E66-ADB0-C49EB6004D74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKHO.Shop-Facade", "src\UKHO.Shop-Facade\UKHO.Shop-Facade.csproj", "{1388E3CA-67BE-4B03-ABBC-8FBE0D49CBE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKHO.Shop-Facade.Tests", "test\UKHO.Shop-Facade.Tests\UKHO.Shop-Facade.Tests.csproj", "{242A67DF-903B-4CD9-A06E-4FA918901B4F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1388E3CA-67BE-4B03-ABBC-8FBE0D49CBE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1388E3CA-67BE-4B03-ABBC-8FBE0D49CBE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1388E3CA-67BE-4B03-ABBC-8FBE0D49CBE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1388E3CA-67BE-4B03-ABBC-8FBE0D49CBE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{242A67DF-903B-4CD9-A06E-4FA918901B4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{242A67DF-903B-4CD9-A06E-4FA918901B4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{242A67DF-903B-4CD9-A06E-4FA918901B4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{242A67DF-903B-4CD9-A06E-4FA918901B4F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1388E3CA-67BE-4B03-ABBC-8FBE0D49CBE2} = {E82252E7-E4F3-4D0B-A8FC-AE93C3B01D6D}
+		{242A67DF-903B-4CD9-A06E-4FA918901B4F} = {3A291465-A94F-4E66-ADB0-C49EB6004D74}
+	EndGlobalSection
+EndGlobal
