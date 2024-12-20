@@ -6,7 +6,7 @@ parameters:
     type: boolean
     default: false
  
-    - name: disableStryker
+  - name: disableStryker
     displayName: "Disable Stryker"
     type: boolean
     default: false
@@ -47,7 +47,7 @@ variables:
   - name: UKHOAssemblyProduct
     value: "Exchange Set Service"
   - name: UKHOAssemblyCopyright
-    value: "Copyright © UK Hydrographic Office"
+    value: "Copyright ï¿½ UK Hydrographic Office"
   - name: Container
     value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.9.6"
   - name: DeploymentPool
