@@ -24,7 +24,7 @@ jobs:
   container: ${{parameters.Container}}
   workspace:
     clean: all
-  variables:
+  # variables:
   strategy:
     runOnce:
       deploy:
@@ -53,9 +53,9 @@ jobs:
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   condition: ${{parameters.RunTests}}
-  variables:
+  # variables:
   strategy:
     runOnce:
       deploy:
-        steps:
+        # steps:
         
