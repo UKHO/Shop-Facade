@@ -16,7 +16,8 @@ parameters:
   default: false
 
 variables:
-- ProjectName: "ShopFacade"
+- name: ProjectName
+  value: "ShopFacade"
   type: string
 
 jobs:
