@@ -44,19 +44,17 @@ jobs:
   workspace:
     clean: all
   displayName: "Dotnet Test and Publish Code Coverage"
-  steps:
  
 - job: BuildAndPublishAPI
   workspace:
     clean: all
   displayName: "Dotnet Build publish API"
-  steps:
+  
   
 - job: PublishFunctionalTestsAndTerraform
   workspace:
     clean: all
   displayName: "Publish Functional Tests And Terraform"
-  steps:
    
 - job: BuildAndPublishMockAPIAndTerraform
   workspace:
