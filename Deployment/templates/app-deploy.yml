@@ -54,8 +54,8 @@ jobs:
   container: ${{parameters.Container}}
   condition: ${{parameters.RunTests}}
   # variables:
-  strategy:
-    runOnce:
-      deploy:
+  # strategy:
+  #   runOnce:
+  #     deploy:
         # steps:
         
