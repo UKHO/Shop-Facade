@@ -15,16 +15,11 @@ parameters:
   type: boolean
   default: false
 
-variables:
-- name: ProjectName
-  value: "ShopFacade"
-  type: string
-
 jobs:
 - deployment: DeployApp
   timeoutInMinutes: 75
   displayName: "${{parameters.Environment}} - deploy terraform and dotnet App"
-  environment: "${{ProjectName}}-${{parameters.Environment}}"
+  environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   workspace:
@@ -54,7 +49,7 @@ jobs:
 - deployment: FunctionalTests
   dependsOn: DeployApp
   displayName: "Run Functional Tests"
-  environment: "${{ProjectName}}-${{parameters.Environment}}"
+  environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   condition: ${{parameters.RunTests}}
