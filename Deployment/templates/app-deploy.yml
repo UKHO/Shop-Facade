@@ -48,7 +48,7 @@ jobs:
 
 - deployment: FunctionalTests
   dependsOn: DeployApp
-  displayName: "Run Functional Tests ${{parameters.pathSuffix}}"
+  displayName: "Run Functional Tests"
   environment: "-${{parameters.Environment}}"
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
