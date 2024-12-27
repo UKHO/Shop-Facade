@@ -4,10 +4,6 @@ parameters:
   type: boolean
   default: false
 
-- name: DotNetVersion
-  type: string
-  default: '6.0.x'
-
 jobs:
 - job: Dependencychecker
   condition: eq('${{ parameters.DisableDependencyCheck }}', false)
@@ -16,10 +12,11 @@ jobs:
   displayName: "Dependencychecker"
   steps:          
     - task: UseDotNet@2
-      displayName: 'Use .NET SDK'
+      displayName: 'Use .NET 8.0.x sdk'
       inputs:
         packageType: sdk
-        version: $(SdkVersion)
+        useGlobalJson: true
+        workingDirectory: '$(Build.SourcesDirectory)'
 
     - task: DotNetCoreCLI@2
       displayName: ".Net Core - NuGet restore non test projects only"
@@ -49,14 +46,4 @@ jobs:
   workspace:
     clean: all
   displayName: "Dotnet Build publish API"
-  
-  
-- job: PublishFunctionalTestsAndTerraform
-  workspace:
-    clean: all
-  displayName: "Publish Functional Tests And Terraform"
-   
-- job: BuildAndPublishMockAPIAndTerraform
-  workspace:
-    clean: all
-  displayName: "Build and Publish Mock API And Terraform"
+

@@ -52,8 +52,6 @@ variables:
     value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.9.6"
   - name: DeploymentPool
     value: "Mare Nectaris"
-  - name: SdkVersion
-    value: "8.0.x"
   - name: WindowPool
     value: "NautilusBuild"
 
