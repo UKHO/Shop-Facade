@@ -150,11 +150,11 @@ jobs:
         rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/UKHO.ShopFacade.API/'
         includeRootFolder: false
         archiveType: "zip"
-        archiveFile: '$(Build.ArtifactStagingDirectory)/UKHO.ShopFacade.API/UKHOShopFacadeAPI.zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
         replaceExistingArchive: true
 
     - task: PublishBuildArtifacts@1
       displayName: "Publish WebAPI Artifact"
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
         ArtifactName: UKHOShopFacadeServiceAPI
