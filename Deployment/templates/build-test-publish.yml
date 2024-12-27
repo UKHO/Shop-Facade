@@ -156,5 +156,5 @@ jobs:
     - task: PublishBuildArtifacts@1
       displayName: "Publish WebAPI Artifact"
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
         ArtifactName: UKHOShopFacadeServiceAPI
