@@ -1,0 +1,92 @@
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Net;
+using System.Text;
+using System.Text.Json;
+using FakeItEasy;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using UKHO.ShopFacade.API.Middleware;
+using UKHO.ShopFacade.Common.Constants;
+using UKHO.ShopFacade.Common.Events;
+using UKHO.ShopFacade.Common.Exceptions;
+
+namespace UKHO.ShopFacade.API.UnitTests.Middleware
+{
+    [TestFixture]
+    public class ExceptionHandlingMiddlewareTests
+    {
+        private RequestDelegate _fakeNextMiddleware;
+        private HttpContext _fakeHttpContext;
+        private ILogger<ExceptionHandlingMiddleware> _fakeLogger;
+        private ExceptionHandlingMiddleware _middleware;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _fakeNextMiddleware = A.Fake<RequestDelegate>();
+            _fakeLogger = A.Fake<ILogger<ExceptionHandlingMiddleware>>();
+            _fakeHttpContext = new DefaultHttpContext();
+
+            _middleware = new ExceptionHandlingMiddleware(_fakeNextMiddleware, _fakeLogger);
+        }
+
+        [Test]
+        public async Task WhenExceptionIsOfTypeException_ThenLogsErrorWithUnhandledExceptionEventId()
+        {
+            var memoryStream = new MemoryStream();
+            _fakeHttpContext.Request.Headers.Append(ApiHeaderKeys.XCorrelationIdHeaderKey, "fakeCorrelationId");
+            _fakeHttpContext.Response.Body = memoryStream;
+            A.CallTo(() => _fakeNextMiddleware(_fakeHttpContext)).Throws(new Exception("fake exception"));
+
+            await _middleware.InvokeAsync(_fakeHttpContext);
+
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            var responseBody = await new StreamReader(memoryStream).ReadToEndAsync();
+
+            var problemDetails = JsonSerializer.Deserialize<ProblemDetails>(responseBody, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            problemDetails!.Extensions["correlationId"]!.ToString().Should().Be("fakeCorrelationId");
+            _fakeHttpContext.Response.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
+            _fakeHttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+            && call.GetArgument<LogLevel>(0) == LogLevel.Error
+            && call.GetArgument<EventId>(1) == EventIds.UnhandledException.ToEventId()
+            && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "fake exception").MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task WhenExceptionIsOfTypePermitServiceException_ThenLogsErrorWithPermitServiceExceptionEventId()
+        {
+            var memoryStream = new MemoryStream();
+            _fakeHttpContext.Request.Headers.Append(ApiHeaderKeys.XCorrelationIdHeaderKey, "fakeCorrelationId");
+            _fakeHttpContext.Response.Body = memoryStream;
+            A.CallTo(() => _fakeNextMiddleware(_fakeHttpContext)).Throws(new ShopFacadeException(EventIds.ShopFacadeException.ToEventId(), "fakemessage"));
+
+            await _middleware.InvokeAsync(_fakeHttpContext);
+
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            var responseBody = await new StreamReader(memoryStream).ReadToEndAsync();
+            var problemDetails = JsonSerializer.Deserialize<ProblemDetails>(responseBody, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            problemDetails!.Extensions["correlationId"]!.ToString().Should().Be("fakeCorrelationId");
+            _fakeHttpContext.Response.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
+            _fakeHttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+            && call.GetArgument<LogLevel>(0) == LogLevel.Error
+            && call.GetArgument<EventId>(1) == EventIds.ShopFacadeException.ToEventId()
+            && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "fakemessage").MustHaveHappenedOnceExactly();
+        }
+    }
+}
