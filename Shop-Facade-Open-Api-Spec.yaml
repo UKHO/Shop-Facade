@@ -9,26 +9,20 @@ info:
   version: 0.0.1
 servers:
   - url: https://shop-facade-service-url
-    description: Proposed Dev URL
+    description: TBC
 security:
   - jwtBearerAuth: []
   
 paths:
-  /permits/{licenceId}/S100:
+  /licences/{licenceId}/s100/permits:
     get:
-      description: Returns a zip file containing all the S100 permit file(s) for the requested licence.
+      description: Returns a zip file containing all the S-100 permit file(s) of the requested licence.
       operationId: getS100Permits
       parameters:
-      - name: licenceId
-        in: path
-        description: Licence Id. It must be an integer value and greater than zero.
-        required: true
-        schema:
-          type: integer
-          example: 12345678
+      - $ref: "#/components/parameters/licenceId"
       responses:
         "200":
-          description: OK - Returns permit files.
+          description: OK - Returns a zip containing permit files.
           headers:
             X-Correlation-ID:
               description: GUID for the request for logging/tracing
@@ -41,11 +35,11 @@ paths:
           content:
             application/zip:
               schema:
-                title: S100 Permits ZIP File
+                title: Zip containing S-100 permit files.
                 type: string
                 format: binary
         "204":
-          description: No Content - There are no S100 permits for the licence.
+          description: No Content - There are no S-100 permits for the requested licence.
           headers:
             X-Correlation-ID:
               description: GUID for the request for logging/tracing
@@ -67,9 +61,6 @@ paths:
                 errors:
                 - source: licenceId
                   description: Invalid licenceId
-            application/zip:
-              schema:
-                $ref: '#/components/schemas/errorDescription'
         "401":
           description: Unauthorised - either you have not provided valid token, or your token is not recognised.
           headers:
@@ -105,7 +96,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/errorDescription'
         "429":
-          description: Too Many Requests.
+          description: Too Many Requests. TODO - It is required?
           headers:
             X-Correlation-ID:
               description: GUID for the request for logging/tracing
@@ -122,22 +113,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/exceptionDescription'
-            application/zip:
-              schema:
-                $ref: '#/components/schemas/exceptionDescription'
   
-  /userpermits/{licenceId}/s100:
+  /licences/{licenceId}/s100/userpermits:
     get:
       description: Returns all User Permit Numbers (UPNs) associated with the requested licence. There can be one or more UPNs for a licence.
       operationId: getUserPermits
       parameters:
-      - name: licenceId
-        in: path
-        description: Licence Id. It must be an integer value and greater than zero.
-        required: true
-        schema:
-          type: integer
-          example: 12345678
+      - $ref: "#/components/parameters/licenceId"
       responses:
         "200":
           description: OK - Returns UPNs available for the licence
@@ -233,18 +215,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/exceptionDescription'
                 
-  /holdings/{licenceId}/s100:
+  /licences/{licenceId}/s100/holdings:
     get:
       description: Get holdings for the requested licence.
       operationId: getHoldings
       parameters:
-      - name: licenceId
-        in: path
-        description: Licence Id. It must be an integer value and greater than zero.
-        required: true
-        schema:
-          type: integer
-          example: 12345678
+      - $ref: "#/components/parameters/licenceId"
       responses:
         "200":
           description: OK - Returns holdings available for the licence.
@@ -374,7 +350,7 @@ paths:
       description: Submit a new S100 product order for a specified licence.
       operationId: submitOrder
       tags:
-        - TBC
+        - DRAFT
       requestBody:
         description: An order represented as JSON. Please see schema for more information.
         content:
@@ -505,14 +481,9 @@ paths:
       description: Gets the current holdings for a given product per supplied licence.
       operationId: getHolding
       tags:
-        - TBC
+        - DRAFT
       parameters:
-      - name: licenceId
-        in: path
-        description: The licence ID of the licence.
-        required: true
-        schema:
-          type: integer
+      - $ref: "#/components/parameters/licenceId"
       - name: serviceType
         in: path
         description: The Service Type from the list of available service types. Can
@@ -615,7 +586,7 @@ paths:
         \ the Order ID"
       operationId: getOrder
       tags:
-        - TBC
+        - DRAFT
       parameters:
       - name: orderId
         in: path
@@ -727,7 +698,7 @@ paths:
       description: Gets the catalogue for the specified product for the current week
       operationId: getCatalogue
       tags:
-        - TBC
+        - DRAFT
       parameters:
       - name: If-Modified-Since
         in: header
@@ -1126,10 +1097,11 @@ components:
     licenceId:
       name: licenceId
       in: path
-      description: Unique Fleet Manager Licence Identifier
+      description: Licence Id. It must be an integer value and greater than zero.
       required: true
       schema:
         type: integer
+        example: 12345678
   securitySchemes:
     jwtBearerAuth: # arbitrary name for the security scheme
       type: http
