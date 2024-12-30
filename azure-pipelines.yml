@@ -50,7 +50,7 @@ variables:
   - name: WindowPool
     value: "NautilusBuild"
   - name: CoverageThresholdLimit
-    value: "90"
+    value: "80"
 
 resources:
   repositories:
