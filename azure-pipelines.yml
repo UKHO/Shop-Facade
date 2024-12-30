@@ -45,7 +45,7 @@ variables:
   - name: UKHOAssemblyVersionPrefix
     value: "1.0."
   - name: UKHOAssemblyProduct
-    value: "Exchange Set Service"
+    value: "Shop Facade"
   - name: UKHOAssemblyCopyright
     value: "Copyright � UK Hydrographic Office"
   - name: Container
@@ -96,7 +96,7 @@ stages:
         - task: Powershell@2
           displayName: "Run Stryker"
           inputs:
-            workingDirectory: '$(Build.SourcesDirectory)\UKHO.ExchangeSetService.API'
+            workingDirectory: '$(Build.SourcesDirectory)\src'
             targetType: 'inline'
             pwsh: true
             script: $(Agent.BuildDirectory)/tools/dotnet-stryker

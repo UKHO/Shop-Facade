@@ -9,7 +9,7 @@ jobs:
   condition: eq('${{ parameters.DisableDependencyCheck }}', false)
   workspace:
     clean: all
-  displayName: "Dependencychecker"
+  displayName: "Dependency Checker"
   steps:          
     - task: UseDotNet@2
       displayName: 'Use .NET 8.0.x sdk'
