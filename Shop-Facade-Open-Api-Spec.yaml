@@ -95,7 +95,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/errorDescription'
         "429":
-          description: Too Many Requests. TODO - It is required?
+          description: Too Many Requests.
           headers:
             X-Correlation-ID:
               description: GUID for the request for logging/tracing
@@ -394,7 +394,6 @@ paths:
               description: GUID for the request for logging/tracing
               schema:
                 type: string
-          content: {}
         "403":
           description: "Forbidden or Quota Exceeded.<br>This will either be because:\
             \ <br> - you have no permission to use this API (in which case the body\
