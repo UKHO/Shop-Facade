@@ -6,11 +6,6 @@ parameters:
     type: boolean
     default: false
  
-  - name: disableStryker
-    displayName: "Disable Stryker"
-    type: boolean
-    default: false
-
   - name: DisableDependencyCheck
     displayName: "Disable OWASP dependency checking"
     type: boolean
@@ -66,48 +61,6 @@ resources:
     ref: refs/heads/main
 
 stages:
-  - stage: Stryker_Mutator
-    displayName: "Stryker Mutator"
-    condition: ${{ eq(parameters.disableStryker, false) }}
-    dependsOn: []
-    jobs:
-    - job: Stryker
-      workspace:
-        clean: all
-      steps:
-        - task: UseDotNet@2
-          displayName: 'Use .NET SDK'
-          inputs:
-            packageType: sdk
-            version: $(SdkVersion)
-
-        - task: UseDotNet@2
-          displayName: 'Use .NET SDK for Stryker'
-          inputs:
-            packageType: sdk
-            version: $(SdkVersion)
-
-        - task: DotNetCoreCLI@2
-          displayName: "Install Stryker"
-          inputs:
-            command: custom
-            custom: tool
-            workingDirectory: $(Agent.TempDirectory)
-            arguments: install dotnet-stryker --tool-path $(Agent.BuildDirectory)/tools
-
-        - task: Powershell@2
-          displayName: "Run Stryker"
-          inputs:
-            workingDirectory: '$(Build.SourcesDirectory)\src'
-            targetType: 'inline'
-            pwsh: true
-            script: $(Agent.BuildDirectory)/tools/dotnet-stryker
-
-        - task: PublishMutationReport@1
-          displayName: 'Publish Stryker Mutator Report'
-          inputs:
-            reportPattern: '**/mutation-report.html'
-
   - stage: BuildTestPublish
     displayName: "Build, test and publish"
     dependsOn: []
