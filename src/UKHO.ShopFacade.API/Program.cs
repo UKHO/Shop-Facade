@@ -1,4 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using UKHO.ShopFacade.API.Middleware;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.Extensions.Options;
@@ -43,6 +46,15 @@ namespace UKHO.ShopFacade.API
             builder.Configuration.AddJsonFile("appsettings.local.overrides.json", true, true);
 #endif
             builder.Configuration.AddEnvironmentVariables();
+
+            var configuration = builder.Configuration;
+            var kvServiceUri = configuration["KeyVaultSettings:ServiceUri"];
+
+            if (!string.IsNullOrWhiteSpace(kvServiceUri))
+            {
+                var secretClient = new SecretClient(new Uri(kvServiceUri), new DefaultAzureCredential(new DefaultAzureCredentialOptions()));
+                builder.Configuration.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
+            }
         }
 
         private static void ConfigureServices(WebApplicationBuilder builder)
