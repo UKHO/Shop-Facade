@@ -42,7 +42,7 @@ variables:
   - name: UKHOAssemblyProduct
     value: "Shop Facade"
   - name: UKHOAssemblyCopyright
-    value: "Copyright � UK Hydrographic Office"
+    value: "Copyright © UK Hydrographic Office"
   - name: Container
     value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.9.6"
   - name: DeploymentPool
