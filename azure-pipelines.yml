@@ -54,6 +54,8 @@ variables:
     value: "Mare Nectaris"
   - name: WindowPool
     value: "NautilusBuild"
+  - name: CoverageThresholdLimit
+    value: "90"
 
 resources:
   repositories:
