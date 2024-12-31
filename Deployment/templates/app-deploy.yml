@@ -19,12 +19,12 @@ jobs:
 - deployment: DeployApp
   timeoutInMinutes: 75
   displayName: "${{parameters.Environment}} - deploy terraform and dotnet App"
-  environment: "-${{parameters.Environment}}"
+  environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   workspace:
     clean: all
-  variables:
+  # variables:
   strategy:
     runOnce:
       deploy:
@@ -37,25 +37,16 @@ jobs:
               ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
               AzureSubscription: ${{parameters.AzureSubscription}}
 
-          - template: continuous-deployment-apim.yml
-            parameters:
-              ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-              AzureSubscription: "UKHO-APIM-SOLAS-${{parameters.LiveOrNonLive}}"
-              TerraformKeyVault: $(APIM_TERRAFORM_KEYVAULT)
-              APIMResourceGroup: $(APIM_RESOURCE_GROUP_NAME)
-              APIMServiceInstance: $(APIM_SERVICE_NAME)
-              tfstateStorageAccountName: $(APIM_TFSTATE_STORAGE_ACCOUNT_NAME)
-
 - deployment: FunctionalTests
   dependsOn: DeployApp
-  displayName: "Run Functional Tests ${{parameters.pathSuffix}}"
-  environment: "-${{parameters.Environment}}"
+  displayName: "Run Functional Tests"
+  environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   condition: ${{parameters.RunTests}}
-  variables:
-  strategy:
-    runOnce:
-      deploy:
-        steps:
+  # variables:
+  # strategy:
+  #   runOnce:
+  #     deploy:
+        # steps:
         
