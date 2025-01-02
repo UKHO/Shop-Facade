@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKHO.ShopFacade.API.UnitTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKHO.ShopFacade.Common.UnitTests", "tests\UKHO.ShopFacade.Common.UnitTests\UKHO.ShopFacade.Common.UnitTests.csproj", "{0BFC380C-B77A-41AD-BA5F-0F30647B4C04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKHO.ShopFacade.API.FunctionalTests", "UKHO.ShopFacade.API.FunctionalTests\UKHO.ShopFacade.API.FunctionalTests.csproj", "{F846C90A-5A00-4480-8D25-92F57AF7EFCA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKHO.ShopFacade.API.FunctionalTests", "tests\UKHO.ShopFacade.API.FunctionalTests\UKHO.ShopFacade.API.FunctionalTests.csproj", "{F846C90A-5A00-4480-8D25-92F57AF7EFCA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
