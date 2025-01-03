@@ -12,7 +12,6 @@ namespace UKHO.ShopFacade.API.Controllers
             _logger = logger;
         }
 
-
         /// <summary>
         /// Get all User Permit Numbers (UPNs) associated with the requested licence.
         /// </summary>
