@@ -19,8 +19,8 @@ namespace UKHO.ShopFacade.API.UnitTests.Middleware
         public void SetUp()
         {
             _fakeNextMiddleware = A.Fake<RequestDelegate>();
-            _middleware = new CorrelationIdMiddleware(_fakeNextMiddleware);
             _fakeLogger = A.Fake<ILogger<CorrelationIdMiddleware>>();
+            _middleware = new CorrelationIdMiddleware(_fakeNextMiddleware, _fakeLogger);
             _fakeHttpContext = A.Fake<HttpContext>();
             _fakeHttpContext.RequestServices = new ServiceCollection().AddSingleton(_fakeLogger).BuildServiceProvider();
         }
