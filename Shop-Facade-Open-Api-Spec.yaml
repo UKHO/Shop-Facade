@@ -827,7 +827,7 @@ components:
       type: object
       properties:
         licenceId:
-          type: string
+          type: integer
         userPermits:
           type: array
           items:
