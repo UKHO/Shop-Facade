@@ -17,6 +17,12 @@ namespace UKHO.ShopFacade.Common.Events
         /// 950002 - Shop facade exception.
         /// </summary>
         ShopFacadeException = 950002,
+
+        /// <summary>
+        /// 950003 - GetUPNs Started.
+        /// </summary>
+        GetUPNsStarted = 950003
+
     }
 
     /// <summary>
