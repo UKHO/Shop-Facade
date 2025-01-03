@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UKHO.ShopFacade.Common.Events;
 
 namespace UKHO.ShopFacade.API.Controllers
 {
     [ApiController]
     public class UpnController : BaseController<UpnController>
     {
-        public UpnController(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        private readonly ILogger<UpnController> _logger;
+        public UpnController(IHttpContextAccessor httpContextAccessor, ILogger<UpnController> logger) : base(httpContextAccessor)
         {
+            _logger = logger;
         }
 
         /// <summary>
@@ -16,6 +19,8 @@ namespace UKHO.ShopFacade.API.Controllers
         [Route("/licenses/{licenceId}/s100/userpermits")]
         public IActionResult GetUPNs(int licenceId)
         {
+            _logger.LogInformation(EventIds.GetUPNsStarted.ToEventId(), "GetUPNs API Call Started.");
+
             return Ok();
         }
     }
