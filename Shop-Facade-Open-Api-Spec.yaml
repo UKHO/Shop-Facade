@@ -113,7 +113,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/exceptionDescription'
   
-  /licences/{licenceId}/s100/userpermits:
+  /licences/{licenceId}/s100/userPermits:
     get:
       description: Returns all S-100 User Permit Numbers (UPNs) associated with the requested licence. There can be one or more S-100 UPNs for a licence.
       operationId: getUserPermits
