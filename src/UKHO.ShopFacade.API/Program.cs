@@ -1,16 +1,19 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using UKHO.ShopFacade.API.Middleware;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.Extensions.Options;
-using System.Reflection;
-using UKHO.ShopFacade.Common.Configuration;
-using UKHO.ShopFacade.Common.Constants;
-using UKHO.Logging.EventHubLogProvider;
 using Serilog;
 using Serilog.Events;
+using UKHO.Logging.EventHubLogProvider;
+using UKHO.ShopFacade.API.Middleware;
+using UKHO.ShopFacade.API.Services;
+using UKHO.ShopFacade.Common.ClientProvider;
+using UKHO.ShopFacade.Common.Configuration;
+using UKHO.ShopFacade.Common.Constants;
+using UKHO.ShopFacade.Common.DataProvider;
 
 namespace UKHO.ShopFacade.API
 {
@@ -18,6 +21,7 @@ namespace UKHO.ShopFacade.API
     internal class Program
     {
         private const string EventHubLoggingConfiguration = "EventHubLoggingConfiguration";
+        private const string SharePointSiteConfiguration = "SharePointSiteConfiguration";
         private static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -79,6 +83,10 @@ namespace UKHO.ShopFacade.API
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.Configure<EventHubLoggingConfiguration>(builder.Configuration.GetSection(EventHubLoggingConfiguration));
+            builder.Services.Configure<SharePointSiteConfiguration>(builder.Configuration.GetSection(SharePointSiteConfiguration));
+            builder.Services.AddScoped<IUpnService, UpnService>();
+            builder.Services.AddScoped<IUpnDataProvider, UpnDataProvider>();
+            builder.Services.AddScoped<IGraphClient, GraphClient>();
         }
 
         private static void ConfigureLogging(WebApplication webApplication)
