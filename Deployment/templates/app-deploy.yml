@@ -16,15 +16,39 @@ parameters:
   default: false
 
 jobs:
+- deployment: DevDeployTerraform
+  displayName: "Dev - Deploy Terraform"
+  environment: ""
+  pool: $(DeploymentPool)
+  container: ${{variables.Container}}
+  workspace:
+    clean: all
+  strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: Deployment/templates/continuous-deployment.yml
+                  parameters:
+                    ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+                    AzureSubscription: ""
+
 - deployment: DeployApp
-  timeoutInMinutes: 75
   displayName: "${{parameters.Environment}} - deploy terraform and dotnet App"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   workspace:
     clean: all
-  # variables:
+  variables:
+    - name : WEB_APP_NAME
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP'] ]
+    - name : "ErpFacadeConfiguration.BaseUrl"
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ErpFacadeBaseUrl'] ]
+    - name : MOCK_WEB_APP_NAME
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.mockWebApp'] ]
+    - name : "KeyVaultSettings.ServiceUri"
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
+   
   strategy:
     runOnce:
       deploy:
@@ -38,15 +62,33 @@ jobs:
               AzureSubscription: ${{parameters.AzureSubscription}}
 
 - deployment: FunctionalTests
-  dependsOn: DeployApp
+  dependsOn:
+  - DevDeployTerraform
+  - DeployApp
   displayName: "Run Functional Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   condition: ${{parameters.RunTests}}
-  # variables:
+   variables:
+      - name : ShopFacadeConfiguration.BaseUrl
+        value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ErpFacadeBaseUrl'] ]
+      - name : SapMockConfiguration.BaseUrl
+        value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.mockwebappurl'] ]
+      - name : AzureStorageConfiguration.ConnectionString
+        value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.AzureStorageConnectionString'] ]
+      - name : mockWebAppName
+        value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.mockWebApp'] ]
+      - name : mockWebAppResourceGroup
+        value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.mockWebAppResourceGroupName'] ]
+        #displayName: "Dev Functional Automated Tests"
   # strategy:
   #   runOnce:
   #     deploy:
         # steps:
-        
+        workspace:
+         clean: all
+        steps:
+          - template: Deployment/templates/continuous-testing.yml
+            parameters:
+              AzureSubscription: ""     
