@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Events;
 
 namespace UKHO.ShopFacade.API.Controllers
@@ -17,6 +19,7 @@ namespace UKHO.ShopFacade.API.Controllers
         /// </summary>
         [HttpGet]
         [Route("/licenses/{licenceId}/s100/userpermits")]
+        [Authorize(Policy = ShopFacadeConstants.ShopFacadePolicy)]
         public IActionResult GetUPNs(int licenceId)
         {
             _logger.LogInformation(EventIds.GetUPNsStarted.ToEventId(), "GetUPNs API Call Started.");

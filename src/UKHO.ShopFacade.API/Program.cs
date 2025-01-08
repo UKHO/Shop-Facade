@@ -11,6 +11,8 @@ using UKHO.ShopFacade.Common.Constants;
 using UKHO.Logging.EventHubLogProvider;
 using Serilog;
 using Serilog.Events;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace UKHO.ShopFacade.API
 {
@@ -18,6 +20,8 @@ namespace UKHO.ShopFacade.API
     internal class Program
     {
         private const string EventHubLoggingConfiguration = "EventHubLoggingConfiguration";
+        private const string AzureAdScheme = "AzureAd";
+        private const string AzureAdConfiguration = "AzureAdConfiguration";
         private static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -79,6 +83,21 @@ namespace UKHO.ShopFacade.API
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.Configure<EventHubLoggingConfiguration>(builder.Configuration.GetSection(EventHubLoggingConfiguration));
+
+            var azureAdConfiguration = builder.Configuration.GetSection(AzureAdConfiguration).Get<AzureAdConfiguration>();
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(AzureAdScheme, options =>
+                {
+                    options.Audience = azureAdConfiguration.ClientId;
+                    options.Authority = $"{azureAdConfiguration.MicrosoftOnlineLoginUrl}{azureAdConfiguration.TenantId}";
+                });
+
+            builder.Services.AddAuthorizationBuilder()
+                .SetDefaultPolicy(new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .AddAuthenticationSchemes(AzureAdScheme)
+                    .Build())
+                .AddPolicy(ShopFacadeConstants.ShopFacadePolicy, policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePolicy));
         }
 
         private static void ConfigureLogging(WebApplication webApplication)
