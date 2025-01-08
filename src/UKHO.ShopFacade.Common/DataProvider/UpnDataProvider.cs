@@ -1,7 +1,5 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.Graph.Models;
 using UKHO.ShopFacade.Common.ClientProvider;
 using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Models;
@@ -18,7 +16,7 @@ namespace UKHO.ShopFacade.Common.DataProvider
             _sharePointSiteConfiguration = sharePointSiteConfiguration.Value;
         }
 
-        public async Task<S100UpnRecord> GetUpnDetailsByLicenseId(int licenceId)
+        public async Task<UpnServiceResult> GetUpnDetailsByLicenseId(int licenceId, string correlationId)
         {
             var graphClient = _graphClient.GetGraphServiceClient();
 
@@ -34,27 +32,39 @@ namespace UKHO.ShopFacade.Common.DataProvider
                        requestConfiguration.QueryParameters.Filter = filterCondition;
                    });
 
-                var result = items.Value.Select(item => new S100UpnRecord
-                {
-                    LicenceId = item.Fields.AdditionalData.TryGetValue("Title", out var title) ? title?.ToString() : string.Empty,
-                    UPN1_Title = item.Fields.AdditionalData.TryGetValue("UPN1_Title", out var upn1Title) ? upn1Title?.ToString() : string.Empty,
-                    UPN1 = item.Fields.AdditionalData.TryGetValue("UPN_1", out var upn1) ? upn1?.ToString() : string.Empty,
-                    UPN2_Title = item.Fields.AdditionalData.TryGetValue("UPN2_Title", out var upn2Title) ? upn2Title?.ToString() : string.Empty,
-                    UPN2 = item.Fields.AdditionalData.TryGetValue("UPN_2", out var upn2) ? upn2?.ToString() : string.Empty,
-                    UPN3_Title = item.Fields.AdditionalData.TryGetValue("UPN3_Title", out var upn3Title) ? upn3Title?.ToString() : string.Empty,
-                    UPN3 = item.Fields.AdditionalData.TryGetValue("UPN_3", out var upn3) ? upn3?.ToString() : string.Empty,
-                    UPN4_Title = item.Fields.AdditionalData.TryGetValue("UPN4_Title", out var upn4Title) ? upn4Title?.ToString() : string.Empty,
-                    UPN4 = item.Fields.AdditionalData.TryGetValue("UPN_4", out var upn4) ? upn4?.ToString() : string.Empty,
-                    UPN5_Title = item.Fields.AdditionalData.TryGetValue("UPN5_Title", out var upn5Title) ? upn5Title?.ToString() : string.Empty,
-                    UPN5 = item.Fields.AdditionalData.TryGetValue("UPN_5", out var upn5) ? upn5?.ToString() : string.Empty
-                }).FirstOrDefault();
-
-                return result;
+                return HandleResponseAsync(items!, correlationId);
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error while fetching UPN details for licenceId: {licenceId}", ex);
+                return UpnServiceResult.InternalServerError(UpnServiceResult.SetErrorResponse(correlationId, "licenceId", ex.Message));
             }
         }
+
+        private static UpnServiceResult HandleResponseAsync(ListItemCollectionResponse s100UpnCollection, string correlationId)
+        {
+            if (s100UpnCollection.Value!.Count > 0)
+            {
+                return UpnServiceResult.Success(GetS100UpnRecord(s100UpnCollection)!);
+            }
+            else
+            {
+                return UpnServiceResult.NotFound(UpnServiceResult.SetErrorResponse(correlationId, "licenceId", "Licence not found."));
+            }
+        }
+
+        private static S100UpnRecord GetS100UpnRecord(ListItemCollectionResponse s100UpnCollection) => s100UpnCollection.Value!.Select(item => new S100UpnRecord
+        {
+            LicenceId = item.Fields.AdditionalData.TryGetValue("Title", out var title) ? title?.ToString() : string.Empty,
+            UPN1_Title = item.Fields.AdditionalData.TryGetValue("UPN1_Title", out var upn1Title) ? upn1Title?.ToString() : string.Empty,
+            UPN1 = item.Fields.AdditionalData.TryGetValue("UPN_1", out var upn1) ? upn1?.ToString() : string.Empty,
+            UPN2_Title = item.Fields.AdditionalData.TryGetValue("UPN2_Title", out var upn2Title) ? upn2Title?.ToString() : string.Empty,
+            UPN2 = item.Fields.AdditionalData.TryGetValue("UPN_2", out var upn2) ? upn2?.ToString() : string.Empty,
+            UPN3_Title = item.Fields.AdditionalData.TryGetValue("UPN3_Title", out var upn3Title) ? upn3Title?.ToString() : string.Empty,
+            UPN3 = item.Fields.AdditionalData.TryGetValue("UPN_3", out var upn3) ? upn3?.ToString() : string.Empty,
+            UPN4_Title = item.Fields.AdditionalData.TryGetValue("UPN4_Title", out var upn4Title) ? upn4Title?.ToString() : string.Empty,
+            UPN4 = item.Fields.AdditionalData.TryGetValue("UPN_4", out var upn4) ? upn4?.ToString() : string.Empty,
+            UPN5_Title = item.Fields.AdditionalData.TryGetValue("UPN5_Title", out var upn5Title) ? upn5Title?.ToString() : string.Empty,
+            UPN5 = item.Fields.AdditionalData.TryGetValue("UPN_5", out var upn5) ? upn5?.ToString() : string.Empty
+        }).FirstOrDefault()!;
     }
 }

@@ -1,7 +1,5 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-using UKHO.ShopFacade.Common.DataProvider;
+﻿using UKHO.ShopFacade.Common.DataProvider;
+using UKHO.ShopFacade.Common.Models;
 
 namespace UKHO.ShopFacade.API.Services
 {
@@ -13,9 +11,9 @@ namespace UKHO.ShopFacade.API.Services
             _upnDataProvider = upnDataProvider;
         }
 
-        public async Task GetUpnDetails(int licenceId)
+        public async Task<UpnServiceResult> GetUpnDetails(int licenceId, string correlationId)
         {
-            var upnList = await _upnDataProvider.GetUpnDetailsByLicenseId(licenceId);
+            return await _upnDataProvider.GetUpnDetailsByLicenseId(licenceId, correlationId);
         }
     }
 }

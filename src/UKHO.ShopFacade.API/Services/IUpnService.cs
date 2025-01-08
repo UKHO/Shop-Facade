@@ -1,10 +1,9 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
+﻿using UKHO.ShopFacade.Common.Models;
 
 namespace UKHO.ShopFacade.API.Services
 {
     public interface IUpnService
     {
-        Task GetUpnDetails(int licenceId);
+        Task<UpnServiceResult> GetUpnDetails(int licenceId, string correlationId);
     }
 }
