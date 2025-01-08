@@ -1,7 +1,9 @@
-﻿using System.Net;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 
 namespace UKHO.ShopFacade.Common.Models
 {
+    [ExcludeFromCodeCoverage]
     public class ServiceResponseResult<T> : Result<T>
     {
         public new T Value { get; }
@@ -22,5 +24,23 @@ namespace UKHO.ShopFacade.Common.Models
         public static ServiceResponseResult<T> NotFound(ErrorResponse errorResponse) => new(default, HttpStatusCode.NotFound, errorResponse);
 
         public static ServiceResponseResult<T> BadRequest(ErrorResponse errorResponse) => new(default, HttpStatusCode.BadRequest, errorResponse);
+
+        public static ServiceResponseResult<T> Error(ErrorResponse errorResponse, HttpStatusCode statusCode) => new(default, statusCode, errorResponse);
+
+        public static ErrorResponse SetErrorResponse(string correlationId, string source, string description)
+        {
+            return new ErrorResponse
+            {
+                CorrelationId = correlationId,
+                Errors =
+                   [
+                       new ErrorDetail
+                       {
+                           Description = description,
+                           Source = source
+                       }
+                   ]
+            };
+        }
     }
 }

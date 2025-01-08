@@ -1,5 +1,6 @@
 ﻿using UKHO.ShopFacade.Common.DataProvider;
 using UKHO.ShopFacade.Common.Models;
+using UKHO.ShopFacade.Common.Models.Response;
 
 namespace UKHO.ShopFacade.API.Services
 {
@@ -13,7 +14,67 @@ namespace UKHO.ShopFacade.API.Services
 
         public async Task<UpnServiceResult> GetUpnDetails(int licenceId, string correlationId)
         {
-            return await _upnDataProvider.GetUpnDetailsByLicenseId(licenceId, correlationId);
+            var upnDataProviderResult = await _upnDataProvider.GetUpnDetailsByLicenseId(licenceId, correlationId);
+
+            if (upnDataProviderResult.IsSuccess)
+            {
+                UpnServiceResult.Success(GetUpnDetail(upnDataProviderResult)!);
+            }
+            return upnDataProviderResult;
+        }
+
+        private UpnDetail GetUpnDetail(UpnServiceResult upnDataProviderResult)
+        {
+            var upnDetail = new UpnDetail();
+            int.TryParse(upnDataProviderResult.Value.LicenceId, out var licid);
+            var userPermits = new List<UserPermit>{
+                new()
+                {
+                    Title = upnDataProviderResult.Value.UPN1_Title,
+                    Upn = upnDataProviderResult.Value.UPN1
+                }
+            };
+
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN2))
+            {
+                userPermits.Add(new UserPermit
+                {
+                    Title = upnDataProviderResult.Value.UPN2_Title,
+                    Upn = upnDataProviderResult.Value.UPN2
+                });
+            }
+
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN3))
+            {
+                userPermits.Add(new UserPermit
+                {
+                    Title = upnDataProviderResult.Value.UPN3_Title,
+                    Upn = upnDataProviderResult.Value.UPN3
+                });
+            }
+
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN4))
+            {
+                userPermits.Add(new UserPermit
+                {
+                    Title = upnDataProviderResult.Value.UPN4_Title,
+                    Upn = upnDataProviderResult.Value.UPN4
+                });
+            }
+
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN5))
+            {
+                userPermits.Add(new UserPermit
+                {
+                    Title = upnDataProviderResult.Value.UPN5_Title,
+                    Upn = upnDataProviderResult.Value.UPN5
+                });
+            }
+
+            upnDetail.LicenceId = licid;
+            upnDetail.UserPermits = userPermits;
+
+            return upnDetail;
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using System.Net;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 
 namespace UKHO.ShopFacade.Common.Models
 {
+    [ExcludeFromCodeCoverage]
     public class UpnServiceResult : ServiceResponseResult<S100UpnRecord>
     {
         public new S100UpnRecord Value { get; }
