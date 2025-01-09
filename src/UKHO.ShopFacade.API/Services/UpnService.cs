@@ -19,16 +19,16 @@ namespace UKHO.ShopFacade.API.Services
 
             return upnDataProviderResult.StatusCode switch
             {
-                HttpStatusCode.OK => UpnServiceResult.Success(GetUpnDetail(upnDataProviderResult)!),
+                HttpStatusCode.OK => UpnServiceResult.Success(SetUpnDetailResponse(upnDataProviderResult)!),
                 HttpStatusCode.NotFound => UpnServiceResult.NotFound(upnDataProviderResult.ErrorResponse),
                 _ => UpnServiceResult.InternalServerError()
             };
         }
 
-        private static UpnDetail GetUpnDetail(UpnDataProviderResult upnDataProviderResult)
+        private static UpnDetail SetUpnDetailResponse(UpnDataProviderResult upnDataProviderResult)
         {
             var upnDetail = new UpnDetail();
-            int.TryParse(upnDataProviderResult.Value.LicenceId, out var licid);
+            int.TryParse(upnDataProviderResult.Value.LicenceId, out var licnceid);
             var userPermits = new List<UserPermit>{
                 new()
                 {
@@ -73,7 +73,7 @@ namespace UKHO.ShopFacade.API.Services
                 });
             }
 
-            upnDetail.LicenceId = licid;
+            upnDetail.LicenceId = licnceid;
             upnDetail.UserPermits = userPermits;
 
             return upnDetail;
