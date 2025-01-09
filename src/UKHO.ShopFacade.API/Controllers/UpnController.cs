@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using UKHO.ShopFacade.API.Services;
+using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.Models;
 
@@ -25,24 +26,28 @@ namespace UKHO.ShopFacade.API.Controllers
         [Route("/licenses/{licenceId}/s100/userpermits")]
         public async Task<IActionResult> GetUPNs(int licenceId)
         {
-            _logger.LogInformation(EventIds.GetUPNCallStarted.ToEventId(), "GetUPNs API call started.");
+            _logger.LogInformation(EventIds.GetUPNCallStarted.ToEventId(), ErrorDetails.GetUPNCallStartedMessage);
 
             if (licenceId <= 0)
             {
-                _logger.LogInformation(EventIds.InvalidLicenceId.ToEventId(), "Bad request - could be missing or invalid licenceId, it must be an integer and greater than zero.");
-                return BadRequest(UpnServiceResult.SetErrorResponse(GetCorrelationId(), "licenceId", "Bad request - could be missing or invalid licenceId, it must be an integer and greater than zero."));
+                _logger.LogInformation(EventIds.InvalidLicenceId.ToEventId(), ErrorDetails.InvalidLicenceIdMessage);
+                return BadRequest(UpnServiceResult.SetErrorResponse(GetCorrelationId(), ErrorDetails.Source, ErrorDetails.InvalidLicenceIdMessage));
             }
 
             var upnServiceResult = await _upnService.GetUpnDetails(licenceId, GetCorrelationId());
 
-            _logger.LogInformation(EventIds.GetUPNCallCompleted.ToEventId(), "GetUPNs API call completed.");
-
-            return upnServiceResult.StatusCode switch
+            switch (upnServiceResult.StatusCode)
             {
-                HttpStatusCode.OK => Ok(upnServiceResult.Value),
-                HttpStatusCode.NotFound => NotFound(upnServiceResult.ErrorResponse),
-                _ => StatusCode((int)upnServiceResult.StatusCode)
-            };
+                case HttpStatusCode.OK:
+                    _logger.LogInformation(EventIds.GetUPNCallCompleted.ToEventId(), ErrorDetails.GetUPNCallCompletedMessage);
+                    return Ok(upnServiceResult.Value);
+                case HttpStatusCode.NotFound:
+                    _logger.LogInformation(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
+                    return NotFound(upnServiceResult.ErrorResponse);
+                default:
+                    _logger.LogInformation(EventIds.InternalError.ToEventId(), ErrorDetails.InternalErrorMessage);
+                    return StatusCode((int)upnServiceResult.StatusCode);
+            }
         }
     }
 }

@@ -1,19 +1,25 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Azure.Identity;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using UKHO.ShopFacade.Common.ClientProvider;
 using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Constants;
+using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.Models;
 
 namespace UKHO.ShopFacade.Common.DataProvider
 {
     public class UpnDataProvider : IUpnDataProvider
     {
+        private readonly ILogger<UpnDataProvider> _logger;
         public readonly IGraphClient _graphClient;
         private readonly SharePointSiteConfiguration _sharePointSiteConfiguration;
 
-        public UpnDataProvider(IGraphClient graphClient, IOptions<SharePointSiteConfiguration> sharePointSiteConfiguration)
+        public UpnDataProvider(ILogger<UpnDataProvider> logger, IGraphClient graphClient, IOptions<SharePointSiteConfiguration> sharePointSiteConfiguration)
         {
+            _logger = logger;
             _graphClient = graphClient;
             _sharePointSiteConfiguration = sharePointSiteConfiguration.Value;
         }
@@ -22,6 +28,8 @@ namespace UKHO.ShopFacade.Common.DataProvider
         {
             const string expandFields = "fields($select=Title,UPN1_Title,ECDIS_UPN_1,UPN2_Title,ECDIS_UPN_2,UPN3_Title,ECDIS_UPN_3,UPN4_Title,ECDIS_UPN_4,UPN5_Title,ECDIS_UPN_5)";
             var filterCondition = $"fields/Title eq '{licenceId}'";
+
+            _logger.LogInformation(EventIds.GetUPNCallStarted.ToEventId(), ErrorDetails.GraphClientCallStartedMessage);
 
             var graphClient = _graphClient.GetGraphServiceClient();
 
@@ -37,16 +45,22 @@ namespace UKHO.ShopFacade.Common.DataProvider
             return HandleResponseAsync(items!, correlationId);
         }
 
-        private static UpnDataProviderResult HandleResponseAsync(ListItemCollectionResponse s100UpnCollection, string correlationId)
+        private UpnDataProviderResult HandleResponseAsync(ListItemCollectionResponse s100UpnCollection, string correlationId)
         {
+            UpnDataProviderResult upnDataProviderResult;
+
             if (s100UpnCollection.Value!.Count > 0)
             {
-                return UpnDataProviderResult.Success(GetS100UpnRecord(s100UpnCollection)!);
+                upnDataProviderResult = UpnDataProviderResult.Success(GetS100UpnRecord(s100UpnCollection)!);
             }
             else
             {
-                return UpnDataProviderResult.NotFound(UpnDataProviderResult.SetErrorResponse(correlationId, "licenceId", "Licence not found."));
+                upnDataProviderResult = UpnDataProviderResult.NotFound(UpnDataProviderResult.SetErrorResponse(correlationId, ErrorDetails.Source, ErrorDetails.LicenceNotFoundMessage));
             }
+
+            _logger.LogInformation(EventIds.GetUPNCallStarted.ToEventId(), ErrorDetails.GraphClientCallCompletedMessage);
+
+            return upnDataProviderResult;
         }
 
         private static S100UpnRecord GetS100UpnRecord(ListItemCollectionResponse s100UpnCollection) => s100UpnCollection.Value!.Select(item => new S100UpnRecord

@@ -41,7 +41,17 @@ namespace UKHO.ShopFacade.Common.Events
         /// <summary>
         /// 950007 - Internal error occurred.
         /// </summary>
-        InternalError = 950007
+        InternalError = 950007,
+
+        /// <summary>
+        /// 950008 - Graph client call started.
+        /// </summary>
+        GraphClientCallStarted = 950008,
+
+        /// <summary>
+        /// 950009 - Graph client call completed.
+        /// </summary>
+        GraphClientCallCompleted = 950009
 
     }
 
