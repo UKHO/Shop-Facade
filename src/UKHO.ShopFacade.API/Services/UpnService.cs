@@ -31,43 +31,43 @@ namespace UKHO.ShopFacade.API.Services
                 new()
                 {
                     Title = upnDataProviderResult.Value.UPN1_Title,
-                    Upn = upnDataProviderResult.Value.UPN1
+                    Upn = upnDataProviderResult.Value.ECDIS_UPN_1
                 }
             };
 
-            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN2))
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN2_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_2))
             {
                 userPermits.Add(new UserPermit
                 {
                     Title = upnDataProviderResult.Value.UPN2_Title,
-                    Upn = upnDataProviderResult.Value.UPN2
+                    Upn = upnDataProviderResult.Value.ECDIS_UPN_2
                 });
             }
 
-            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN3))
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN3_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_3))
             {
                 userPermits.Add(new UserPermit
                 {
                     Title = upnDataProviderResult.Value.UPN3_Title,
-                    Upn = upnDataProviderResult.Value.UPN3
+                    Upn = upnDataProviderResult.Value.ECDIS_UPN_3
                 });
             }
 
-            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN4))
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN4_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_4))
             {
                 userPermits.Add(new UserPermit
                 {
                     Title = upnDataProviderResult.Value.UPN4_Title,
-                    Upn = upnDataProviderResult.Value.UPN4
+                    Upn = upnDataProviderResult.Value.ECDIS_UPN_4
                 });
             }
 
-            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN5))
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN5_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_5))
             {
                 userPermits.Add(new UserPermit
                 {
                     Title = upnDataProviderResult.Value.UPN5_Title,
-                    Upn = upnDataProviderResult.Value.UPN5
+                    Upn = upnDataProviderResult.Value.ECDIS_UPN_5
                 });
             }
 
