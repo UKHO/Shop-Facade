@@ -20,7 +20,7 @@ namespace UKHO.ShopFacade.Common.DataProvider
 
         public async Task<UpnDataProviderResult> GetUpnDetailsByLicenseId(int licenceId, string correlationId)
         {
-            const string expandFields = "fields($select=Title,UPN1_Title,UPN_1,UPN2_Title,UPN_2,UPN3_Title,UPN_3,UPN4_Title,UPN_4,UPN5_Title,UPN_5)";
+            const string expandFields = "fields($select=Title,UPN1_Title,ECDIS_UPN_1,UPN2_Title,ECDIS_UPN_2,UPN3_Title,ECDIS_UPN_3,UPN4_Title,ECDIS_UPN_4,UPN5_Title,ECDIS_UPN_5)";
             var filterCondition = $"fields/Title eq '{licenceId}'";
 
             var graphClient = _graphClient.GetGraphServiceClient();
