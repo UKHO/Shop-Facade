@@ -18,41 +18,34 @@ namespace UKHO.ShopFacade.Common.DataProvider
             _sharePointSiteConfiguration = sharePointSiteConfiguration.Value;
         }
 
-        public async Task<UpnServiceResult> GetUpnDetailsByLicenseId(int licenceId, string correlationId)
+        public async Task<UpnDataProviderResult> GetUpnDetailsByLicenseId(int licenceId, string correlationId)
         {
             const string expandFields = "fields($select=Title,UPN1_Title,UPN_1,UPN2_Title,UPN_2,UPN3_Title,UPN_3,UPN4_Title,UPN_4,UPN5_Title,UPN_5)";
             var filterCondition = $"fields/Title eq '{licenceId}'";
 
             var graphClient = _graphClient.GetGraphServiceClient();
 
-            try
-            {
-                var items = await graphClient.Sites[_sharePointSiteConfiguration.SiteId]
-                   .Lists[_sharePointSiteConfiguration.ListId]
-                   .Items
-                   .GetAsync(requestConfiguration =>
-                   {
-                       requestConfiguration.QueryParameters.Expand = new string[] { expandFields };
-                       requestConfiguration.QueryParameters.Filter = filterCondition;
-                   });
+            var items = await graphClient.Sites[_sharePointSiteConfiguration.SiteId]
+               .Lists[_sharePointSiteConfiguration.ListId]
+               .Items
+               .GetAsync(requestConfiguration =>
+               {
+                   requestConfiguration.QueryParameters.Expand = new string[] { expandFields };
+                   requestConfiguration.QueryParameters.Filter = filterCondition;
+               });
 
-                return HandleResponseAsync(items!, correlationId);
-            }
-            catch (Exception ex)
-            {
-                return UpnServiceResult.InternalServerError(UpnServiceResult.SetErrorResponse(correlationId, "licenceId", ex.Message));
-            }
+            return HandleResponseAsync(items!, correlationId);
         }
 
-        private static UpnServiceResult HandleResponseAsync(ListItemCollectionResponse s100UpnCollection, string correlationId)
+        private static UpnDataProviderResult HandleResponseAsync(ListItemCollectionResponse s100UpnCollection, string correlationId)
         {
             if (s100UpnCollection.Value!.Count > 0)
             {
-                return UpnServiceResult.Success(GetS100UpnRecord(s100UpnCollection)!);
+                return UpnDataProviderResult.Success(GetS100UpnRecord(s100UpnCollection)!);
             }
             else
             {
-                return UpnServiceResult.NotFound(UpnServiceResult.SetErrorResponse(correlationId, "licenceId", "Licence not found."));
+                return UpnDataProviderResult.NotFound(UpnDataProviderResult.SetErrorResponse(correlationId, "licenceId", "Licence not found."));
             }
         }
 

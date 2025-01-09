@@ -4,6 +4,6 @@ namespace UKHO.ShopFacade.Common.DataProvider
 {
     public interface IUpnDataProvider
     {
-        Task<UpnServiceResult> GetUpnDetailsByLicenseId(int licenceId, string correlationId);
+        Task<UpnDataProviderResult> GetUpnDetailsByLicenseId(int licenceId, string correlationId);
     }
 }

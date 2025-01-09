@@ -1,4 +1,5 @@
-﻿using UKHO.ShopFacade.Common.DataProvider;
+﻿using System.Net;
+using UKHO.ShopFacade.Common.DataProvider;
 using UKHO.ShopFacade.Common.Models;
 using UKHO.ShopFacade.Common.Models.Response;
 
@@ -16,14 +17,15 @@ namespace UKHO.ShopFacade.API.Services
         {
             var upnDataProviderResult = await _upnDataProvider.GetUpnDetailsByLicenseId(licenceId, correlationId);
 
-            if (upnDataProviderResult.IsSuccess)
+            return upnDataProviderResult.StatusCode switch
             {
-                UpnServiceResult.Success(GetUpnDetail(upnDataProviderResult)!);
-            }
-            return upnDataProviderResult;
+                HttpStatusCode.OK => UpnServiceResult.Success(GetUpnDetail(upnDataProviderResult)!),
+                HttpStatusCode.NotFound => UpnServiceResult.NotFound(upnDataProviderResult.ErrorResponse),
+                _ => UpnServiceResult.InternalServerError()
+            };
         }
 
-        private UpnDetail GetUpnDetail(UpnServiceResult upnDataProviderResult)
+        private static UpnDetail GetUpnDetail(UpnDataProviderResult upnDataProviderResult)
         {
             var upnDetail = new UpnDetail();
             int.TryParse(upnDataProviderResult.Value.LicenceId, out var licid);

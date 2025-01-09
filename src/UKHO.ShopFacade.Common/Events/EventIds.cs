@@ -19,9 +19,29 @@ namespace UKHO.ShopFacade.Common.Events
         ShopFacadeException = 950002,
 
         /// <summary>
-        /// 950003 - GetUPNs Started.
+        /// 950003 - GetUPN API call started.
         /// </summary>
-        GetUPNsStarted = 950003
+        GetUPNCallStarted = 950003,
+
+        /// <summary>
+        /// 950004 - GetUPN API call completed.
+        /// </summary>
+        GetUPNCallCompleted = 950004,
+
+        /// <summary>
+        /// 950005 - Invalid licence id.
+        /// </summary>
+        InvalidLicenceId = 950005,
+
+        /// <summary>
+        /// 950006 - No data found against license.
+        /// </summary>
+        LicenceNotFound = 950006,
+
+        /// <summary>
+        /// 950007 - Internal error occurred.
+        /// </summary>
+        InternalError = 950007
 
     }
 
