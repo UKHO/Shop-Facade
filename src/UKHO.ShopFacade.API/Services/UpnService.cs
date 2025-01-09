@@ -10,7 +10,7 @@ namespace UKHO.ShopFacade.API.Services
         public readonly IUpnDataProvider _upnDataProvider;
         public UpnService(IUpnDataProvider upnDataProvider)
         {
-            _upnDataProvider = upnDataProvider;
+            _upnDataProvider = upnDataProvider ?? throw new ArgumentNullException(nameof(upnDataProvider));
         }
 
         public async Task<UpnServiceResult> GetUpnDetails(int licenceId, string correlationId)

@@ -15,8 +15,8 @@ namespace UKHO.ShopFacade.API.Controllers
 
         public UpnController(IHttpContextAccessor httpContextAccessor, ILogger<UpnController> logger, IUpnService upnService) : base(httpContextAccessor)
         {
-            _logger = logger;
-            _upnService = upnService;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _upnService = upnService ?? throw new ArgumentNullException(nameof(upnService));
         }
 
         /// <summary>

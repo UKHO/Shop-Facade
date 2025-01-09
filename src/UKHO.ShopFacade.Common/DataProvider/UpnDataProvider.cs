@@ -1,7 +1,5 @@
-﻿using Azure.Identity;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Graph;
 using Microsoft.Graph.Models;
 using UKHO.ShopFacade.Common.ClientProvider;
 using UKHO.ShopFacade.Common.Configuration;
