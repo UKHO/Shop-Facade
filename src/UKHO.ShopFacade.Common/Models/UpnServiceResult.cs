@@ -1,45 +1,26 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using UKHO.ShopFacade.Common.Models.Response;
 
 namespace UKHO.ShopFacade.Common.Models
 {
     [ExcludeFromCodeCoverage]
-    public class UpnServiceResult : ServiceResponseResult<S100UpnRecord>
+    public class UpnServiceResult : ServiceResponseResult<UpnDetail>
     {
-        public new S100UpnRecord Value { get; }
         public new ErrorResponse ErrorResponse { get; }
         public new HttpStatusCode StatusCode { get; }
 
-        private UpnServiceResult(S100UpnRecord value, HttpStatusCode statusCode, ErrorResponse errorResponse = null)
+        private UpnServiceResult(UpnDetail value, HttpStatusCode statusCode, ErrorResponse errorResponse = null)
             : base(value, statusCode, errorResponse)
         {
-            Value = value;
             StatusCode = statusCode;
             ErrorResponse = errorResponse;
         }
 
-        public new static UpnServiceResult Success(S100UpnRecord value) => new(value, HttpStatusCode.OK);
+        public static new UpnServiceResult Success(UpnDetail value) => new(value, HttpStatusCode.OK);
 
-        public new static UpnServiceResult NotFound(ErrorResponse errorResponse) => new(null, HttpStatusCode.NotFound, errorResponse);
+        public static new UpnServiceResult NotFound(ErrorResponse errorResponse) => new(null, HttpStatusCode.NotFound, errorResponse);
 
-        public new static UpnServiceResult BadRequest(ErrorResponse errorResponse) => new(null, HttpStatusCode.BadRequest, errorResponse);
-
-        public static UpnServiceResult InternalServerError(ErrorResponse errorResponse) => new(null, HttpStatusCode.InternalServerError, errorResponse);
-
-        public static ErrorResponse SetErrorResponse(string correlationId, string source, string description)
-        {
-            return new ErrorResponse
-            {
-                CorrelationId = correlationId,
-                Errors =
-                   [
-                       new ErrorDetail
-                       {
-                           Description = description,
-                           Source = source
-                       }
-                   ]
-            };
-        }
+        public static UpnServiceResult InternalServerError() => new(null, HttpStatusCode.InternalServerError);
     }
 }

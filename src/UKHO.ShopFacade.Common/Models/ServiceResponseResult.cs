@@ -25,8 +25,6 @@ namespace UKHO.ShopFacade.Common.Models
 
         public static ServiceResponseResult<T> BadRequest(ErrorResponse errorResponse) => new(default, HttpStatusCode.BadRequest, errorResponse);
 
-        public static ServiceResponseResult<T> Error(ErrorResponse errorResponse, HttpStatusCode statusCode) => new(default, statusCode, errorResponse);
-
         public static ErrorResponse SetErrorResponse(string correlationId, string source, string description)
         {
             return new ErrorResponse
