@@ -13,13 +13,13 @@ namespace UKHO.ShopFacade.Common.DataProvider
     {
         private readonly ILogger<UpnDataProvider> _logger;
         private readonly IGraphClient _graphClient;
-        private readonly SharePointSiteConfiguration _sharePointSiteConfiguration;
+        private readonly IOptions<SharePointSiteConfiguration> _sharePointSiteConfiguration;
 
         public UpnDataProvider(ILogger<UpnDataProvider> logger, IGraphClient graphClient, IOptions<SharePointSiteConfiguration> sharePointSiteConfiguration)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _graphClient = graphClient ?? throw new ArgumentNullException(nameof(graphClient));
-            _sharePointSiteConfiguration = sharePointSiteConfiguration.Value ?? throw new ArgumentNullException(nameof(sharePointSiteConfiguration));
+            _sharePointSiteConfiguration = sharePointSiteConfiguration ?? throw new ArgumentNullException(nameof(sharePointSiteConfiguration));
         }
 
         public async Task<UpnDataProviderResult> GetUpnDetailsByLicenseId(int licenceId, string correlationId)
@@ -27,12 +27,12 @@ namespace UKHO.ShopFacade.Common.DataProvider
             const string expandFields = "fields($select=Title,ECDIS_UPN1_Title,ECDIS_UPN_1,ECDIS_UPN2_Title,ECDIS_UPN_2,ECDIS_UPN3_Title,ECDIS_UPN_3,ECDIS_UPN4_Title,ECDIS_UPN_4,ECDIS_UPN5_Title,ECDIS_UPN_5)";
             var filterCondition = $"fields/Title eq '{licenceId}'";
 
-            _logger.LogInformation(EventIds.GetUPNCallStarted.ToEventId(), ErrorDetails.GraphClientCallStartedMessage);
+            _logger.LogInformation(EventIds.GraphClientCallStarted.ToEventId(), ErrorDetails.GraphClientCallStartedMessage);
 
             var graphClient = _graphClient.GetGraphServiceClient();
 
-            var items = await graphClient.Sites[_sharePointSiteConfiguration.SiteId]
-               .Lists[_sharePointSiteConfiguration.ListId]
+            var items = await graphClient.Sites[_sharePointSiteConfiguration.Value.SiteId]
+               .Lists[_sharePointSiteConfiguration.Value.ListId]
                .Items
                .GetAsync(requestConfiguration =>
                {
@@ -56,7 +56,7 @@ namespace UKHO.ShopFacade.Common.DataProvider
                 upnDataProviderResult = UpnDataProviderResult.NotFound(UpnDataProviderResult.SetErrorResponse(correlationId, ErrorDetails.Source, ErrorDetails.LicenceNotFoundMessage));
             }
 
-            _logger.LogInformation(EventIds.GetUPNCallStarted.ToEventId(), ErrorDetails.GraphClientCallCompletedMessage);
+            _logger.LogInformation(EventIds.GraphClientCallCompleted.ToEventId(), ErrorDetails.GraphClientCallCompletedMessage);
 
             return upnDataProviderResult;
         }
