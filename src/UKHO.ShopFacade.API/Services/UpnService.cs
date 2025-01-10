@@ -7,7 +7,7 @@ namespace UKHO.ShopFacade.API.Services
 {
     public class UpnService : IUpnService
     {
-        public readonly IUpnDataProvider _upnDataProvider;
+        private readonly IUpnDataProvider _upnDataProvider;
         public UpnService(IUpnDataProvider upnDataProvider)
         {
             _upnDataProvider = upnDataProvider ?? throw new ArgumentNullException(nameof(upnDataProvider));
@@ -32,43 +32,43 @@ namespace UKHO.ShopFacade.API.Services
             var userPermits = new List<UserPermit>{
                 new()
                 {
-                    Title = upnDataProviderResult.Value.UPN1_Title,
+                    Title = upnDataProviderResult.Value.ECDIS_UPN1_Title,
                     Upn = upnDataProviderResult.Value.ECDIS_UPN_1
                 }
             };
 
-            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN2_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_2))
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN2_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_2))
             {
                 userPermits.Add(new UserPermit
                 {
-                    Title = upnDataProviderResult.Value.UPN2_Title,
+                    Title = upnDataProviderResult.Value.ECDIS_UPN2_Title,
                     Upn = upnDataProviderResult.Value.ECDIS_UPN_2
                 });
             }
 
-            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN3_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_3))
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN3_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_3))
             {
                 userPermits.Add(new UserPermit
                 {
-                    Title = upnDataProviderResult.Value.UPN3_Title,
+                    Title = upnDataProviderResult.Value.ECDIS_UPN3_Title,
                     Upn = upnDataProviderResult.Value.ECDIS_UPN_3
                 });
             }
 
-            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN4_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_4))
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN4_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_4))
             {
                 userPermits.Add(new UserPermit
                 {
-                    Title = upnDataProviderResult.Value.UPN4_Title,
+                    Title = upnDataProviderResult.Value.ECDIS_UPN4_Title,
                     Upn = upnDataProviderResult.Value.ECDIS_UPN_4
                 });
             }
 
-            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.UPN5_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_5))
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN5_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_5))
             {
                 userPermits.Add(new UserPermit
                 {
-                    Title = upnDataProviderResult.Value.UPN5_Title,
+                    Title = upnDataProviderResult.Value.ECDIS_UPN5_Title,
                     Upn = upnDataProviderResult.Value.ECDIS_UPN_5
                 });
             }

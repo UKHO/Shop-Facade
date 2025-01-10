@@ -11,7 +11,7 @@ namespace UKHO.ShopFacade.API.Controllers
     public class UpnController : BaseController<UpnController>
     {
         private readonly ILogger<UpnController> _logger;
-        public readonly IUpnService _upnService;
+        private readonly IUpnService _upnService;
 
         public UpnController(IHttpContextAccessor httpContextAccessor, ILogger<UpnController> logger, IUpnService upnService) : base(httpContextAccessor)
         {

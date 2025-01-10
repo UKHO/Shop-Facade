@@ -1,15 +1,15 @@
 ﻿using System.Net;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Graph.Models;
 using Microsoft.Graph;
+using Microsoft.Graph.Models;
+using Microsoft.Graph.Sites.Item.Lists.Item.Items;
+using Microsoft.Kiota.Abstractions;
 using UKHO.ShopFacade.Common.ClientProvider;
 using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.DataProvider;
-using Microsoft.Kiota.Abstractions;
-using Microsoft.Graph.Sites.Item.Lists.Item.Items;
-using Microsoft.Extensions.Logging;
 
 namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
 {
@@ -50,7 +50,7 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
                                     AdditionalData = new Dictionary<string, object>
                                     {
                                         { UpnSchema.Title, "123" },
-                                        { UpnSchema.UPN1_Title, "UPN1" },
+                                        { UpnSchema.ECDIS_UPN1_Title, "UPN1" },
                                         { UpnSchema.ECDIS_UPN_1, "ECDIS1" }
                                     }
                                 }

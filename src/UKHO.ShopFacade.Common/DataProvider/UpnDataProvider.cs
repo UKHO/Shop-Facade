@@ -12,19 +12,19 @@ namespace UKHO.ShopFacade.Common.DataProvider
     public class UpnDataProvider : IUpnDataProvider
     {
         private readonly ILogger<UpnDataProvider> _logger;
-        public readonly IGraphClient _graphClient;
+        private readonly IGraphClient _graphClient;
         private readonly SharePointSiteConfiguration _sharePointSiteConfiguration;
 
         public UpnDataProvider(ILogger<UpnDataProvider> logger, IGraphClient graphClient, IOptions<SharePointSiteConfiguration> sharePointSiteConfiguration)
         {
-            _logger = logger;
-            _graphClient = graphClient;
-            _sharePointSiteConfiguration = sharePointSiteConfiguration.Value;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _graphClient = graphClient ?? throw new ArgumentNullException(nameof(graphClient));
+            _sharePointSiteConfiguration = sharePointSiteConfiguration.Value ?? throw new ArgumentNullException(nameof(sharePointSiteConfiguration));
         }
 
         public async Task<UpnDataProviderResult> GetUpnDetailsByLicenseId(int licenceId, string correlationId)
         {
-            const string expandFields = "fields($select=Title,UPN1_Title,ECDIS_UPN_1,UPN2_Title,ECDIS_UPN_2,UPN3_Title,ECDIS_UPN_3,UPN4_Title,ECDIS_UPN_4,UPN5_Title,ECDIS_UPN_5)";
+            const string expandFields = "fields($select=Title,ECDIS_UPN1_Title,ECDIS_UPN_1,ECDIS_UPN2_Title,ECDIS_UPN_2,ECDIS_UPN3_Title,ECDIS_UPN_3,ECDIS_UPN4_Title,ECDIS_UPN_4,ECDIS_UPN5_Title,ECDIS_UPN_5)";
             var filterCondition = $"fields/Title eq '{licenceId}'";
 
             _logger.LogInformation(EventIds.GetUPNCallStarted.ToEventId(), ErrorDetails.GraphClientCallStartedMessage);
@@ -64,15 +64,15 @@ namespace UKHO.ShopFacade.Common.DataProvider
         private static S100UpnRecord GetS100UpnRecord(ListItemCollectionResponse s100UpnCollection) => s100UpnCollection.Value!.Select(item => new S100UpnRecord
         {
             LicenceId = item.Fields.AdditionalData.TryGetValue(UpnSchema.Title, out var title) ? title?.ToString() ?? string.Empty : string.Empty,
-            UPN1_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.UPN1_Title, out var upn1Title) ? upn1Title?.ToString() ?? string.Empty : string.Empty,
+            ECDIS_UPN1_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN1_Title, out var upn1Title) ? upn1Title?.ToString() ?? string.Empty : string.Empty,
             ECDIS_UPN_1 = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN_1, out var upn1) ? upn1?.ToString() ?? string.Empty : string.Empty,
-            UPN2_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.UPN2_Title, out var upn2Title) ? upn2Title?.ToString() : string.Empty,
+            ECDIS_UPN2_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN2_Title, out var upn2Title) ? upn2Title?.ToString() : string.Empty,
             ECDIS_UPN_2 = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN_2, out var upn2) ? upn2?.ToString() : string.Empty,
-            UPN3_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.UPN3_Title, out var upn3Title) ? upn3Title?.ToString() : string.Empty,
+            ECDIS_UPN3_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN3_Title, out var upn3Title) ? upn3Title?.ToString() : string.Empty,
             ECDIS_UPN_3 = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN_3, out var upn3) ? upn3?.ToString() : string.Empty,
-            UPN4_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.UPN4_Title, out var upn4Title) ? upn4Title?.ToString() : string.Empty,
+            ECDIS_UPN4_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN4_Title, out var upn4Title) ? upn4Title?.ToString() : string.Empty,
             ECDIS_UPN_4 = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN_4, out var upn4) ? upn4?.ToString() : string.Empty,
-            UPN5_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.UPN5_Title, out var upn5Title) ? upn5Title?.ToString() : string.Empty,
+            ECDIS_UPN5_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN5_Title, out var upn5Title) ? upn5Title?.ToString() : string.Empty,
             ECDIS_UPN_5 = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN_5, out var upn5) ? upn5?.ToString() : string.Empty
         }).FirstOrDefault()!;
     }
