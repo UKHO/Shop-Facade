@@ -6,6 +6,7 @@ using UKHO.ShopFacade.Common.Events;
 namespace UKHO.ShopFacade.API.Controllers
 {
     [ApiController]
+    [Authorize]
     public class UpnController : BaseController<UpnController>
     {
         private readonly ILogger<UpnController> _logger;
