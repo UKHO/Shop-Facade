@@ -45,11 +45,9 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         {
             int invalidLicenceId = 0;
 
-            var result = await _upnController.GetUPNs(invalidLicenceId);
+            var result = (BadRequestObjectResult)await _upnController.GetUPNs(invalidLicenceId);
 
-            var badRequestResult = result as BadRequestObjectResult;
-
-            badRequestResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            result.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                  && call.GetArgument<LogLevel>(0) == LogLevel.Information
@@ -66,16 +64,14 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         [Test]
         public async Task WhenLicenceIdIsValid_ThenReturn200OkResponseWithUpns()
         {
-            A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored))
-                .Returns(GetUpnServiceResult(HttpStatusCode.OK));
+            A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnServiceResult(HttpStatusCode.OK));
 
-            var result = await _upnController.GetUPNs(1);
-            var okResult = result as OkObjectResult;
+            var result = (OkObjectResult)await _upnController.GetUPNs(1);
 
-            var upnRecord = okResult!.Value as UpnDetail;
+            var upnRecord = result.Value as UpnDetail;
 
-            okResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
-            upnRecord!.LicenceId.Should().Be(1);
+            result.StatusCode.Should().Be((int)HttpStatusCode.OK);
+            upnRecord.LicenceId.Should().Be(1);
             upnRecord.UserPermits[0].Title.Should().Be("upn1");
             upnRecord.UserPermits[0].Upn.Should().Be("1A1DAD797C");
 
@@ -93,20 +89,17 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         [Test]
         public async Task WhenLicenceIdIsNotFound_ThenReturn404NotFoundResponse()
         {
-            A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored))
-                .Returns(GetUpnServiceResult(HttpStatusCode.NotFound));
+            A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnServiceResult(HttpStatusCode.NotFound));
 
-            var result = await _upnController.GetUPNs(1);
+            var result = (NotFoundObjectResult)await _upnController.GetUPNs(6);
 
-            var notFoundObjectResult = result as NotFoundObjectResult;
+            result.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
 
-            notFoundObjectResult!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
-
-            notFoundObjectResult.Value.Should().BeEquivalentTo(new
+            result.Value.Should().BeEquivalentTo(new
             {
                 Errors = new List<ErrorDetail>
                 {
-                    new() { Source = "licenceId" ,Description = "Licence not found"}
+                    new() { Source = ErrorDetails.Source ,Description = ErrorDetails.LicenceNotFoundMessage}
                 }
             });
 
@@ -124,14 +117,11 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         [Test]
         public async Task WhenUpnServiceFailed_ThenReturn500InternalServerErrorResponse()
         {
-            A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored))
-                .Returns(GetUpnServiceResult(HttpStatusCode.InternalServerError));
+            A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnServiceResult(HttpStatusCode.InternalServerError));
 
-            var result = await _upnController.GetUPNs(1);
+            var result = (StatusCodeResult)await _upnController.GetUPNs(1);
 
-            var statusCodeResult = result as StatusCodeResult;
-
-            statusCodeResult!.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
+            result.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                   && call.GetArgument<LogLevel>(0) == LogLevel.Information

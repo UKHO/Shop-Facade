@@ -31,37 +31,29 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
         [Test]
         public async Task WhenUpnDetailsAreValid_ThenReturn200SuccessResponse()
         {
-            var licenceId = 123;
-            var correlationId = "test-correlation-id";
+            A.CallTo(() => _fakeUpnDataProvider.GetUpnDetailsByLicenseId(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnDataProviderResult(HttpStatusCode.OK));
 
-            A.CallTo(() => _fakeUpnDataProvider.GetUpnDetailsByLicenseId(licenceId, correlationId))
-                .Returns(GetUpnDataProviderResult(HttpStatusCode.OK));
-
-            var result = await _upnService.GetUpnDetails(licenceId, correlationId);
+            var result = await _upnService.GetUpnDetails(123, "correlationId");
 
             result.StatusCode.Should().Be(HttpStatusCode.OK);
             result.Value.Should().NotBeNull();
-            result.Value.LicenceId.Should().Be(licenceId);
+            result.Value.LicenceId.Should().Be(123);
             result.Value.UserPermits.Count.Should().Be(5);
         }
 
         [Test]
         public async Task WhenLicenceIsNotFound_ThenReturn404NotFoundResponse()
         {
-            var licenceId = 123;
-            var correlationId = "test-correlation-id";
+            A.CallTo(() => _fakeUpnDataProvider.GetUpnDetailsByLicenseId(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnDataProviderResult(HttpStatusCode.NotFound));
 
-            A.CallTo(() => _fakeUpnDataProvider.GetUpnDetailsByLicenseId(licenceId, correlationId))
-                .Returns(GetUpnDataProviderResult(HttpStatusCode.NotFound));
+            var result = await _upnService.GetUpnDetails(123, "correlationId");
 
-            var result = await _upnService.GetUpnDetails(licenceId, correlationId);
+            result.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
             result.ErrorResponse.Errors.Should().BeEquivalentTo(new List<ErrorDetail>
             {
                 new() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }
             });
-
-            result.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         private static UpnDataProviderResult GetUpnDataProviderResult(HttpStatusCode httpStatusCode)
