@@ -17,6 +17,8 @@ paths:
   /licences/{licenceId}/s100/permits:
     get:
       description: Returns a zip file containing all the S-100 permit file(s) of the requested licence.
+      tags:
+        - Licensing
       operationId: getS100Permits
       parameters:
       - $ref: "#/components/parameters/licenceId"
@@ -116,6 +118,8 @@ paths:
   /licences/{licenceId}/s100/userPermits:
     get:
       description: Returns all S-100 User Permit Numbers (UPNs) associated with the requested licence. There can be one or more S-100 UPNs for a licence.
+      tags:
+        - Licensing
       operationId: getUserPermits
       parameters:
       - $ref: "#/components/parameters/licenceId"
