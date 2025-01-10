@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using UKHO.ShopFacade.API.Controllers;
 using UKHO.ShopFacade.API.Services;
+using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.Models;
 using UKHO.ShopFacade.Common.Models.Response;
@@ -40,7 +41,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         }
 
         [Test]
-        public async Task WhenLicenceIdIsInvalid_ThenGetUPNsReturns400BadRequestResponse()
+        public async Task WhenLicenceIdIsInvalid_ThenReturn400BadRequestResponse()
         {
             int invalidLicenceId = 0;
 
@@ -48,22 +49,22 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
             var badRequestResult = result as BadRequestObjectResult;
 
-            badRequestResult.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            badRequestResult!.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                  && call.GetArgument<LogLevel>(0) == LogLevel.Information
-                                                 && call.GetArgument<EventId>(1) == EventIds.GetUPNCallStarted.ToEventId()
-                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "GetUPNs API call started.").MustHaveHappenedOnceExactly();
+                                                 && call.GetArgument<EventId>(1) == EventIds.GetUPNsCallStarted.ToEventId()
+                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallStartedMessage).MustHaveHappenedOnceExactly();
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                  && call.GetArgument<LogLevel>(0) == LogLevel.Information
                                                  && call.GetArgument<EventId>(1) == EventIds.InvalidLicenceId.ToEventId()
-                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "Bad request - could be missing or invalid licenceId, it must be an integer and greater than zero.").MustHaveHappenedOnceExactly();
+                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.InvalidLicenceIdMessage).MustHaveHappenedOnceExactly();
 
         }
 
         [Test]
-        public async Task WhenLicenceIdIsValid_ThenGetUpnsReturns200OkResponseWithUpns()
+        public async Task WhenLicenceIdIsValid_ThenReturn200OkResponseWithUpns()
         {
             A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored))
                 .Returns(GetUpnServiceResult(HttpStatusCode.OK));
@@ -71,26 +72,26 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
             var result = await _upnController.GetUPNs(1);
             var okResult = result as OkObjectResult;
 
-            var upnRecord = okResult.Value as UpnDetail;
+            var upnRecord = okResult!.Value as UpnDetail;
 
             okResult.StatusCode.Should().Be((int)HttpStatusCode.OK);
-            upnRecord.LicenceId.Should().Be(1);
+            upnRecord!.LicenceId.Should().Be(1);
             upnRecord.UserPermits[0].Title.Should().Be("upn1");
             upnRecord.UserPermits[0].Upn.Should().Be("1A1DAD797C");
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                   && call.GetArgument<LogLevel>(0) == LogLevel.Information
-                                                  && call.GetArgument<EventId>(1) == EventIds.GetUPNCallStarted.ToEventId()
-                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "GetUPNs API call started.").MustHaveHappenedOnceExactly();
+                                                  && call.GetArgument<EventId>(1) == EventIds.GetUPNsCallStarted.ToEventId()
+                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallStartedMessage).MustHaveHappenedOnceExactly();
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                  && call.GetArgument<LogLevel>(0) == LogLevel.Information
-                                                 && call.GetArgument<EventId>(1) == EventIds.GetUPNCallCompleted.ToEventId()
-                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "GetUPNs API call completed successfully.").MustHaveHappenedOnceExactly();
+                                                 && call.GetArgument<EventId>(1) == EventIds.GetUPNsCallCompleted.ToEventId()
+                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallCompletedMessage).MustHaveHappenedOnceExactly();
         }
 
         [Test]
-        public async Task WhenLicenceIdIsNotFound_ThenGetUpnsReturns404NotFoundResponse()
+        public async Task WhenLicenceIdIsNotFound_ThenReturn404NotFoundResponse()
         {
             A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored))
                 .Returns(GetUpnServiceResult(HttpStatusCode.NotFound));
@@ -99,7 +100,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
             var notFoundObjectResult = result as NotFoundObjectResult;
 
-            notFoundObjectResult.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
+            notFoundObjectResult!.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
 
             notFoundObjectResult.Value.Should().BeEquivalentTo(new
             {
@@ -111,17 +112,17 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                   && call.GetArgument<LogLevel>(0) == LogLevel.Information
-                                                  && call.GetArgument<EventId>(1) == EventIds.GetUPNCallStarted.ToEventId()
-                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "GetUPNs API call started.").MustHaveHappenedOnceExactly();
+                                                  && call.GetArgument<EventId>(1) == EventIds.GetUPNsCallStarted.ToEventId()
+                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallStartedMessage).MustHaveHappenedOnceExactly();
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                  && call.GetArgument<LogLevel>(0) == LogLevel.Information
                                                  && call.GetArgument<EventId>(1) == EventIds.LicenceNotFound.ToEventId()
-                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "Licence not found").MustHaveHappenedOnceExactly();
+                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.LicenceNotFoundMessage).MustHaveHappenedOnceExactly();
         }
 
         [Test]
-        public async Task WhenUpnServiceFailed_ThenGetUpnsReturns500InternalServerErrorResponse()
+        public async Task WhenUpnServiceFailed_ThenReturn500InternalServerErrorResponse()
         {
             A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored))
                 .Returns(GetUpnServiceResult(HttpStatusCode.InternalServerError));
@@ -130,25 +131,25 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
             var statusCodeResult = result as StatusCodeResult;
 
-            statusCodeResult.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
+            statusCodeResult!.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                   && call.GetArgument<LogLevel>(0) == LogLevel.Information
-                                                  && call.GetArgument<EventId>(1) == EventIds.GetUPNCallStarted.ToEventId()
-                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "GetUPNs API call started.").MustHaveHappenedOnceExactly();
+                                                  && call.GetArgument<EventId>(1) == EventIds.GetUPNsCallStarted.ToEventId()
+                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallStartedMessage).MustHaveHappenedOnceExactly();
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                  && call.GetArgument<LogLevel>(0) == LogLevel.Information
                                                  && call.GetArgument<EventId>(1) == EventIds.InternalError.ToEventId()
-                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "Error occurred while processing request.").MustHaveHappenedOnceExactly();
+                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.InternalErrorMessage).MustHaveHappenedOnceExactly();
         }
 
-        private UpnServiceResult GetUpnServiceResult(HttpStatusCode httpStatusCode)
+        private static UpnServiceResult GetUpnServiceResult(HttpStatusCode httpStatusCode)
         {
             return httpStatusCode switch
             {
-                HttpStatusCode.OK => UpnServiceResult.Success(new UpnDetail() { LicenceId = 1, UserPermits = new List<UserPermit> { new UserPermit { Title = "upn1", Upn = "1A1DAD797C" } } }),
-                HttpStatusCode.NotFound => UpnServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = new List<ErrorDetail> { new ErrorDetail() { Description = "Licence not found", Source = "licenceId" } } }),
+                HttpStatusCode.OK => UpnServiceResult.Success(new UpnDetail() { LicenceId = 1, UserPermits = [new() { Title = "upn1", Upn = "1A1DAD797C" }] }),
+                HttpStatusCode.NotFound => UpnServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
                 _ => UpnServiceResult.InternalServerError()
             };
         }

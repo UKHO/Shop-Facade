@@ -23,10 +23,10 @@ namespace UKHO.ShopFacade.API.Controllers
         /// Get all User Permit Numbers (UPNs) associated with the requested licence.
         /// </summary>
         [HttpGet]
-        [Route("/licenses/{licenceId}/s100/userpermits")]
+        [Route("/licences/{licenceId}/s100/userpermits")]
         public async Task<IActionResult> GetUPNs(int licenceId)
         {
-            _logger.LogInformation(EventIds.GetUPNCallStarted.ToEventId(), ErrorDetails.GetUPNCallStartedMessage);
+            _logger.LogInformation(EventIds.GetUPNsCallStarted.ToEventId(), ErrorDetails.GetUPNsCallStartedMessage);
 
             if (licenceId <= 0)
             {
@@ -39,7 +39,7 @@ namespace UKHO.ShopFacade.API.Controllers
             switch (upnServiceResult.StatusCode)
             {
                 case HttpStatusCode.OK:
-                    _logger.LogInformation(EventIds.GetUPNCallCompleted.ToEventId(), ErrorDetails.GetUPNCallCompletedMessage);
+                    _logger.LogInformation(EventIds.GetUPNsCallCompleted.ToEventId(), ErrorDetails.GetUPNsCallCompletedMessage);
                     return Ok(upnServiceResult.Value);
                 case HttpStatusCode.NotFound:
                     _logger.LogInformation(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);

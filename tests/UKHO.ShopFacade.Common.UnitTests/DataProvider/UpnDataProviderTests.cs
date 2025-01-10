@@ -36,7 +36,7 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
         }
 
         [Test]
-        public async Task WhenLicenceIdExists_ThenGetUpnDetailsByLicenseId_ReturnsSuccessResponse()
+        public async Task WhenLicenceExists_ThenReturnUpnDetailsByLicenseId()
         {
             var fakeGraphServiceClient = A.Fake<GraphServiceClient>();
             var fakeListItemCollectionResponse = new ListItemCollectionResponse
@@ -71,4 +71,3 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
         }
     }
 }
-

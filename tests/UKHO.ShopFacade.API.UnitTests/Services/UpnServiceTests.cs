@@ -2,6 +2,7 @@
 using FakeItEasy;
 using FluentAssertions;
 using UKHO.ShopFacade.API.Services;
+using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.DataProvider;
 using UKHO.ShopFacade.Common.Models;
 
@@ -28,7 +29,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
         }
 
         [Test]
-        public async Task WhenUpnDetailsAreValid_ThenReturns200SuccessResponse()
+        public async Task WhenUpnDetailsAreValid_ThenReturn200SuccessResponse()
         {
             var licenceId = 123;
             var correlationId = "test-correlation-id";
@@ -45,7 +46,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
         }
 
         [Test]
-        public async Task WhenLicenceIsNotFound_ThenReturns404NotFoundResponse()
+        public async Task WhenLicenceIsNotFound_ThenReturn404NotFoundResponse()
         {
             var licenceId = 123;
             var correlationId = "test-correlation-id";
@@ -57,17 +58,17 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
 
             result.ErrorResponse.Errors.Should().BeEquivalentTo(new List<ErrorDetail>
             {
-                new() { Source = "licenceId" ,Description = "Licence not found"}
+                new() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }
             });
 
             result.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
-        private UpnDataProviderResult GetUpnDataProviderResult(HttpStatusCode httpStatusCode)
+        private static UpnDataProviderResult GetUpnDataProviderResult(HttpStatusCode httpStatusCode)
         {
             return httpStatusCode switch
             {
-                HttpStatusCode.NotFound => UpnDataProviderResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = new List<ErrorDetail> { new ErrorDetail() { Source = "licenceId", Description = "Licence not found" } } }),
+                HttpStatusCode.NotFound => UpnDataProviderResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = new List<ErrorDetail> { new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage } } }),
                 _ => UpnDataProviderResult.Success(new S100UpnRecord { LicenceId = "123", ECDIS_UPN1_Title = "Title1", ECDIS_UPN_1 = "UPN1", ECDIS_UPN2_Title = "Title2", ECDIS_UPN_2 = "UPN2", ECDIS_UPN3_Title = "Title3", ECDIS_UPN_3 = "UPN3", ECDIS_UPN4_Title = "Title4", ECDIS_UPN_4 = "UPN4", ECDIS_UPN5_Title = "Title5", ECDIS_UPN_5 = "UPN5" }),
             };
         }

@@ -27,7 +27,7 @@ namespace UKHO.ShopFacade.Common.DataProvider
             const string expandFields = "fields($select=Title,ECDIS_UPN1_Title,ECDIS_UPN_1,ECDIS_UPN2_Title,ECDIS_UPN_2,ECDIS_UPN3_Title,ECDIS_UPN_3,ECDIS_UPN4_Title,ECDIS_UPN_4,ECDIS_UPN5_Title,ECDIS_UPN_5)";
             var filterCondition = $"fields/Title eq '{licenceId}'";
 
-            _logger.LogInformation(EventIds.GetUPNCallStarted.ToEventId(), ErrorDetails.GraphClientCallStartedMessage);
+            _logger.LogInformation(EventIds.GetUPNsCallStarted.ToEventId(), ErrorDetails.GraphClientCallStartedMessage);
 
             var graphClient = _graphClient.GetGraphServiceClient();
 
@@ -36,7 +36,7 @@ namespace UKHO.ShopFacade.Common.DataProvider
                .Items
                .GetAsync(requestConfiguration =>
                {
-                   requestConfiguration.QueryParameters.Expand = new string[] { expandFields };
+                   requestConfiguration.QueryParameters.Expand = [expandFields];
                    requestConfiguration.QueryParameters.Filter = filterCondition;
                });
 
@@ -56,7 +56,7 @@ namespace UKHO.ShopFacade.Common.DataProvider
                 upnDataProviderResult = UpnDataProviderResult.NotFound(UpnDataProviderResult.SetErrorResponse(correlationId, ErrorDetails.Source, ErrorDetails.LicenceNotFoundMessage));
             }
 
-            _logger.LogInformation(EventIds.GetUPNCallStarted.ToEventId(), ErrorDetails.GraphClientCallCompletedMessage);
+            _logger.LogInformation(EventIds.GetUPNsCallStarted.ToEventId(), ErrorDetails.GraphClientCallCompletedMessage);
 
             return upnDataProviderResult;
         }
