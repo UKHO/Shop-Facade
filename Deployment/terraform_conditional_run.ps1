@@ -54,9 +54,7 @@ $terraformOutput = terraform output -json | ConvertFrom-Json
 write-output "Set JSON output into pipeline variables"
 Write-Host "##vso[task.setvariable variable=WEB_APP_NAME]$($terraformOutput.webapp_name.value)"
 Write-Host "##vso[task.setvariable variable=WEB_APP;isOutput=true]$($terraformOutput.webapp_name.value)"
-Write-Host "##vso[task.setvariable variable=MOCK_WEB_APP_NAME]$($terraformOutput.mock_webapp_name.value)"
-Write-Host "##vso[task.setvariable variable=ResourceGroup;isOutput=true]$($terraformOutput.resource_group.value)"
-Write-Host "##vso[task.setvariable variable=mockWebApp;isOutput=true]$($terraformOutput.mock_webapp_name.value)"
 Write-Host "##vso[task.setvariable variable=keyvaulturi;isOutput=true]$($terraformOutput.keyvault_uri.value)"
-
+Write-Host "##vso[task.setvariable variable=ShopFacadeConfiguration.BaseUrl]$($terraformOutput.shop_facade_web_app_public_url.value)"
+Write-Host "##vso[task.setvariable variable=ShopFacadeBaseUrl;isOutput=true]$($terraformOutput.shop_facade_web_app_public_url.value)"
 $terraformOutput | ConvertTo-Json -Depth 5 > $terraformJsonOutputFile

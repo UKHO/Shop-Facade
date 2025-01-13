@@ -1,0 +1,20 @@
+parameters:
+  - name: AzureSubscription
+    type: string
+
+steps:
+  - task: FileTransform@1
+    displayName: "File Transform: WebAppSettings"
+    inputs:
+      folderPath: '$(Pipeline.Workspace)/UKHOShopFacadeServiceAPI/*.zip'
+      fileType: 'json'
+      targetFiles: '**/appsettings.json'
+
+   # Add Linux Web App Deployment Task
+  - task: AzureWebApp@1
+    displayName: "Deploy to Linux Web App"
+    inputs:
+    azureSubscription: $(AzureSubscription)  # Replace with your Azure service connection
+    appType: 'webAppLinux'
+    appName: $(WEB_APP_NAME)  
+    package: $(Pipeline.Workspace)/UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip  # Adjust the path to oour packaged application

@@ -49,13 +49,15 @@ variables:
   - name: UKHOAssemblyCopyright
     value: "Copyright © UK Hydrographic Office"
   - name: Container
-    value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.9.6"
+    value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.10.4"
   - name: DeploymentPool
     value: "Mare Nectaris"
   - name: WindowPool
     value: "NautilusBuild"
   - name: CoverageThresholdLimit
     value: "80"
+  - name: SdkVersion
+    value: "8.x"
 
 resources:
   repositories:
@@ -96,17 +98,32 @@ stages:
             arguments: install dotnet-stryker --tool-path $(Agent.BuildDirectory)/tools
 
         - task: Powershell@2
-          displayName: "Run Stryker"
-          inputs:
-            workingDirectory: '$(Build.SourcesDirectory)\src'
-            targetType: 'inline'
-            pwsh: true
-            script: $(Agent.BuildDirectory)/tools/dotnet-stryker
+            displayName: "Run Stryker for UnitTests"
+            inputs:
+              workingDirectory: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.API.UnitTests'
+              targetType: 'inline'
+              pwsh: true
+              script: $(Agent.BuildDirectory)/tools/dotnet-stryker
 
-        - task: PublishMutationReport@1
-          displayName: 'Publish Stryker Mutator Report'
-          inputs:
-            reportPattern: '**/mutation-report.html'
+        - task: PublishMutationReport@0
+            displayName: 'Publish Strkyer Mutator Report'
+            inputs:
+              reportPattern: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.API.UnitTests/**/mutation-report.html'
+              reportDisplayName: 'API UnitTests'
+
+         - task: Powershell@2
+            displayName: "Run Stryker for Common UnitTests"
+            inputs:
+              workingDirectory: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.Common.UnitTests'
+              targetType: 'inline'
+              pwsh: true
+              script: $(Agent.BuildDirectory)/tools/dotnet-stryker
+
+        - task: PublishMutationReport@0
+            displayName: 'Publish Strkyer Mutator Report'
+            inputs:
+              reportPattern: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.Common.UnitTests/**/mutation-report.html'
+              reportDisplayName: 'Common UnitTests'
 
 stages:
   - stage: BuildTestPublish
