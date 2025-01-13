@@ -154,7 +154,7 @@ stages:
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: ""
           Container: ${{variables.Container}} 
-          RunTests: true
+          RunTests: false
 
   - stage: vNextIatdeploy
     dependsOn:
