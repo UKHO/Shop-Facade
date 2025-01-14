@@ -11,6 +11,8 @@ using UKHO.ShopFacade.Common.Constants;
 using UKHO.Logging.EventHubLogProvider;
 using Serilog;
 using Serilog.Events;
+using UKHO.ShopFacade.Common.Authentication;
+using Microsoft.Kiota.Abstractions.Authentication;
 
 namespace UKHO.ShopFacade.API
 {
@@ -18,6 +20,7 @@ namespace UKHO.ShopFacade.API
     internal class Program
     {
         private const string EventHubLoggingConfiguration = "EventHubLoggingConfiguration";
+        private const string GraphServiceConfiguration = "GraphServiceConfiguration";
         private static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -59,9 +62,11 @@ namespace UKHO.ShopFacade.API
 
         private static void ConfigureServices(WebApplicationBuilder builder)
         {
+            var configuration = builder.Configuration;
+
             builder.Services.AddLogging(loggingBuilder =>
             {
-                loggingBuilder.AddConfiguration(builder.Configuration.GetSection("Logging"));
+                loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
                 loggingBuilder.AddConsole();
                 loggingBuilder.AddDebug();
 #if DEBUG
@@ -73,12 +78,16 @@ namespace UKHO.ShopFacade.API
 #endif
                 loggingBuilder.AddAzureWebAppDiagnostics();
             });
-            var options = new ApplicationInsightsServiceOptions { ConnectionString = builder.Configuration.GetValue<string>("ApplicationInsights:ConnectionString") };
+            var options = new ApplicationInsightsServiceOptions { ConnectionString = configuration.GetValue<string>("ApplicationInsights:ConnectionString") };
             builder.Services.AddApplicationInsightsTelemetry(options);
+            builder.Services.Configure<EventHubLoggingConfiguration>(configuration.GetSection(EventHubLoggingConfiguration));
+            builder.Services.Configure<GraphServiceConfiguration>(configuration.GetSection(GraphServiceConfiguration));
+
             builder.Services.AddControllers();
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            builder.Services.Configure<EventHubLoggingConfiguration>(builder.Configuration.GetSection(EventHubLoggingConfiguration));
+            builder.Services.AddScoped<IAuthenticationProvider, ManagedIdentityGraphAuthProvider>();
+
         }
 
         private static void ConfigureLogging(WebApplication webApplication)
