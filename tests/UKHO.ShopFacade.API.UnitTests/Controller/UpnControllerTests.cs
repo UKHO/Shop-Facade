@@ -49,6 +49,14 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
             result.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
 
+            result.Value.Should().BeEquivalentTo(new
+            {
+                Errors = new List<ErrorDetail>
+                {
+                    new() { Source = ErrorDetails.Source, Description = ErrorDetails.InvalidLicenceIdMessage }
+                }
+            });
+
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                  && call.GetArgument<LogLevel>(0) == LogLevel.Information
                                                  && call.GetArgument<EventId>(1) == EventIds.GetUPNsCallStarted.ToEventId()
@@ -58,7 +66,6 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                  && call.GetArgument<LogLevel>(0) == LogLevel.Information
                                                  && call.GetArgument<EventId>(1) == EventIds.InvalidLicenceId.ToEventId()
                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.InvalidLicenceIdMessage).MustHaveHappenedOnceExactly();
-
         }
 
         [Test]

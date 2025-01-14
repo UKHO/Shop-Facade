@@ -79,7 +79,7 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
         }
 
         [Test]
-        public async Task WhenLicenceIsNotFound_ThenGetUpnDetailsByLicenseIdReturns404NotFoundResponse()
+        public async Task WhenLicenceIsNotFound_ThenReturns404NotFoundResponse()
         {
             var fakeListItemCollectionResponse = new ListItemCollectionResponse
             {

@@ -23,7 +23,7 @@ namespace UKHO.ShopFacade.API.Controllers
         /// Get all User Permit Numbers (UPNs) associated with the requested licence.
         /// </summary>
         [HttpGet]
-        [Route("/licences/{licenceId}/s100/userpermits")]
+        [Route("/licences/{licenceId}/s100/userPermits")]
         public async Task<IActionResult> GetUPNs(int licenceId)
         {
             _logger.LogInformation(EventIds.GetUPNsCallStarted.ToEventId(), ErrorDetails.GetUPNsCallStartedMessage);
