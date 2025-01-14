@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.Graph.Models;
 using UKHO.ShopFacade.Common.ClientProvider;
-using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.Models;
@@ -13,13 +11,11 @@ namespace UKHO.ShopFacade.Common.DataProvider
     {
         private readonly ILogger<UpnDataProvider> _logger;
         private readonly IGraphClient _graphClient;
-        private readonly IOptions<SharePointSiteConfiguration> _sharePointSiteConfiguration;
 
-        public UpnDataProvider(ILogger<UpnDataProvider> logger, IGraphClient graphClient, IOptions<SharePointSiteConfiguration> sharePointSiteConfiguration)
+        public UpnDataProvider(ILogger<UpnDataProvider> logger, IGraphClient graphClient)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _graphClient = graphClient ?? throw new ArgumentNullException(nameof(graphClient));
-            _sharePointSiteConfiguration = sharePointSiteConfiguration ?? throw new ArgumentNullException(nameof(sharePointSiteConfiguration));
         }
 
         public async Task<UpnDataProviderResult> GetUpnDetailsByLicenseId(int licenceId, string correlationId)
@@ -29,18 +25,9 @@ namespace UKHO.ShopFacade.Common.DataProvider
 
             _logger.LogInformation(EventIds.GraphClientCallStarted.ToEventId(), ErrorDetails.GraphClientCallStartedMessage);
 
-            var graphClient = _graphClient.GetGraphServiceClient();
+            var listItemCollectionResponse = await _graphClient.GetListItemCollectionResponse(expandFields, filterCondition);
 
-            var items = await graphClient.Sites[_sharePointSiteConfiguration.Value.SiteId]
-               .Lists[_sharePointSiteConfiguration.Value.ListId]
-               .Items
-               .GetAsync(requestConfiguration =>
-               {
-                   requestConfiguration.QueryParameters.Expand = [expandFields];
-                   requestConfiguration.QueryParameters.Filter = filterCondition;
-               });
-
-            return HandleResponseAsync(items!, correlationId);
+            return HandleResponseAsync(listItemCollectionResponse!, correlationId);
         }
 
         private UpnDataProviderResult HandleResponseAsync(ListItemCollectionResponse s100UpnCollection, string correlationId)

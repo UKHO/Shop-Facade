@@ -2,13 +2,8 @@
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Graph;
 using Microsoft.Graph.Models;
-using Microsoft.Graph.Sites.Item.Lists.Item.Items;
-using Microsoft.Kiota.Abstractions;
 using UKHO.ShopFacade.Common.ClientProvider;
-using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.DataProvider;
 using UKHO.ShopFacade.Common.Events;
@@ -20,7 +15,6 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
     public class UpnDataProviderTests
     {
         private IGraphClient _fakeGraphClient;
-        private IOptions<SharePointSiteConfiguration> _fakeSharePointSiteConfiguration;
         private UpnDataProvider _upnDataProvider;
         private ILogger<UpnDataProvider> _fakeLogger;
 
@@ -29,27 +23,22 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
         {
             _fakeLogger = A.Fake<ILogger<UpnDataProvider>>();
             _fakeGraphClient = A.Fake<IGraphClient>();
-            _fakeSharePointSiteConfiguration = A.Fake<IOptions<SharePointSiteConfiguration>>();
-            _upnDataProvider = new UpnDataProvider(_fakeLogger, _fakeGraphClient, _fakeSharePointSiteConfiguration);
+            _upnDataProvider = new UpnDataProvider(_fakeLogger, _fakeGraphClient);
         }
 
         [Test]
         public void WhenParameterIsNull_ThenConstructorThrowsArgumentNullException()
         {
-            Action nullLogger = () => new UpnDataProvider(null, _fakeGraphClient, _fakeSharePointSiteConfiguration);
+            Action nullLogger = () => new UpnDataProvider(null, _fakeGraphClient);
             nullLogger.Should().ThrowExactly<ArgumentNullException>().And.ParamName.Should().Be("logger");
 
-            Action nullGraphClient = () => new UpnDataProvider(_fakeLogger, null, _fakeSharePointSiteConfiguration);
+            Action nullGraphClient = () => new UpnDataProvider(_fakeLogger, null);
             nullGraphClient.Should().ThrowExactly<ArgumentNullException>().And.ParamName.Should().Be("graphClient");
-
-            Action nullSharePointSiteConfiguration = () => new UpnDataProvider(_fakeLogger, _fakeGraphClient, null);
-            nullSharePointSiteConfiguration.Should().ThrowExactly<ArgumentNullException>().And.ParamName.Should().Be("sharePointSiteConfiguration");
         }
 
         [Test]
         public async Task WhenLicenceExists_ThenReturnUpnDetailsByLicenseId()
         {
-            var fakeGraphServiceClient = A.Fake<GraphServiceClient>();
             var fakeListItemCollectionResponse = new ListItemCollectionResponse
             {
                 Value = new List<ListItem>
@@ -69,9 +58,7 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
                         }
             };
 
-            A.CallTo(() => _fakeGraphClient.GetGraphServiceClient()).Returns(fakeGraphServiceClient);
-            A.CallTo(() => fakeGraphServiceClient.Sites[A<string>.Ignored].Lists[A<string>.Ignored].Items.GetAsync(A<Action<RequestConfiguration<ItemsRequestBuilder.ItemsRequestBuilderGetQueryParameters>>>.Ignored, A<CancellationToken>.Ignored))
-                   .Returns(Task.FromResult<ListItemCollectionResponse?>(fakeListItemCollectionResponse));
+            A.CallTo(() => _fakeGraphClient.GetListItemCollectionResponse(A<string>.Ignored, A<string>.Ignored)).Returns(fakeListItemCollectionResponse);
 
             var result = await _upnDataProvider.GetUpnDetailsByLicenseId(123, "correlationId");
 
@@ -91,19 +78,15 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GraphClientCallCompletedMessage).MustHaveHappenedOnceExactly();
         }
 
-
         [Test]
         public async Task WhenLicenceIsNotFound_ThenGetUpnDetailsByLicenseIdReturns404NotFoundResponse()
         {
-            var fakeGraphServiceClient = A.Fake<GraphServiceClient>();
             var fakeListItemCollectionResponse = new ListItemCollectionResponse
             {
                 Value = new List<ListItem>()
             };
 
-            A.CallTo(() => _fakeGraphClient.GetGraphServiceClient()).Returns(fakeGraphServiceClient);
-            A.CallTo(() => fakeGraphServiceClient.Sites[A<string>.Ignored].Lists[A<string>.Ignored].Items.GetAsync(A<Action<RequestConfiguration<ItemsRequestBuilder.ItemsRequestBuilderGetQueryParameters>>>.Ignored, A<CancellationToken>.Ignored))
-                   .Returns(Task.FromResult<ListItemCollectionResponse?>(fakeListItemCollectionResponse));
+            A.CallTo(() => _fakeGraphClient.GetListItemCollectionResponse(A<string>.Ignored, A<string>.Ignored)).Returns(fakeListItemCollectionResponse);
 
             var result = await _upnDataProvider.GetUpnDetailsByLicenseId(123, "correlationId");
 
