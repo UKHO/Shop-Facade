@@ -33,7 +33,7 @@ jobs:
                     AzureSubscription: ""
 
 - deployment: DeployApp
-  displayName: "${{parameters.Environment}} - deploy terraform and dotnet App"
+  displayName: "${{parameters.Environment}} - deploy dotnet App"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
