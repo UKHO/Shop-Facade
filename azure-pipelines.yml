@@ -162,8 +162,8 @@ stages:
     - Devdeploy
     displayName: "vNextIat Deploy (inc terraform, webapp deploy)"
     variables:
-      - group : "Shop-Facade-Dev"
-      - group : "Shop-Facade-Dev-TF"
+      - group : "Shop-Facade-vNextIAT"
+      - group : "Shop-Facade-vNextIAT-TF"
       - name  : "AzureADConfiguration.TenantId"
         value : $(AzureADConfigurationTenantId)
       - name  : "AzureADConfiguration.ClientId"
@@ -184,8 +184,8 @@ stages:
     - vNextIatdeploy
     displayName: "vNextE2E Deploy (inc terraform, webapp deploy)"
     variables:
-      - group : "Shop-Facade-Dev"
-      - group : "Shop-Facade-Dev-TF"
+      - group : "Shop-Facade-vNextE2E"
+      - group : "Shop-Facade-vNextE2E-TF"
       - name  : "AzureADConfiguration.TenantId"
         value : $(AzureADConfigurationTenantId)
       - name  : "AzureADConfiguration.ClientId"
@@ -206,8 +206,8 @@ stages:
     - Devdeploy
     displayName: "IAT Deploy (inc terraform, webapp deploy)"
     variables:
-      - group : "Shop-Facade-Dev"
-      - group : "Shop-Facade-Dev-TF"
+      - group : "Shop-Facade-IAT"
+      - group : "Shop-Facade-IAT-TF"
       - name  : "AzureADConfiguration.TenantId"
         value : $(AzureADConfigurationTenantId)
       - name  : "AzureADConfiguration.ClientId"
@@ -228,8 +228,8 @@ stages:
     - IATdeploy
     displayName: "PreProd Deploy (inc terraform, webapp deploy)"
     variables:
-      - group : "Shop-Facade-Dev"
-      - group : "Shop-Facade-Dev-TF"
+      - group : "Shop-Facade-PreProd"
+      - group : "Shop-Facade-PreProd-TF"
       - name  : "AzureADConfiguration.TenantId"
         value : $(AzureADConfigurationTenantId)
       - name  : "AzureADConfiguration.ClientId"
@@ -250,8 +250,8 @@ stages:
     - PreProddeploy
     displayName: "Live Deploy (inc terraform, webapp deploy)"
     variables:
-      - group : "Shop-Facade-Dev"
-      - group : "Shop-Facade-Dev-TF"
+      - group : "Shop-Facade-Live"
+      - group : "Shop-Facade-Live-TF"
       - name  : "AzureADConfiguration.TenantId"
         value : $(AzureADConfigurationTenantId)
       - name  : "AzureADConfiguration.ClientId"
