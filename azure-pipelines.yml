@@ -5,8 +5,7 @@ parameters:
     displayName: "Continue even if resources are getting destroyed"
     type: boolean
     default: false
-  - name : DotNetVersion
-    version : 8.0.x
+  
 
   - name: disableStryker
     displayName: "Disable Stryker"
@@ -134,7 +133,7 @@ stages:
     - template: Deployment/templates/build-test-publish.yml  
       parameters:
         DisableDependencyCheck: ${{ parameters.DisableDependencyCheck }}
-        DotNetVersion: '8.0.x'
+        Container: ${{ variables.Container }}
 
 - stage: Devdeploy
     dependsOn:
@@ -176,7 +175,7 @@ stages:
         parameters:
           Environment: "vnextiat"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: "ShopFacade IAT - A.011.15.12"
+          AzureSubscription: "ShopFacade vNext-IAT - A.011.15.12"
           Container: ${{variables.Container}} 
           RunTests: false
 
@@ -220,7 +219,7 @@ stages:
         parameters:
           Environment: "iat"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: ""
+          AzureSubscription: "ShopFacade IAT - A.011.15.12"
           Container: ${{variables.Container}} 
           RunTests: false
 

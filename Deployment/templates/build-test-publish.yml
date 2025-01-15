@@ -3,9 +3,9 @@ parameters:
 - name: DisableDependencyCheck
   type: boolean
   default: false
-- name: DotNetVersion
-  value: 8.0.x
-
+# The Terraform Azure PowerShell container.
+- name: Container
+  type: string
 jobs:
 - job: Dependencychecker
   condition: eq('${{ parameters.DisableDependencyCheck }}', false)
