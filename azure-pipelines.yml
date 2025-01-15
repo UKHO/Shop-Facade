@@ -135,7 +135,7 @@ stages:
         DisableDependencyCheck: ${{ parameters.DisableDependencyCheck }}
         Container: ${{ variables.Container }}
 
-- stage: Devdeploy
+  - stage: Devdeploy
     dependsOn:
     - BuildTestPublish
     displayName: "Dev deploy (inc terraform, webapp deploy)"
@@ -151,7 +151,7 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          Environment: "dev"
+          Environment: "ShopFacade-Dev"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade Dev - A.011.15.12"
           Container: ${{variables.Container}} 
@@ -173,7 +173,7 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          Environment: "vnextiat"
+          Environment: "ShopFacade-vNextIAT"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade vNext-IAT - A.011.15.12"
           Container: ${{variables.Container}} 
@@ -195,7 +195,7 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          Environment: "vnexte2e"
+          Environment: "ShopFacade-vNextE2E"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade vNext-E2E - A.011.15.12"
           Container: ${{variables.Container}} 
@@ -217,7 +217,7 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          Environment: "iat"
+          Environment: "ShopFacade-IAT"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade IAT - A.011.15.12"
           Container: ${{variables.Container}} 
@@ -239,9 +239,9 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          Environment: "iat"
+          Environment: "ShopFacade-PreProd"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: ""
+          AzureSubscription: "ShopFacade PreProd - A.011.15.12"
           Container: ${{variables.Container}} 
           RunTests: false
 
@@ -261,8 +261,8 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          Environment: "iat"
+          Environment: "ShopFacade-Live"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: ""
+          AzureSubscription: "ShopFacade Live - A.011.15.12"
           Container: ${{variables.Container}} 
           RunTests: false

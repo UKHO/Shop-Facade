@@ -18,7 +18,7 @@ parameters:
 jobs:
 - deployment: DevDeployTerraform
   displayName: "terraform $(Environment) deploy "
-  environment: ""
+  environment: ${{parameters.Environment}}
   pool: $(DeploymentPool)
   container: ${{variables.Container}}
   workspace:
@@ -30,11 +30,11 @@ jobs:
                 - template: Deployment/templates/continuous-deployment.yml
                   parameters:
                     ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-                    AzureSubscription: ""
+                    AzureSubscription: ${{parameters.AzureSubscription}}
 
 - deployment: DeployApp
   displayName: "${{parameters.Environment}} - deploy dotnet App"
-  environment: "ShopFacade-${{parameters.Environment}}"
+  environment: ${{parameters.Environment}}
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   workspace:
