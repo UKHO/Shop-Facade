@@ -17,7 +17,7 @@ parameters:
     displayName: "terraform $(Environment)deploy"
     inputs:
       targetType: filePath
-      filePath: '$(Pipeline.Workspace)/Deployment/terraform_conditional_run.ps1'
+      filePath: '$(Pipeline.Workspace)/terraformartifact/terraform_conditional_run.ps1'
       arguments: '-deploymentResourceGroupName $(DeploymentResourceGroupName) -deploymentStorageAccountName $(DeploymentStorageAccountName) -workSpace $(Environment) -continueEvenIfResourcesAreGettingDestroyed $${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }} -terraformJsonOutputFile $(Pipeline.Workspace)/terraformartifact/terraform_output.json -elasticApmServerUrl $(ElasticAPM.ServerURL) -elasticApmApiKey $(ElasticAPM.ApiKey)'
 
       env:
