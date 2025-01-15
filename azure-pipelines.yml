@@ -17,6 +17,9 @@ parameters:
     type: boolean
     default: false
 
+  - name: AzureSubscription
+    type: string
+
 trigger:
   - main
   - release/*
