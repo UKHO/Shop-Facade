@@ -52,7 +52,7 @@ jobs:
         steps:
           - checkout: self
             submodules: recursive
-          - template: Deployment/templates/continuous-deployment-app.yml
+          - template: continuous-deployment-app.yml
             parameters:
               ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
               AzureSubscription: ${{parameters.AzureSubscription}}
