@@ -149,7 +149,7 @@ stages:
       - name  : "AzureADConfiguration.ClientSecret"
         value : $(AzureADConfigurationClientSecret)
     jobs:
-      - template: Deployment/templates/app-deploy.yml
+      - template: Shop-Facade/Deployment/templates/app-deploy.yml
         parameters:
           Environment: "ShopFacade-Dev"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
@@ -171,7 +171,7 @@ stages:
       - name  : "AzureADConfiguration.ClientSecret"
         value : $(AzureADConfigurationClientSecret)
     jobs:
-      - template: Deployment/templates/app-deploy.yml
+      - template: Shop-Facade/Deployment/templates/app-deploy.yml
         parameters:
           Environment: "ShopFacade-vNextIAT"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
@@ -193,7 +193,7 @@ stages:
       - name  : "AzureADConfiguration.ClientSecret"
         value : $(AzureADConfigurationClientSecret)
     jobs:
-      - template: Deployment/templates/app-deploy.yml
+      - template: Shop-Facade/Deployment/templates/app-deploy.yml
         parameters:
           Environment: "ShopFacade-vNextE2E"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
@@ -215,7 +215,7 @@ stages:
       - name  : "AzureADConfiguration.ClientSecret"
         value : $(AzureADConfigurationClientSecret)
     jobs:
-      - template: Deployment/templates/app-deploy.yml
+      - template: Shop-Facade/Deployment/templates/app-deploy.yml
         parameters:
           Environment: "ShopFacade-IAT"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
@@ -237,7 +237,7 @@ stages:
       - name  : "AzureADConfiguration.ClientSecret"
         value : $(AzureADConfigurationClientSecret)
     jobs:
-      - template: Deployment/templates/app-deploy.yml
+      - template: Shop-Facade/Deployment/templates/app-deploy.yml
         parameters:
           Environment: "ShopFacade-PreProd"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
@@ -259,7 +259,7 @@ stages:
       - name  : "AzureADConfiguration.ClientSecret"
         value : $(AzureADConfigurationClientSecret)
     jobs:
-      - template: Deployment/templates/app-deploy.yml
+      - template: Shop-Facade/Deployment/templates/app-deploy.yml
         parameters:
           Environment: "ShopFacade-Live"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
