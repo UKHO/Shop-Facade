@@ -31,27 +31,27 @@ jobs:
                   parameters:
                     ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
                     AzureSubscription: ${{parameters.AzureSubscription}}
-
-- deployment: DeployApp
-  displayName: "${{parameters.Environment}} - deploy dotnet App"
-  environment: ${{parameters.Environment}}
-  pool: $(DeploymentPool)
-  container: ${{parameters.Container}}
-  workspace:
-    clean: all
-  variables:
-    - name  : WEB_APP_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP'] ]
-    - name  : "KeyVaultSettings.ServiceUri"
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
-    - name  : "ShopFacadeConfiguration.BaseUrl"
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ShopFacadeBaseUrl'] ]
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-          - checkout: self
-            submodules: recursive
-          - template: continuous-deployment-app.yml
-            parameters:
-              AzureSubscription: ${{parameters.AzureSubscription}}
+                          
+#- deployment: DeployApp
+ # displayName: "${{parameters.Environment}} - deploy dotnet App"
+  #environment: ${{parameters.Environment}}
+  #pool: $(DeploymentPool)
+  #container: ${{parameters.Container}}
+  #workspace:
+   # clean: all
+# variables:
+#     - name  : WEB_APP_NAME
+#       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP'] ]
+#     - name  : "KeyVaultSettings.ServiceUri" 
+  #     value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
+  #   - name  : "ShopFacadeConfiguration.BaseUrl"
+  #     value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ShopFacadeBaseUrl'] ]
+  # strategy:
+  #   runOnce:
+  #     deploy:
+  #       steps:
+  #         - checkout: self
+  #           submodules: recursive
+  #         - template: continuous-deployment-app.yml
+  #           parameters:
+  #             AzureSubscription: ${{parameters.AzureSubscription}}
