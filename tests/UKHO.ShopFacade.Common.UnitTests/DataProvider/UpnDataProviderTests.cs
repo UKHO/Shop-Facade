@@ -107,5 +107,75 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
                                                  && call.GetArgument<EventId>(1) == EventIds.GraphClientCallCompleted.ToEventId()
                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GraphClientCallCompletedMessage).MustHaveHappenedOnceExactly();
         }
+
+        [Test]
+        public async Task WhenLicenceExistsWithNullFieldsValues_ThenReturnUpnDetailsByLicenseId()
+        {
+            var fakeListItemCollectionResponse = new ListItemCollectionResponse
+            {
+                Value = new List<ListItem>
+                        {
+                            new ListItem
+                            {
+                                Fields = new FieldValueSet
+                                {
+                                    AdditionalData = new Dictionary<string, object>
+                                    {
+                                        { UpnSchema.Title, null },
+                                        { UpnSchema.ECDIS_UPN1_Title, null },
+                                        { UpnSchema.ECDIS_UPN_1, null}
+                                    }
+                                }
+                            }
+                        }
+            };
+
+            A.CallTo(() => _fakeGraphClient.GetListItemCollectionResponse(A<string>.Ignored, A<string>.Ignored)).Returns(fakeListItemCollectionResponse);
+
+            var result = await _upnDataProvider.GetUpnDetailsByLicenseId(123, "correlationId");
+
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(HttpStatusCode.OK);
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                && call.GetArgument<EventId>(1) == EventIds.GraphClientCallStarted.ToEventId()
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GraphClientCallStartedMessage).MustHaveHappenedOnceExactly();
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                 && call.GetArgument<EventId>(1) == EventIds.GraphClientCallCompleted.ToEventId()
+                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GraphClientCallCompletedMessage).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task WhenLicenceExistsWithEmptyFieldsValues_ThenReturnUpnDetailsByLicenseId()
+        {
+            var fakeListItemCollectionResponse = new ListItemCollectionResponse
+            {
+                Value = new List<ListItem>
+                        {
+                            new ListItem
+                            {
+                                Fields = new FieldValueSet{}
+                            }
+                        }
+            };
+
+            A.CallTo(() => _fakeGraphClient.GetListItemCollectionResponse(A<string>.Ignored, A<string>.Ignored)).Returns(fakeListItemCollectionResponse);
+
+            var result = await _upnDataProvider.GetUpnDetailsByLicenseId(123, "correlationId");
+
+            result.Should().NotBeNull();
+            result.StatusCode.Should().Be(HttpStatusCode.OK);
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                && call.GetArgument<EventId>(1) == EventIds.GraphClientCallStarted.ToEventId()
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GraphClientCallStartedMessage).MustHaveHappenedOnceExactly();
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                 && call.GetArgument<EventId>(1) == EventIds.GraphClientCallCompleted.ToEventId()
+                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GraphClientCallCompletedMessage).MustHaveHappenedOnceExactly();
+        }
     }
 }
