@@ -13,7 +13,7 @@ steps:
   - task: AzureWebApp@1
     displayName: "Deploy to Linux Web App"
     inputs:
-      azureSubscription: $(AzureSubscription)  
+      azureSubscription: "${{ parameters.AzureSubscription }}" 
       appType: 'webAppLinux'
       appName: $(WEB_APP_NAME)  
       package: $(Pipeline.Workspace)/UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip 
