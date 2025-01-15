@@ -24,7 +24,7 @@ namespace UKHO.ShopFacade.API
     {
         private const string EventHubLoggingConfiguration = "EventHubLoggingConfiguration";
         private const string SharePointSiteConfiguration = "SharePointSiteConfiguration";
-        private const string GraphServiceConfiguration = "GraphServiceConfiguration";
+        private const string GraphApiConfiguration = "GraphApiConfiguration";
         private static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -85,7 +85,7 @@ namespace UKHO.ShopFacade.API
             var options = new ApplicationInsightsServiceOptions { ConnectionString = configuration.GetValue<string>("ApplicationInsights:ConnectionString") };
             builder.Services.AddApplicationInsightsTelemetry(options);
             builder.Services.Configure<EventHubLoggingConfiguration>(configuration.GetSection(EventHubLoggingConfiguration));
-            builder.Services.Configure<GraphServiceConfiguration>(configuration.GetSection(GraphServiceConfiguration));
+            builder.Services.Configure<GraphApiConfiguration>(configuration.GetSection(GraphApiConfiguration));
 
             builder.Services.AddControllers();
 
