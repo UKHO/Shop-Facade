@@ -5,11 +5,13 @@ using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.Extensions.Options;
+using Microsoft.Kiota.Abstractions.Authentication;
 using Serilog;
 using Serilog.Events;
 using UKHO.Logging.EventHubLogProvider;
 using UKHO.ShopFacade.API.Middleware;
 using UKHO.ShopFacade.API.Services;
+using UKHO.ShopFacade.Common.Authentication;
 using UKHO.ShopFacade.Common.ClientProvider;
 using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Constants;
@@ -22,6 +24,7 @@ namespace UKHO.ShopFacade.API
     {
         private const string EventHubLoggingConfiguration = "EventHubLoggingConfiguration";
         private const string SharePointSiteConfiguration = "SharePointSiteConfiguration";
+        private const string GraphServiceConfiguration = "GraphServiceConfiguration";
         private static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -63,9 +66,11 @@ namespace UKHO.ShopFacade.API
 
         private static void ConfigureServices(WebApplicationBuilder builder)
         {
+            var configuration = builder.Configuration;
+
             builder.Services.AddLogging(loggingBuilder =>
             {
-                loggingBuilder.AddConfiguration(builder.Configuration.GetSection("Logging"));
+                loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
                 loggingBuilder.AddConsole();
                 loggingBuilder.AddDebug();
 #if DEBUG
@@ -77,8 +82,11 @@ namespace UKHO.ShopFacade.API
 #endif
                 loggingBuilder.AddAzureWebAppDiagnostics();
             });
-            var options = new ApplicationInsightsServiceOptions { ConnectionString = builder.Configuration.GetValue<string>("ApplicationInsights:ConnectionString") };
+            var options = new ApplicationInsightsServiceOptions { ConnectionString = configuration.GetValue<string>("ApplicationInsights:ConnectionString") };
             builder.Services.AddApplicationInsightsTelemetry(options);
+            builder.Services.Configure<EventHubLoggingConfiguration>(configuration.GetSection(EventHubLoggingConfiguration));
+            builder.Services.Configure<GraphServiceConfiguration>(configuration.GetSection(GraphServiceConfiguration));
+
             builder.Services.AddControllers();
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -87,6 +95,8 @@ namespace UKHO.ShopFacade.API
             builder.Services.AddScoped<IUpnService, UpnService>();
             builder.Services.AddScoped<IUpnDataProvider, UpnDataProvider>();
             builder.Services.AddScoped<IGraphClient, GraphClient>();
+            builder.Services.AddScoped<IAuthenticationProvider, ManagedIdentityGraphAuthProvider>();
+
         }
 
         private static void ConfigureLogging(WebApplication webApplication)
