@@ -11,17 +11,17 @@ namespace UKHO.ShopFacade.Common.Authentication
     [ExcludeFromCodeCoverage] ////Excluded from code coverage as it has AD interaction
     public class ManagedIdentityGraphAuthProvider : IAuthenticationProvider
     {
-        private readonly IOptions<GraphServiceConfiguration> _graphServiceConfiguration;
+        private readonly IOptions<GraphApiConfiguration> _graphApiConfiguration;
 
-        public ManagedIdentityGraphAuthProvider(IOptions<GraphServiceConfiguration> graphServiceConfiguration)
+        public ManagedIdentityGraphAuthProvider(IOptions<GraphApiConfiguration> graphApiConfiguration)
         {
-            _graphServiceConfiguration = graphServiceConfiguration ?? throw new ArgumentNullException(
-                                                     nameof(graphServiceConfiguration));
+            _graphApiConfiguration = graphApiConfiguration ?? throw new ArgumentNullException(
+                                                     nameof(graphApiConfiguration));
         }
         public async Task AuthenticateRequestAsync(RequestInformation request, Dictionary<string, object>? additionalAuthenticationContext = null, CancellationToken cancellationToken = default)
         {
             var credential = new DefaultAzureCredential();
-            var scopes = new[] { _graphServiceConfiguration.Value.GraphApiScope! };
+            var scopes = new[] { _graphApiConfiguration.Value.GraphApiScope! };
             var accessToken = await credential.GetTokenAsync(new TokenRequestContext(scopes), cancellationToken);
             request.Headers.Add("Authorization", $"Bearer {accessToken.Token}");
         }
