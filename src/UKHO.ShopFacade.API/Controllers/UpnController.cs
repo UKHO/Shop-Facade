@@ -19,7 +19,7 @@ namespace UKHO.ShopFacade.API.Controllers
         /// Get all User Permit Numbers (UPNs) associated with the requested licence.
         /// </summary>
         [HttpGet]
-        [Route("/licenses/{licenceId}/s100/userpermits")]
+        [Route("/licences/{licenceId}/s100/userPermits")]
         [Authorize(Policy = ShopFacadeConstants.ShopFacadePolicy)]
         public IActionResult GetUPNs(int licenceId)
         {
