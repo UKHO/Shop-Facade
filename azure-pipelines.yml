@@ -6,7 +6,7 @@ parameters:
     type: boolean
     default: false
   - name : DotNetVersion
-    version :
+    version : 8.0.x
 
   - name: disableStryker
     displayName: "Disable Stryker"
@@ -100,32 +100,32 @@ stages:
             arguments: install dotnet-stryker --tool-path $(Agent.BuildDirectory)/tools
 
         - task: Powershell@2
-            displayName: "Run Stryker for UnitTests"
-            inputs:
-              workingDirectory: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.API.UnitTests'
-              targetType: 'inline'
-              pwsh: true
-              script: $(Agent.BuildDirectory)/tools/dotnet-stryker
+          displayName: "Run Stryker for UnitTests"
+          inputs:
+            workingDirectory: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.API.UnitTests'
+            targetType: 'inline'
+            pwsh: true
+            script: $(Agent.BuildDirectory)/tools/dotnet-stryker
 
         - task: PublishMutationReport@0
-            displayName: 'Publish Strkyer Mutator Report'
-            inputs:
-              reportPattern: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.API.UnitTests/**/mutation-report.html'
-              reportDisplayName: 'API UnitTests'
+          displayName: 'Publish Strkyer Mutator Report'
+          inputs:
+            reportPattern: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.API.UnitTests/**/mutation-report.html'
+            reportDisplayName: 'API UnitTests'
 
-         - task: Powershell@2
-            displayName: "Run Stryker for Common UnitTests"
-            inputs:
-              workingDirectory: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.Common.UnitTests'
-              targetType: 'inline'
-              pwsh: true
-              script: $(Agent.BuildDirectory)/tools/dotnet-stryker
+        - task: Powershell@2
+          displayName: "Run Stryker for Common UnitTests"
+          inputs:
+            workingDirectory: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.Common.UnitTests'
+            targetType: 'inline'
+            pwsh: true
+            script: $(Agent.BuildDirectory)/tools/dotnet-stryker
 
         - task: PublishMutationReport@0
-            displayName: 'Publish Strkyer Mutator Report'
-            inputs:
-              reportPattern: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.Common.UnitTests/**/mutation-report.html'
-              reportDisplayName: 'Common UnitTests'
+          displayName: 'Publish Strkyer Mutator Report'
+          inputs:
+            reportPattern: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.Common.UnitTests/**/mutation-report.html'
+            reportDisplayName: 'Common UnitTests'
 
   - stage: BuildTestPublish
     displayName: "Build, test and publish"
