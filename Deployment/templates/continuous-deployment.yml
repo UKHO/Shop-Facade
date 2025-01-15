@@ -4,7 +4,7 @@ parameters:
     default: false
   - name: AzureSubscription
     type: string
-
+steps:
   - task: FileTransform@2
     displayName: "File Transform: Shop Facade Config" #Replace exchange set instance value from pipeline 
     inputs:
