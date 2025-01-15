@@ -20,7 +20,7 @@ jobs:
   displayName: "terraform $(Environment) deploy "
   environment: ${{parameters.Environment}}
   pool: $(DeploymentPool)
-  container: ${{variables.Container}}
+  container: ${{parameters.Container}}
   workspace:
     clean: all
   strategy:
