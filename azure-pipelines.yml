@@ -142,12 +142,6 @@ stages:
     variables:
       - group : "Shop-Facade-Dev"
       - group : "Shop-Facade-Dev-TF"
-      - name  : "AzureADConfiguration.TenantId"
-        value : $(AzureADConfigurationTenantId)
-      - name  : "AzureADConfiguration.ClientId"
-        value : $(AzureADConfigurationClientId)
-      - name  : "AzureADConfiguration.ClientSecret"
-        value : $(AzureADConfigurationClientSecret)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -164,12 +158,6 @@ stages:
     variables:
       - group : "Shop-Facade-vNextIAT"
       - group : "Shop-Facade-vNextIAT-TF"
-      - name  : "AzureADConfiguration.TenantId"
-        value : $(AzureADConfigurationTenantId)
-      - name  : "AzureADConfiguration.ClientId"
-        value : $(AzureADConfigurationClientId)
-      - name  : "AzureADConfiguration.ClientSecret"
-        value : $(AzureADConfigurationClientSecret)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -186,12 +174,6 @@ stages:
     variables:
       - group : "Shop-Facade-vNextE2E"
       - group : "Shop-Facade-vNextE2E-TF"
-      - name  : "AzureADConfiguration.TenantId"
-        value : $(AzureADConfigurationTenantId)
-      - name  : "AzureADConfiguration.ClientId"
-        value : $(AzureADConfigurationClientId)
-      - name  : "AzureADConfiguration.ClientSecret"
-        value : $(AzureADConfigurationClientSecret)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -208,12 +190,6 @@ stages:
     variables:
       - group : "Shop-Facade-IAT"
       - group : "Shop-Facade-IAT-TF"
-      - name  : "AzureADConfiguration.TenantId"
-        value : $(AzureADConfigurationTenantId)
-      - name  : "AzureADConfiguration.ClientId"
-        value : $(AzureADConfigurationClientId)
-      - name  : "AzureADConfiguration.ClientSecret"
-        value : $(AzureADConfigurationClientSecret)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -230,12 +206,6 @@ stages:
     variables:
       - group : "Shop-Facade-PreProd"
       - group : "Shop-Facade-PreProd-TF"
-      - name  : "AzureADConfiguration.TenantId"
-        value : $(AzureADConfigurationTenantId)
-      - name  : "AzureADConfiguration.ClientId"
-        value : $(AzureADConfigurationClientId)
-      - name  : "AzureADConfiguration.ClientSecret"
-        value : $(AzureADConfigurationClientSecret)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -252,12 +222,6 @@ stages:
     variables:
       - group : "Shop-Facade-Live"
       - group : "Shop-Facade-Live-TF"
-      - name  : "AzureADConfiguration.TenantId"
-        value : $(AzureADConfigurationTenantId)
-      - name  : "AzureADConfiguration.ClientId"
-        value : $(AzureADConfigurationClientId)
-      - name  : "AzureADConfiguration.ClientSecret"
-        value : $(AzureADConfigurationClientSecret)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
