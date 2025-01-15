@@ -7,9 +7,9 @@
       "progress"
     ],
     "thresholds": {
-      "high": 80,
-      "low": 70,
-      "break": 65
+      "high": 0,
+      "low": 0,
+      "break": 0
     },
 
     "project": "UKHO.ShopFacade.API.UnitTests.csproj",

@@ -5,6 +5,8 @@ parameters:
     displayName: "Continue even if resources are getting destroyed"
     type: boolean
     default: false
+  - name : DotNetVersion
+    version :
 
   - name: disableStryker
     displayName: "Disable Stryker"
@@ -125,7 +127,6 @@ stages:
               reportPattern: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.Common.UnitTests/**/mutation-report.html'
               reportDisplayName: 'Common UnitTests'
 
-stages:
   - stage: BuildTestPublish
     displayName: "Build, test and publish"
     dependsOn: []
@@ -140,19 +141,20 @@ stages:
     - BuildTestPublish
     displayName: "Dev deploy (inc terraform, webapp deploy)"
     variables:
-     - group: ""
-      - group: ""
-      - group: ""
-      - name: "AzureADConfiguration.TenantId"
-        value: $(AzureADConfigurationTenantId)
-      - name: "AzureADConfiguration.ClientId"
-        value: $(AzureADConfigurationClientId)
+      - group : "Shop-Facade-Dev"
+      - group : "Shop-Facade-Dev-TF"
+      - name  : "AzureADConfiguration.TenantId"
+        value : $(AzureADConfigurationTenantId)
+      - name  : "AzureADConfiguration.ClientId"
+        value : $(AzureADConfigurationClientId)
+      - name  : "AzureADConfiguration.ClientSecret"
+        value : $(AzureADConfigurationClientSecret)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
           Environment: "dev"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: ""
+          AzureSubscription: "ShopFacade Dev - A.011.15.12"
           Container: ${{variables.Container}} 
           RunTests: false
 
@@ -160,12 +162,21 @@ stages:
     dependsOn:
     - Devdeploy
     displayName: "vNextIat Deploy (inc terraform, webapp deploy)"
+    variables:
+      - group : "Shop-Facade-Dev"
+      - group : "Shop-Facade-Dev-TF"
+      - name  : "AzureADConfiguration.TenantId"
+        value : $(AzureADConfigurationTenantId)
+      - name  : "AzureADConfiguration.ClientId"
+        value : $(AzureADConfigurationClientId)
+      - name  : "AzureADConfiguration.ClientSecret"
+        value : $(AzureADConfigurationClientSecret)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
           Environment: "vnextiat"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: ""
+          AzureSubscription: "ShopFacade IAT - A.011.15.12"
           Container: ${{variables.Container}} 
           RunTests: false
 
@@ -173,12 +184,21 @@ stages:
     dependsOn:
     - vNextIatdeploy
     displayName: "vNextE2E Deploy (inc terraform, webapp deploy)"
+    variables:
+      - group : "Shop-Facade-Dev"
+      - group : "Shop-Facade-Dev-TF"
+      - name  : "AzureADConfiguration.TenantId"
+        value : $(AzureADConfigurationTenantId)
+      - name  : "AzureADConfiguration.ClientId"
+        value : $(AzureADConfigurationClientId)
+      - name  : "AzureADConfiguration.ClientSecret"
+        value : $(AzureADConfigurationClientSecret)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
           Environment: "vnexte2e"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: ""
+          AzureSubscription: "ShopFacade vNext-E2E - A.011.15.12"
           Container: ${{variables.Container}} 
           RunTests: false
 
@@ -186,6 +206,15 @@ stages:
     dependsOn:
     - Devdeploy
     displayName: "IAT Deploy (inc terraform, webapp deploy)"
+    variables:
+      - group : "Shop-Facade-Dev"
+      - group : "Shop-Facade-Dev-TF"
+      - name  : "AzureADConfiguration.TenantId"
+        value : $(AzureADConfigurationTenantId)
+      - name  : "AzureADConfiguration.ClientId"
+        value : $(AzureADConfigurationClientId)
+      - name  : "AzureADConfiguration.ClientSecret"
+        value : $(AzureADConfigurationClientSecret)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -199,6 +228,15 @@ stages:
     dependsOn:
     - IATdeploy
     displayName: "PreProd Deploy (inc terraform, webapp deploy)"
+    variables:
+      - group : "Shop-Facade-Dev"
+      - group : "Shop-Facade-Dev-TF"
+      - name  : "AzureADConfiguration.TenantId"
+        value : $(AzureADConfigurationTenantId)
+      - name  : "AzureADConfiguration.ClientId"
+        value : $(AzureADConfigurationClientId)
+      - name  : "AzureADConfiguration.ClientSecret"
+        value : $(AzureADConfigurationClientSecret)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -212,6 +250,15 @@ stages:
     dependsOn:
     - PreProddeploy
     displayName: "Live Deploy (inc terraform, webapp deploy)"
+    variables:
+      - group : "Shop-Facade-Dev"
+      - group : "Shop-Facade-Dev-TF"
+      - name  : "AzureADConfiguration.TenantId"
+        value : $(AzureADConfigurationTenantId)
+      - name  : "AzureADConfiguration.ClientId"
+        value : $(AzureADConfigurationClientId)
+      - name  : "AzureADConfiguration.ClientSecret"
+        value : $(AzureADConfigurationClientSecret)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
