@@ -85,11 +85,11 @@ jobs:
         filePath: '$(Build.SourcesDirectory)\CodeCoverageReport.ps1'
         arguments: '-source "$(Build.SourcesDirectory)" -reportFolder "$(Build.ArtifactStagingDirectory)"'
 
-    - task: PublishBuildArtifacts@1
-      displayName: "Publish Code coverage"
-      inputs:
-        PathtoPublish: "$(Build.ArtifactStagingDirectory)/codecoveragereport"
-        ArtifactName: codecoveragereport
+    # - task: PublishBuildArtifacts@1
+    #   displayName: "Publish Code coverage"
+    #   inputs:
+    #     PathtoPublish: "$(Build.ArtifactStagingDirectory)/codecoveragereport"
+    #     ArtifactName: codecoveragereport
 
     - task: BuildQualityChecks@9
       displayName: "Code coverage fails if threshold not meet"            
