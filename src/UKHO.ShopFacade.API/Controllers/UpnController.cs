@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Events;
 
@@ -21,6 +23,8 @@ namespace UKHO.ShopFacade.API.Controllers
         [HttpGet]
         [Route("/licences/{licenceId}/s100/userPermits")]
         [Authorize(Policy = ShopFacadeConstants.ShopFacadePolicy)]
+        [SwaggerResponse(statusCode: (int)HttpStatusCode.Unauthorized, description: "<p>Unauthorized - either you have not provided valid token, or your token is not recognized.</p>")]
+        [SwaggerResponse(statusCode: (int)HttpStatusCode.Forbidden, description: "<p>Forbidden - you have no permission to use this API.</p>")]
         public IActionResult GetUPNs(int licenceId)
         {
             _logger.LogInformation(EventIds.GetUPNsStarted.ToEventId(), "GetUPNs API Call Started.");
