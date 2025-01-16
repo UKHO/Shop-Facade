@@ -63,7 +63,7 @@ resources:
 stages:
   - stage: Stryker_Mutator
     displayName: "Stryker Mutator"
-    condition: ${{ eq(parameters.disableStryker, false) }}
+    condition: eq('${{ parameters.DisableDependencyCheck }}', false)  
     dependsOn: []
     jobs:
     - job: Stryker
