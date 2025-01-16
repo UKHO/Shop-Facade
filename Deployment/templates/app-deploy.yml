@@ -17,7 +17,7 @@ parameters:
 
 jobs:
 - deployment: DevDeployTerraform
-  displayName: "terraform $(Environment) deploy "
+  displayName: "terraform ${{parameters.Environment}}deploy "
   environment: ${{parameters.Environment}}
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}

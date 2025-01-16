@@ -5,16 +5,16 @@ parameters:
   - name: AzureSubscription
     type: string
 steps:
-  - task: FileTransform@2
-    displayName: "File Transform: Shop Facade Config" #Replace exchange set instance value from pipeline 
-    inputs:
-      folderPath: '$(Pipeline.Workspace)/terraformartifact/src'
-      enableXmlTransform: false
-      xmlTransformationRules: ''
-      jsonTargetFiles: '**/appsettings.json'
+  # - task: FileTransform@2
+  #   displayName: "File Transform: Shop Facade Config" Replace exchange set instance value from pipeline 
+  #   inputs:
+  #     folderPath: '$(Pipeline.Workspace)/terraformartifact/src'
+  #     enableXmlTransform: false
+  #     xmlTransformationRules: ''
+  #     jsonTargetFiles: '**/appsettings.json'
 
   - task: PowerShell@2
-    displayName: "terraform $(Environment)deploy"
+    displayName: "terraform ${{parameters.Environment}}deploy"
     inputs:
       targetType: filePath
       filePath: '$(Pipeline.Workspace)/terraformartifact/terraform_conditional_run.ps1'
