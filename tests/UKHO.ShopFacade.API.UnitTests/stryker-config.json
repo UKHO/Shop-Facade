@@ -14,7 +14,7 @@
 
     "project": "UKHO.ShopFacade.API.UnitTests.csproj",
 
-    "solution": "../../ShopFacade.sln"
+    "solution": "../../../ShopFacade.sln"
 
   }
 }
