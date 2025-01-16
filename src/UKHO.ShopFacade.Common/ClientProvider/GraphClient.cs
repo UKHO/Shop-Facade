@@ -1,17 +1,40 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-using Azure.Identity;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Options;
 using Microsoft.Graph;
+using Microsoft.Graph.Models;
+using Microsoft.Kiota.Abstractions.Authentication;
+using UKHO.ShopFacade.Common.Configuration;
 
 namespace UKHO.ShopFacade.Common.ClientProvider
 {
+    [ExcludeFromCodeCoverage]
     public class GraphClient : IGraphClient
     {
-        public GraphServiceClient GetGraphServiceClient()
+        private readonly IOptions<SharePointSiteConfiguration> _sharePointSiteConfiguration;
+        private readonly IOptions<GraphApiConfiguration> _graphApiConfiguration;
+        private readonly IAuthenticationProvider _authenticationProvider;
+
+        public GraphClient(IOptions<SharePointSiteConfiguration> sharePointSiteConfiguration, IAuthenticationProvider authenticationProvider, IOptions<GraphApiConfiguration> graphApiConfiguration)
         {
-            var graphClient = new GraphServiceClient(new DefaultAzureCredential(), new[] { "https://graph.microsoft.com/.default" });
-            return graphClient;
+            _sharePointSiteConfiguration = sharePointSiteConfiguration ?? throw new ArgumentNullException(nameof(sharePointSiteConfiguration));
+            _authenticationProvider = authenticationProvider;
+            _graphApiConfiguration = graphApiConfiguration;
+        }
+
+        public async Task<ListItemCollectionResponse> GetListItemCollectionResponse(string expandFields, string filterCondition)
+        {
+            var graphClient = new GraphServiceClient(_authenticationProvider, _graphApiConfiguration.Value.GraphApiBaseUrl);
+
+            var listItemCollectionResponse = await graphClient.Sites[_sharePointSiteConfiguration.Value.SiteId]
+               .Lists[_sharePointSiteConfiguration.Value.ListId]
+               .Items
+               .GetAsync(requestConfiguration =>
+               {
+                   requestConfiguration.QueryParameters.Expand = [expandFields];
+                   requestConfiguration.QueryParameters.Filter = filterCondition;
+               });
+
+            return listItemCollectionResponse!;
         }
     }
 }

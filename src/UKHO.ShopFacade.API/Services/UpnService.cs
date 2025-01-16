@@ -1,21 +1,82 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
+﻿using System.Net;
 using UKHO.ShopFacade.Common.DataProvider;
+using UKHO.ShopFacade.Common.Models;
+using UKHO.ShopFacade.Common.Models.Response;
 
 namespace UKHO.ShopFacade.API.Services
 {
     public class UpnService : IUpnService
     {
-        public readonly IUpnDataProvider _upnDataProvider;
+        private readonly IUpnDataProvider _upnDataProvider;
         public UpnService(IUpnDataProvider upnDataProvider)
         {
-            _upnDataProvider = upnDataProvider;
+            _upnDataProvider = upnDataProvider ?? throw new ArgumentNullException(nameof(upnDataProvider));
         }
 
-        public async Task GetUpnDetails(int licenceId)
+        public async Task<UpnServiceResult> GetUpnDetails(int licenceId, string correlationId)
         {
-            var upnList = await _upnDataProvider.GetUpnDetailsByLicenseId(licenceId);
+            var upnDataProviderResult = await _upnDataProvider.GetUpnDetailsByLicenseId(licenceId, correlationId);
+
+            return upnDataProviderResult.StatusCode switch
+            {
+                HttpStatusCode.OK => UpnServiceResult.Success(SetUpnDetailResponse(upnDataProviderResult)!),
+                HttpStatusCode.NotFound => UpnServiceResult.NotFound(upnDataProviderResult.ErrorResponse),
+                _ => UpnServiceResult.InternalServerError()
+            };
+        }
+
+        private static UpnDetail SetUpnDetailResponse(UpnDataProviderResult upnDataProviderResult)
+        {
+            var upnDetail = new UpnDetail();
+            int.TryParse(upnDataProviderResult.Value.LicenceId, out var licnceid);
+            var userPermits = new List<UserPermit>{
+                new()
+                {
+                    Title = upnDataProviderResult.Value.ECDIS_UPN1_Title,
+                    Upn = upnDataProviderResult.Value.ECDIS_UPN_1
+                }
+            };
+
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN2_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_2))
+            {
+                userPermits.Add(new UserPermit
+                {
+                    Title = upnDataProviderResult.Value.ECDIS_UPN2_Title,
+                    Upn = upnDataProviderResult.Value.ECDIS_UPN_2
+                });
+            }
+
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN3_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_3))
+            {
+                userPermits.Add(new UserPermit
+                {
+                    Title = upnDataProviderResult.Value.ECDIS_UPN3_Title,
+                    Upn = upnDataProviderResult.Value.ECDIS_UPN_3
+                });
+            }
+
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN4_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_4))
+            {
+                userPermits.Add(new UserPermit
+                {
+                    Title = upnDataProviderResult.Value.ECDIS_UPN4_Title,
+                    Upn = upnDataProviderResult.Value.ECDIS_UPN_4
+                });
+            }
+
+            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN5_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_5))
+            {
+                userPermits.Add(new UserPermit
+                {
+                    Title = upnDataProviderResult.Value.ECDIS_UPN5_Title,
+                    Upn = upnDataProviderResult.Value.ECDIS_UPN_5
+                });
+            }
+
+            upnDetail.LicenceId = licnceid;
+            upnDetail.UserPermits = userPermits;
+
+            return upnDetail;
         }
     }
 }
