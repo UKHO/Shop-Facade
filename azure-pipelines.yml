@@ -120,10 +120,10 @@ stages:
             reportPattern: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.Common.UnitTests/**/mutation-report.html'
             reportDisplayName: 'Common UnitTests'
 
-  # - stage: BuildTestPublish
-  #   displayName: "Build, test and publish"
-  #   dependsOn: []
-  #   jobs:
-  #   - template: Deployment/templates/build-test-publish.yml  
-  #     parameters:
-  #       DisableDependencyCheck: ${{ parameters.DisableDependencyCheck }}
+  - stage: BuildTestPublish
+    displayName: "Build, test and publish"
+    dependsOn: []
+    jobs:
+    - template: Deployment/templates/build-test-publish.yml  
+      parameters:
+        DisableDependencyCheck: ${{ parameters.DisableDependencyCheck }}
