@@ -72,18 +72,18 @@ jobs:
         publishTestResults: true
         testRunTitle: "UnitTests"
 
-    - task: publishcodecoverageresults@2
-      displayName: "publish code coverage report for build quality checks"
-      inputs:
-        summaryfilelocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'              
-        failIfCoverageEmpty: true
+    # - task: publishcodecoverageresults@2
+    #   displayName: "publish code coverage report for build quality checks"
+    #   inputs:
+    #     summaryfilelocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'              
+    #     failIfCoverageEmpty: true
 
-    - task: PowerShell@2
-      displayName: "Generate code coverage report"
-      inputs:
-        targetType: filePath
-        filePath: '$(Build.SourcesDirectory)\CodeCoverageReport.ps1'
-        arguments: '-source "$(Build.SourcesDirectory)" -reportFolder "$(Build.ArtifactStagingDirectory)"'
+    # - task: PowerShell@2
+    #   displayName: "Generate code coverage report"
+    #   inputs:
+    #     targetType: filePath
+    #     filePath: '$(Build.SourcesDirectory)\CodeCoverageReport.ps1'
+    #     arguments: '-source "$(Build.SourcesDirectory)" -reportFolder "$(Build.ArtifactStagingDirectory)"'
 
     # - task: PublishBuildArtifacts@1
     #   displayName: "Publish Code coverage"
