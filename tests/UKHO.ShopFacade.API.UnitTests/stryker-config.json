@@ -12,9 +12,9 @@
       "break": 40
     },
 
-    "project": "UKHO.ShopFacade.API.UnitTests.csproj",
+    "project": "UKHO.ShopFacade.API.csproj",
 
-    "solution": "../../../ShopFacade.sln"
+    "solution": "../../ShopFacade.sln"
 
   }
 }
