@@ -61,6 +61,63 @@ resources:
     ref: refs/heads/main
 
 stages:
+  - stage: Stryker_Mutator
+    displayName: "Stryker Mutator"
+    condition: ${{ eq(parameters.disableStryker, false) }}
+    dependsOn: []
+    jobs:
+    - job: Stryker
+      workspace:
+        clean: all
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Use .NET SDK'
+          inputs:
+            packageType: sdk
+            version: $(SdkVersion)
+
+        - task: UseDotNet@2
+          displayName: 'Use .NET SDK for Stryker'
+          inputs:
+            packageType: sdk
+            version: $(SdkVersion)
+
+        - task: DotNetCoreCLI@2
+          displayName: "Install Stryker"
+          inputs:
+            command: custom
+            custom: tool
+            workingDirectory: $(Agent.TempDirectory)
+            arguments: install dotnet-stryker --tool-path $(Agent.BuildDirectory)/tools
+
+        - task: Powershell@2
+          displayName: "Run Stryker for UnitTests"
+          inputs:
+            workingDirectory: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.API.UnitTests'
+            targetType: 'inline'
+            pwsh: true
+            script: $(Agent.BuildDirectory)/tools/dotnet-stryker
+
+        - task: PublishMutationReport@0
+          displayName: 'Publish Strkyer Mutator Report'
+          inputs:
+            reportPattern: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.API.UnitTests/**/mutation-report.html'
+            reportDisplayName: 'API UnitTests'
+
+        - task: Powershell@2
+          displayName: "Run Stryker for Common UnitTests"
+          inputs:
+            workingDirectory: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.Common.UnitTests'
+            targetType: 'inline'
+            pwsh: true
+            script: $(Agent.BuildDirectory)/tools/dotnet-stryker
+
+        - task: PublishMutationReport@0
+          displayName: 'Publish Strkyer Mutator Report'
+          inputs:
+            reportPattern: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.Common.UnitTests/**/mutation-report.html'
+            reportDisplayName: 'Common UnitTests'
+
   - stage: BuildTestPublish
     displayName: "Build, test and publish"
     dependsOn: []
