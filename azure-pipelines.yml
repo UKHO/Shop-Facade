@@ -51,6 +51,8 @@ variables:
     value: "NautilusBuild"
   - name: CoverageThresholdLimit
     value: "80"
+  - name: SdkVersion
+    value: "8.0.x"
 
 resources:
   repositories:
@@ -118,10 +120,10 @@ stages:
             reportPattern: '$(Build.SourcesDirectory)/Tests/UKHO.ShopFacade.Common.UnitTests/**/mutation-report.html'
             reportDisplayName: 'Common UnitTests'
 
-  - stage: BuildTestPublish
-    displayName: "Build, test and publish"
-    dependsOn: []
-    jobs:
-    - template: Deployment/templates/build-test-publish.yml  
-      parameters:
-        DisableDependencyCheck: ${{ parameters.DisableDependencyCheck }}
+  # - stage: BuildTestPublish
+  #   displayName: "Build, test and publish"
+  #   dependsOn: []
+  #   jobs:
+  #   - template: Deployment/templates/build-test-publish.yml  
+  #     parameters:
+  #       DisableDependencyCheck: ${{ parameters.DisableDependencyCheck }}
