@@ -4,8 +4,7 @@ parameters:
     default: false
   - name: AzureSubscription
     type: string
-  - name: Environment
-    type: string
+  
 steps:
   # - task: FileTransform@2
   #   displayName: "File Transform: Shop Facade Config" Replace exchange set instance value from pipeline 
@@ -16,7 +15,7 @@ steps:
   #     jsonTargetFiles: '**/appsettings.json'
 
   - task: PowerShell@2
-    displayName: "terraform ${{parameters.Environment}}deploy"
+    displayName: "Terraform deployment"
     inputs:
       targetType: filePath
       filePath: '$(Pipeline.Workspace)/terraformartifact/terraform_conditional_run.ps1'
