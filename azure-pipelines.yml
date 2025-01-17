@@ -95,7 +95,6 @@ stages:
     displayName: "vNextIat Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/develop'),startsWith(variables['Build.SourceBranch'], 'refs/heads/dev/'),startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')))
     variables:
-    variables:
       - group: "Shop-Facade-vNextIAT"
       - group: "Shop-Facade-vNextIAT-TF"
     jobs:
@@ -112,7 +111,6 @@ stages:
     - vNextIatdeploy
     displayName: "vNextE2E Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/develop'),startsWith(variables['Build.SourceBranch'], 'refs/heads/dev/'),startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')))
-    variables:
     variables:
       - group: "Shop-Facade-vNextE2E"
       - group: "Shop-Facade-vNextE2E-TF"
@@ -131,7 +129,6 @@ stages:
     displayName: "IAT Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
-    variables:
       - group: "Shop-Facade-IAT"
       - group: "Shop-Facade-IAT-TF"
     jobs:
@@ -149,7 +146,6 @@ stages:
     displayName: "PreProd Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
-    variables:
       - group: "Shop-Facade-PreProd"
       - group: "Shop-Facade-PreProd-TF"
     jobs:
@@ -166,7 +162,6 @@ stages:
     - PreProddeploy
     displayName: "Live Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
-    variables:
     variables:
       - group: "Shop-Facade-Live"
       - group: "Shop-Facade-Live-TF"
