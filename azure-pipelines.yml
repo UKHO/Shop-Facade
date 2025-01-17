@@ -90,7 +90,7 @@ stages:
         parameters:
           Environment: "ShopFacade-Dev"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: "ShopFacade Dev - A.011.15.12"
+          AzureSubscription: "ShopFacade-Dev-A.011.15.12"
           Container: ${{variables.Container}} 
           RunTests: false
 
