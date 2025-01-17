@@ -25,24 +25,23 @@ steps:
    #      az account set --subscription $(ARM_SUBSCRIPTION_ID)
 
    #   env:
-   #    ARM_CLIENT_ID: $(TERRAFORM-CLIENT-ID)
-   #    ARM_CLIENT_SECRET: $(TERRAFORM-CLIENT-SECRET)
-   #    ARM_TENANT_ID: $(TERRAFORM-TENANT-ID)
-   #    ARM_SUBSCRIPTION_ID: $(TERRAFORM-SUBSCRIPTION-ID)
-   #    ARM_ACCESS_KEY: $(TERRAFORM-ACCESS-KEY)
-   #    TF_VAR_ARM_OBJECT_ID: $(TERRAFORM-CLIENT-OBJECT-ID)
+   #     ARM_CLIENT_ID: $(TERRAFORM-CLIENT-ID)
+   #     ARM_CLIENT_SECRET: $(TERRAFORM-CLIENT-SECRET)
+   #     ARM_TENANT_ID: $(TERRAFORM-TENANT-ID)
+   #     ARM_SUBSCRIPTION_ID: $(TERRAFORM-SUBSCRIPTION-ID)
+   #     ARM_ACCESS_KEY: $(TERRAFORM-ACCESS-KEY)
+   #     TF_VAR_ARM_OBJECT_ID: $(TERRAFORM-CLIENT-OBJECT-ID)
 
-  - task: PowerShell@2
-    displayName: "Terraform deployment"
-    inputs:
-      targetType: filePath
-      filePath: '$(Pipeline.Workspace)/terraformartifact/terraform_conditional_run.ps1'
-      arguments: '-deploymentResourceGroupName $(DeploymentResourceGroupName) -deploymentStorageAccountName $(DeploymentStorageAccountName) -workSpace $(Environment) -continueEvenIfResourcesAreGettingDestroyed $${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }} -terraformJsonOutputFile $(Pipeline.Workspace)/terraformartifact/terraform_output.json'
-
-      env:
-      ARM_CLIENT_ID: $(TERRAFORM-CLIENT-ID)
-      ARM_CLIENT_SECRET: $(TERRAFORM-CLIENT-SECRET)
-      ARM_TENANT_ID: $(TERRAFORM-TENANT-ID)
-      ARM_SUBSCRIPTION_ID: $(TERRAFORM-SUBSCRIPTION-ID)
-      ARM_ACCESS_KEY: $(TERRAFORM-ACCESS-KEY)
-      TF_VAR_ARM_OBJECT_ID: $(TERRAFORM-CLIENT-OBJECT-ID)
+   - task: PowerShell@2
+     displayName: "Terraform deployment"
+     inputs:
+       targetType: filePath
+       filePath: '$(Pipeline.Workspace)/terraformartifact/terraform_conditional_run.ps1'
+       arguments: '-deploymentResourceGroupName $(DeploymentResourceGroupName) -deploymentStorageAccountName $(DeploymentStorageAccountName) -workSpace $(Environment) -continueEvenIfResourcesAreGettingDestroyed $${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }} -terraformJsonOutputFile $(Pipeline.Workspace)/terraformartifact/terraform_output.json'
+     env:
+       ARM_CLIENT_ID: $(TERRAFORM-CLIENT-ID)
+       ARM_CLIENT_SECRET: $(TERRAFORM-CLIENT-SECRET)
+       ARM_TENANT_ID: $(TERRAFORM-TENANT-ID)
+       ARM_SUBSCRIPTION_ID: $(TERRAFORM-SUBSCRIPTION-ID)
+       ARM_ACCESS_KEY: $(TERRAFORM-ACCESS-KEY)
+       TF_VAR_ARM_OBJECT_ID: $(TERRAFORM-CLIENT-OBJECT-ID)
