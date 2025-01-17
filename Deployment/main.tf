@@ -7,10 +7,10 @@ module "webapp_service" {
   location                  = azurerm_resource_group.rg.location
   sku_name                  = var.sku_name[local.env_name]
   app_settings = {
-    "KeyVaultSettings:ServiceUri"                              = "https://${local.key_vault_name}.vault.azure.net/"
-    "EventHubLoggingConfiguration:Environment"                 = local.env_name
-    "EventHubLoggingConfiguration:MinimumLoggingLevel"         = "Warning"
-    "EventHubLoggingConfiguration:UkhoMinimumLoggingLevel"     = "Information"
+    "KeyVaultSettings__ServiceUri"                              = "https://${local.key_vault_name}.vault.azure.net/"
+    "EventHubLoggingConfiguration__Environment"                 = local.env_name
+    "EventHubLoggingConfiguration__MinimumLoggingLevel"         = "Warning"
+    "EventHubLoggingConfiguration__UkhoMinimumLoggingLevel"     = "Information"
     "APPINSIGHTS_INSTRUMENTATIONKEY"                           = module.app_insights.instrumentation_key
     "ASPNETCORE_ENVIRONMENT"                                   = local.env_name
     "WEBSITE_RUN_FROM_PACKAGE"                                 = "1"
