@@ -83,8 +83,8 @@ stages:
     - BuildTestPublish
     displayName: "Dev deploy (inc terraform, webapp deploy)"
     variables:
-      - group : "Shop-Facade-Dev"
-      - group : "Shop-Facade-Dev-TF"
+      - group: "Shop-Facade-Dev"
+      - group: "Shop-Facade-Dev-TF"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
