@@ -4,10 +4,12 @@ parameters:
     default: false
   - name: AzureSubscription
     type: string
+  - name: environment
+    type: string
   
 steps:  
    - task: PowerShell@2
-     displayName: "$(Environment) Terraform deployment"
+     displayName: "${{parameters.Environment}} Terraform deployment"
      name: TerraformDeploy
      inputs:
        targetType: filePath

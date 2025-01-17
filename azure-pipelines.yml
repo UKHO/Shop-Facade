@@ -88,11 +88,11 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          env_name: "ShopFacade-Dev"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade-Dev-A.011.15.12"
           Container: ${{variables.Container}} 
           RunTests: false
+          Environment: "Dev"
 
   - stage: vNextIatdeploy
     dependsOn:
@@ -104,7 +104,7 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          env_name: "ShopFacade-vNextIAT"
+          Environment: "vNextIAT"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade vNext-IAT - A.011.15.12 (13917923-6e3a-47de-98b6-ea628e469374)"
           Container: ${{variables.Container}} 
@@ -120,7 +120,7 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          env_name: "ShopFacade-vNextE2E"
+          Environment: "vNextE2E"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade vNext-E2E - A.011.15.12 (5c4498ee-67cb-4316-a4b4-f4b8fb8beda9)"
           Container: ${{variables.Container}} 
@@ -136,7 +136,7 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          env_name: "ShopFacade-IAT"
+          Environment: "IAT"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade IAT - A.011.15.12 (7f278003-0adf-41b2-afed-c67b698f17f7)"
           Container: ${{variables.Container}} 
@@ -152,7 +152,7 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          env_name: "ShopFacade-PreProd"
+          Environment: "PreProd"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade PreProd - A.011.15.12 (63614f72-e0ce-4a9b-a3b0-c5d38fc6daf6)"
           Container: ${{variables.Container}} 
@@ -168,7 +168,7 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          env_name: "ShopFacade-Live"
+          Environment: "Live"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade Live - A.011.15.12 (cdd11fe0-f5ac-4f8f-b960-f0bdce684595)"
           Container: ${{variables.Container}} 
