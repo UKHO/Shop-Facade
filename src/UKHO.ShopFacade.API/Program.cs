@@ -14,7 +14,7 @@ using Serilog.Events;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
+using UKHO.ShopFacade.API.Filters;
 
 namespace UKHO.ShopFacade.API
 {
@@ -170,7 +170,7 @@ namespace UKHO.ShopFacade.API
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
                 c.EnableAnnotations();
-                c.OperationFilter<AddResponseHeadersFilter>();
+                c.OperationFilter<AddHeaderOperationFilter>();
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
