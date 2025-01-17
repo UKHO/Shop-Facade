@@ -23,7 +23,8 @@ steps:
       inlineScript: |
         az login --service-principal -u $(ARM_CLIENT_ID) -p $(ARM_CLIENT_SECRET) --tenant $(ARM_TENANT_ID)
         az account set --subscription $(ARM_SUBSCRIPTION_ID)
-env:
+
+     env:
       ARM_CLIENT_ID: $(TERRAFORM-CLIENT-ID)
       ARM_CLIENT_SECRET: $(TERRAFORM-CLIENT-SECRET)
       ARM_TENANT_ID: $(TERRAFORM-TENANT-ID)
