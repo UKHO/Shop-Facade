@@ -17,7 +17,7 @@ steps:
    - task: AzureCLI@2
      displayName: 'Azure CLI login'
      inputs:
-      azureSubscription: ${{ parameters.AzureSubscription }}
+      azureSubscription: ${{parameters.AzureSubscription}}
       scriptType: 'ps'
       scriptLocation: 'inlineScript'
       inlineScript: |
