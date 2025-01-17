@@ -18,7 +18,7 @@ parameters:
 jobs:
 - deployment: DevDeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Terraform"
-  environment: ${{parameters.Environment}}
+  environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   workspace:
@@ -35,7 +35,7 @@ jobs:
 - deployment: DeployApp
   dependsOn: DevDeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Dotnet App"
-  environment: ${{parameters.Environment}}
+  environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   workspace:
