@@ -11,13 +11,12 @@ module "webapp_service" {
     "EventHubLoggingConfiguration__Environment"                 = local.env_name
     "EventHubLoggingConfiguration__MinimumLoggingLevel"         = "Warning"
     "EventHubLoggingConfiguration__UkhoMinimumLoggingLevel"     = "Information"
-    "APPINSIGHTS_INSTRUMENTATIONKEY"                           = module.app_insights.instrumentation_key
-    "ASPNETCORE_ENVIRONMENT"                                   = local.env_name
-    "WEBSITE_RUN_FROM_PACKAGE"                                 = "1"
-    "WEBSITE_ENABLE_SYNC_UPDATE_SITE"                          = "true"
-    "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG"          = "1"    
+    "ASPNETCORE_ENVIRONMENT"                                    = local.env_name
+    "WEBSITE_RUN_FROM_PACKAGE"                                  = "1"
+    "WEBSITE_ENABLE_SYNC_UPDATE_SITE"                           = "true"
+    "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG"           = "1"    
   }
-  tags                                                         = local.tags
+  tags                                                          = local.tags
 }
 
 module "app_insights" {

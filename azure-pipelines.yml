@@ -1,17 +1,12 @@
-name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yy)$(DayOfYear).$(BuildCounter)
+name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd).$(BuildCounter)
+ 
 
 parameters:
   - name: ContinueEvenIfResourcesAreGettingDestroyed
     displayName: "Continue even if resources are getting destroyed"
     type: boolean
     default: false
-  
 
-  - name: disableStryker
-    displayName: "Disable Stryker"
-    type: boolean
-    default: false
- 
   - name: DisableDependencyCheck
     displayName: "Disable OWASP dependency checking"
     type: boolean
@@ -88,19 +83,21 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
+          Environment: "Dev"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade-Dev-A.011.15.12"
           Container: ${{variables.Container}} 
           RunTests: false
-          Environment: "Dev"
 
   - stage: vNextIatdeploy
     dependsOn:
     - Devdeploy
     displayName: "vNextIat Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/develop'),startsWith(variables['Build.SourceBranch'], 'refs/heads/dev/'),startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')))
     variables:
-      - group : "Shop-Facade-vNextIAT"
-      - group : "Shop-Facade-vNextIAT-TF"
+    variables:
+      - group: "Shop-Facade-vNextIAT"
+      - group: "Shop-Facade-vNextIAT-TF"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -114,9 +111,11 @@ stages:
     dependsOn:
     - vNextIatdeploy
     displayName: "vNextE2E Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/develop'),startsWith(variables['Build.SourceBranch'], 'refs/heads/dev/'),startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')))
     variables:
-      - group : "Shop-Facade-vNextE2E"
-      - group : "Shop-Facade-vNextE2E-TF"
+    variables:
+      - group: "Shop-Facade-vNextE2E"
+      - group: "Shop-Facade-vNextE2E-TF"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -130,9 +129,11 @@ stages:
     dependsOn:
     - Devdeploy
     displayName: "IAT Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
-      - group : "Shop-Facade-IAT"
-      - group : "Shop-Facade-IAT-TF"
+    variables:
+      - group: "Shop-Facade-IAT"
+      - group: "Shop-Facade-IAT-TF"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -146,9 +147,11 @@ stages:
     dependsOn:
     - IATdeploy
     displayName: "PreProd Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
-      - group : "Shop-Facade-PreProd"
-      - group : "Shop-Facade-PreProd-TF"
+    variables:
+      - group: "Shop-Facade-PreProd"
+      - group: "Shop-Facade-PreProd-TF"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -162,9 +165,11 @@ stages:
     dependsOn:
     - PreProddeploy
     displayName: "Live Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
-      - group : "Shop-Facade-Live"
-      - group : "Shop-Facade-Live-TF"
+    variables:
+      - group: "Shop-Facade-Live"
+      - group: "Shop-Facade-Live-TF"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:

@@ -47,8 +47,6 @@ jobs:
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
     - name  : "KeyVaultSettings.ServiceUri" 
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
-    - name  : "ShopFacadeConfiguration.BaseUrl"
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ShopFacadeBaseUrl'] ]
   strategy:
     runOnce:
       deploy:

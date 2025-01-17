@@ -3,15 +3,15 @@ parameters:
     type: string
 
 steps:
-  - task: FileTransform@1
-    displayName: "File Transform: WebAppSettings"
+  - task: FileTransform@2
+    displayName: "File Transform: API Service Application Settings"
     inputs:
       folderPath: '$(Pipeline.Workspace)/UKHOShopFacadeServiceAPI/*.zip'
-      fileType: 'json'
-      targetFiles: '**/appsettings.json'
+      xmlTransformationRules:
+      jsonTargetFiles: '**/appsettings.json'
 
   - task: AzureWebApp@1
-    displayName: "Deploy to Linux Web App"
+    displayName: "Deploy to ShopFacade API Service"
     inputs:
       azureSubscription: "${{ parameters.AzureSubscription }}" 
       appType: 'webAppLinux'
