@@ -16,4 +16,4 @@ steps:
       azureSubscription: "${{ parameters.AzureSubscription }}" 
       appType: 'webAppLinux'
       appName: "$(WEB_APP_NAME)"  
-      package: "$(Pipeline.Workspace)/UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip"
+      package: "$(Pipeline.Workspace)/UKHOShopFacadeServiceAPI/UKHOShopFacadeServiceAPI.zip"
