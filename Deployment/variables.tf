@@ -11,11 +11,11 @@ variable "resource_group_name" {
 variable "sku_name" {
   type = map(any)
   default = {
-            "dev"     =  "Premium v2"            
-            "vni"     =  "Premium v2"
-            "iat"     =  "Premium v2"
-            "prp"     =  "Premium v2"     
-            "e2e"     =  "Premium v2"
-            live      =  "Premium v2"
+            "dev"     =  "P1v2"            
+            "vni"     =  "P1v2"
+            "iat"     =  "P1v2"
+            "prp"     =  "P1v2"     
+            "e2e"     =  "P1v2"
+            live      =  "P1v2"
             }
 }
