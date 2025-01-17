@@ -17,10 +17,19 @@ steps:
    - task: AzureCLI@2
      displayName: 'Azure CLI login'
      inputs:
-     azureSubscription: '$${{ parameters.AzureSubscription}}'
-     scriptType: 'ps'
-     scriptLocation: 'inlineScript'
-     inlineScript: 'az login --service-principal -u $(ARM_CLIENT_ID) -p $(ARM_CLIENT_SECRET) --tenant $(ARM_TENANT_ID)'
+       azureSubscription: '$${{ parameters.AzureSubscription}}'
+       scriptType: 'ps'
+       scriptLocation: 'inlineScript'
+       inlineScript: 'az login --service-principal -u $(ARM_CLIENT_ID) -p $(ARM_CLIENT_SECRET) --tenant $(ARM_TENANT_ID)'
+                     
+
+     env:
+      ARM_CLIENT_ID: $(TERRAFORM-CLIENT-ID)
+      ARM_CLIENT_SECRET: $(TERRAFORM-CLIENT-SECRET)
+      ARM_TENANT_ID: $(TERRAFORM-TENANT-ID)
+      ARM_SUBSCRIPTION_ID: $(TERRAFORM-SUBSCRIPTION-ID)
+      ARM_ACCESS_KEY: $(TERRAFORM-ACCESS-KEY)
+      TF_VAR_ARM_OBJECT_ID: $(TERRAFORM-CLIENT-OBJECT-ID)
 
   # - task: PowerShell@2
   #   displayName: "Terraform deployment"
@@ -33,10 +42,3 @@ steps:
   #                az login --service-principal -u $env:ARM_CLIENT_ID -p $env:ARM_CLIENT_SECRET --tenant $env:ARM_TENANT_ID
   #                az account set --subscription $env:ARM_SUBSCRIPTION_ID
 
-      env:
-      ARM_CLIENT_ID: $(TERRAFORM-CLIENT-ID)
-      ARM_CLIENT_SECRET: $(TERRAFORM-CLIENT-SECRET)
-      ARM_TENANT_ID: $(TERRAFORM-TENANT-ID)
-      ARM_SUBSCRIPTION_ID: $(TERRAFORM-SUBSCRIPTION-ID)
-      ARM_ACCESS_KEY: $(TERRAFORM-ACCESS-KEY)
-      TF_VAR_ARM_OBJECT_ID: $(TERRAFORM-CLIENT-OBJECT-ID)
