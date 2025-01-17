@@ -56,7 +56,7 @@ variables:
   - name: WindowPool
     value: "NautilusBuild"
   - name: CoverageThresholdLimit
-    value: "50"
+    value: "80"
   - name: SdkVersion
     value: "8.x"
 
@@ -88,7 +88,7 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          Environment: "ShopFacade-Dev"
+          environment: "ShopFacade-Dev"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade-Dev-A.011.15.12"
           Container: ${{variables.Container}} 
