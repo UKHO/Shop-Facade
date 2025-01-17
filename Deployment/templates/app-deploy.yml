@@ -1,5 +1,5 @@
 parameters:
-- name: environment
+- name: env_name
   type: string
 - name: AzureSubscription
   type: string
@@ -18,7 +18,7 @@ parameters:
 jobs:
 - deployment: DevDeploy_Terraform
   displayName: "$(Environment) - Deploy Terraform"
-  environment: ${{parameters.environment}}
+  environment: ${{parameters.env_name}}
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   workspace:
@@ -34,7 +34,7 @@ jobs:
                           
 - deployment: DeployApp
   displayName: "$(Environment) - Deploy Dotnet App"
-  environment: ${{parameters.environment}}
+  environment: ${{parameters.env_name}}
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   workspace:

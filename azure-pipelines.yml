@@ -88,7 +88,7 @@ stages:
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          environment: "ShopFacade-Dev"
+          env_name: "ShopFacade-Dev"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade-Dev-A.011.15.12"
           Container: ${{variables.Container}} 
