@@ -16,7 +16,7 @@ parameters:
   default: false
 
 jobs:
-- deployment: DevDeploy_Terraform
+- deployment: DevDeployTerraform
   displayName: "$(Environment) - Deploy Terraform"
   environment: ${{parameters.env_name}}
   pool: $(DeploymentPool)
@@ -33,6 +33,7 @@ jobs:
                     AzureSubscription: ${{parameters.AzureSubscription}}
                           
 - deployment: DeployApp
+  dependsOn: DevDeployTerraform
   displayName: "$(Environment) - Deploy Dotnet App"
   environment: ${{parameters.env_name}}
   pool: $(DeploymentPool)
