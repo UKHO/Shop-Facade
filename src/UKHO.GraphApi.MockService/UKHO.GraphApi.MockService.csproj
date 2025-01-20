@@ -20,8 +20,5 @@
   <ItemGroup>
     <PackageReference Include="WireMock.Net" Version="1.6.7" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\UKHO.ShopFacade.API\UKHO.ShopFacade.API.csproj" />
-  </ItemGroup>
 
 </Project>

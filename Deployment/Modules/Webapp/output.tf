@@ -9,3 +9,7 @@ output "web_app_object_id" {
 output "web_app_tenant_id" {
   value = azurerm_linux_web_app.webapp_service.identity.0.tenant_id
 }
+
+output "mock_web_app_object_id" {
+  value = var.env_name == "dev" ? azurerm_linux_web_app.mock_webapp_service.0.identity.0.principal_id : null
+}
