@@ -23,6 +23,9 @@ jobs:
   container: ${{parameters.Container}}
   workspace:
     clean: all
+  variables:
+    - group: "Shop-Facade-${{parameters.Environment}}"
+    - group: "Shop-Facade-${{parameters.Environment}}-TF"
   strategy:
           runOnce:
             deploy:

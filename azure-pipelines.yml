@@ -77,9 +77,6 @@ stages:
     dependsOn:
     - BuildTestPublish
     displayName: "Dev deploy (inc terraform, webapp deploy)"
-    variables:
-      - group: "Shop-Facade-Dev"
-      - group: "Shop-Facade-Dev-TF"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -94,9 +91,6 @@ stages:
     - Devdeploy
     displayName: "vNextIat Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/develop'),startsWith(variables['Build.SourceBranch'], 'refs/heads/dev/'),startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')))
-    variables:
-      - group: "Shop-Facade-vNextIAT"
-      - group: "Shop-Facade-vNextIAT-TF"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -111,9 +105,6 @@ stages:
     - vNextIatdeploy
     displayName: "vNextE2E Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/develop'),startsWith(variables['Build.SourceBranch'], 'refs/heads/dev/'),startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')))
-    variables:
-      - group: "Shop-Facade-vNextE2E"
-      - group: "Shop-Facade-vNextE2E-TF"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
