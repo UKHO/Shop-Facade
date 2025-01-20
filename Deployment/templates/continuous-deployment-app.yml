@@ -34,4 +34,4 @@ steps:
       azureSubscription: "${{ parameters.AzureSubscription }}" 
       appType: 'webAppLinux'
       appName: "$(MOCK_WEB_APP_NAME)"  
-      package: "$(Pipeline.Workspace)/UKHOGraphMockServiceAPI/UKHOGraphApiMockService.zip"s
+      package: "$(Pipeline.Workspace)/UKHOGraphMockServiceAPI/UKHOGraphApiMockService.zip"
