@@ -53,3 +53,9 @@ module "key_vault" {
   }
   tags                                                          = local.tags
 }
+
+data "azurerm_subnet" "main_subnet" {
+  name                 = var.spoke_subnet_name
+  virtual_network_name = var.spoke_vnet_name
+  resource_group_name  = var.spoke_rg
+}

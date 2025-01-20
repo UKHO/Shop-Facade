@@ -19,3 +19,7 @@ variable "sku_name" {
             "live"         =  "P1v2"
             }
 }
+
+variable "spoke_subnet_name" {
+  type = string
+}
