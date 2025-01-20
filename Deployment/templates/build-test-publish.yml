@@ -156,13 +156,14 @@ jobs:
         replaceExistingArchive: true
 
     - task: PublishBuildArtifacts@1
+      displayName: "Publish WebAPI Artifact"
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
+        ArtifactName: UKHOShopFacadeServiceAPI
+
+    - task: PublishBuildArtifacts@1
       displayName: "Publish terraform Artifacts"
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\Deployment'
         ArtifactName: terraformartifact   
 
-    - task: PublishBuildArtifacts@1
-      displayName: "Publish WebAPI Artifact"
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
-        ArtifactName: UKHOShopFacadeServiceAPI
