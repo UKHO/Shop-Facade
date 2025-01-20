@@ -51,7 +51,7 @@ variables:
   - name: WindowPool
     value: "NautilusBuild"
   - name: CoverageThresholdLimit
-    value: "75"
+    value: "80"
   - name: SdkVersion
     value: "8.x"
 
