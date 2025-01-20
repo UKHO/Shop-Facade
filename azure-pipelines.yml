@@ -73,24 +73,12 @@ stages:
         DisableDependencyCheck: ${{ parameters.DisableDependencyCheck }}
         Container: ${{ variables.Container }}
 
-  - stage: Devdeploy
-    dependsOn:
-    - BuildTestPublish
-    displayName: "Dev deploy (inc terraform, webapp deploy)"
-    jobs:
-      - template: Deployment/templates/app-deploy.yml
-        parameters:
-          Environment: "Dev"
-          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: "ShopFacade-Dev-A.011.15.12"
-          Container: ${{variables.Container}} 
-          RunTests: false
 
   - stage: vNextIatdeploy
     dependsOn:
     - Devdeploy
     displayName: "vNextIat Deploy (inc terraform, webapp deploy)"
-    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/develop'),startsWith(variables['Build.SourceBranch'], 'refs/heads/dev/'),startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')))
+    #condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/develop'),startsWith(variables['Build.SourceBranch'], 'refs/heads/dev/'),startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')))
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
