@@ -3,7 +3,9 @@ parameters:
 - name: DisableDependencyCheck
   type: boolean
   default: false
-
+# The Terraform Azure PowerShell container.
+- name: Container
+  type: string
 jobs:
 - job: Dependencychecker
   condition: eq('${{ parameters.DisableDependencyCheck }}', false)
@@ -152,6 +154,12 @@ jobs:
         archiveType: "zip"
         archiveFile: '$(Build.ArtifactStagingDirectory)/UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
         replaceExistingArchive: true
+
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish terraform Artifacts"
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)\Deployment'
+        ArtifactName: terraformartifact   
 
     - task: PublishBuildArtifacts@1
       displayName: "Publish WebAPI Artifact"

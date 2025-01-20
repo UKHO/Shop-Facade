@@ -4,21 +4,21 @@ parameters:
     default: false
   - name: AzureSubscription
     type: string
-
-steps:
-  - task: FileTransform@2
-    displayName: "File Transform: Shop Facade Config" #Replace exchange set instance value from pipeline 
-    inputs:
-      folderPath: '$(Pipeline.Workspace)/terraformartifact/src'
-      enableXmlTransform: false
-      xmlTransformationRules: ''
-      jsonTargetFiles: '**/appsettings.json'
-
-  - task: PowerShell@2
-    displayName: "terraform devdeploy"
-    inputs:
-      targetType: filePath
-      filePath: '$(Pipeline.Workspace)/terraformartifact/terraform_conditional_run.ps1'
-      arguments: '-deploymentResourceGroupName $(DeploymentResourceGroupName) -deploymentStorageAccountName $(DeploymentStorageAccountName) -workSpace $(Environment) -continueEvenIfResourcesAreGettingDestroyed $${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }} -terraformJsonOutputFile $(Pipeline.Workspace)/terraformartifact/terraform_output.json -elasticApmServerUrl $(ElasticAPM.ServerURL) -elasticApmApiKey $(ElasticAPM.ApiKey)'
-    # env:
-
+  - name: Environment
+    type: string
+  
+steps:  
+   - task: PowerShell@2
+     displayName: "${{parameters.Environment}} Terraform deployment"
+     name: TerraformDeploy
+     inputs:
+       targetType: filePath
+       filePath: '$(Pipeline.Workspace)/terraformartifact/terraform_conditional_run.ps1'
+       arguments: '-deploymentResourceGroupName $(DeploymentResourceGroupName) -deploymentStorageAccountName $(DeploymentStorageAccountName) -workSpace ${{parameters.Environment}} -continueEvenIfResourcesAreGettingDestroyed $${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }} -terraformJsonOutputFile $(Pipeline.Workspace)/terraformartifact/terraform_output.json'
+     env:
+       ARM_CLIENT_ID: $(TERRAFORM-CLIENT-ID)
+       ARM_CLIENT_SECRET: $(TERRAFORM-CLIENT-SECRET)
+       ARM_TENANT_ID: $(TERRAFORM-TENANT-ID)
+       ARM_SUBSCRIPTION_ID: $(TERRAFORM-SUBSCRIPTION-ID)
+       ARM_ACCESS_KEY: $(TERRAFORM-ACCESS-KEY)
+       TF_VAR_ARM_OBJECT_ID: $(TERRAFORM-CLIENT-OBJECT-ID)
