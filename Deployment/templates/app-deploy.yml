@@ -16,37 +16,42 @@ parameters:
   default: false
 
 jobs:
-- deployment: DeployApp
-  timeoutInMinutes: 75
-  displayName: "${{parameters.Environment}} - deploy terraform and dotnet App"
+- deployment: DevDeployTerraform
+  displayName: "${{parameters.Environment}} - Deploy Terraform"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   workspace:
     clean: all
-  # variables:
+  strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: continuous-deployment.yml
+                  parameters:
+                    ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+                    AzureSubscription: ${{parameters.AzureSubscription}}
+
+                          
+- deployment: DeployApp
+  dependsOn: DevDeployTerraform
+  displayName: "${{parameters.Environment}} - Deploy Dotnet App"
+  environment: "ShopFacade-${{parameters.Environment}}"
+  pool: $(DeploymentPool)
+  container: ${{parameters.Container}}
+  workspace:
+   clean: all
+  variables:
+    - name  : WEB_APP_NAME
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
+    - name  : "KeyVaultSettings.ServiceUri" 
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
   strategy:
     runOnce:
       deploy:
         steps:
           - checkout: self
             submodules: recursive
-
-          - template: continuous-deployment.yml
+          - template: continuous-deployment-app.yml
             parameters:
-              ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
               AzureSubscription: ${{parameters.AzureSubscription}}
-
-- deployment: FunctionalTests
-  dependsOn: DeployApp
-  displayName: "Run Functional Tests"
-  environment: "ShopFacade-${{parameters.Environment}}"
-  pool: $(DeploymentPool)
-  container: ${{parameters.Container}}
-  condition: ${{parameters.RunTests}}
-  # variables:
-  # strategy:
-  #   runOnce:
-  #     deploy:
-        # steps:
-        

@@ -1,0 +1,19 @@
+parameters:
+  - name: AzureSubscription
+    type: string
+
+steps:
+  - task: FileTransform@2
+    displayName: "File Transform: API Service Application Settings"
+    inputs:
+      folderPath: '$(Pipeline.Workspace)/UKHOShopFacadeServiceAPI/*.zip'
+      xmlTransformationRules:
+      jsonTargetFiles: '**/appsettings.json'
+
+  - task: AzureWebApp@1
+    displayName: "Deploy to ShopFacade API Service"
+    inputs:
+      azureSubscription: "${{ parameters.AzureSubscription }}" 
+      appType: 'webAppLinux'
+      appName: "$(WEB_APP_NAME)"  
+      package: "$(Pipeline.Workspace)/UKHOShopFacadeServiceAPI/UKHOShopFacadeServiceAPI.zip"
