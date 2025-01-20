@@ -121,7 +121,6 @@ stages:
             reportPattern: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.Common.UnitTests/**/mutation-report.html'
             reportDisplayName: 'Common UnitTests'
 
-stages:
   - stage: BuildTestPublish
     displayName: "Build, test and publish"
     dependsOn: []
