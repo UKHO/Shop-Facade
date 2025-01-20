@@ -16,6 +16,7 @@ using UKHO.ShopFacade.Common.ClientProvider;
 using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.DataProvider;
+using UKHO.ShopFacade.Common.HealthCheck;
 
 namespace UKHO.ShopFacade.API
 {
@@ -40,7 +41,7 @@ namespace UKHO.ShopFacade.API
             app.UseExceptionHandlingMiddleware();
 
             ConfigureLogging(app);
-
+            app.MapHealthChecks("/health");
             app.MapControllers();
 
             app.Run();
@@ -96,7 +97,7 @@ namespace UKHO.ShopFacade.API
             builder.Services.AddScoped<IUpnDataProvider, UpnDataProvider>();
             builder.Services.AddScoped<IGraphClient, GraphClient>();
             builder.Services.AddScoped<IAuthenticationProvider, ManagedIdentityGraphAuthProvider>();
-
+            builder.Services.AddHealthChecks().AddCheck<GraphApiHealthCheck>("GraphApiHealthCheck");
         }
 
         private static void ConfigureLogging(WebApplication webApplication)

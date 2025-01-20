@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.13.1" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
     <PackageReference Include="Microsoft.Graph" Version="5.68.0" />
     <PackageReference Include="UKHO.Logging.EventHubLogProvider" Version="1.24163.8" />
