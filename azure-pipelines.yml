@@ -1,11 +1,12 @@
-name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yy)$(DayOfYear).$(BuildCounter)
+name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd).$(BuildCounter)
+ 
 
 parameters:
   - name: ContinueEvenIfResourcesAreGettingDestroyed
     displayName: "Continue even if resources are getting destroyed"
     type: boolean
     default: false
- 
+
   - name: DisableDependencyCheck
     displayName: "Disable OWASP dependency checking"
     type: boolean
@@ -44,15 +45,15 @@ variables:
   - name: UKHOAssemblyCopyright
     value: "Copyright © UK Hydrographic Office"
   - name: Container
-    value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.9.6"
+    value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.10.4"
   - name: DeploymentPool
     value: "Mare Nectaris"
   - name: WindowPool
     value: "NautilusBuild"
   - name: CoverageThresholdLimit
-    value: "80"
+    value: "60"
   - name: SdkVersion
-    value: "8.0.x"
+    value: "8.x"
 
 resources:
   repositories:
@@ -106,20 +107,6 @@ stages:
             reportPattern: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.API.UnitTests/**/mutation-report.html'
             reportDisplayName: 'API UnitTests'
 
-        - task: Powershell@2
-          displayName: "Run Stryker for Common UnitTests"
-          inputs:
-            workingDirectory: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.Common.UnitTests'
-            targetType: 'inline'
-            pwsh: true
-            script: $(Agent.BuildDirectory)/tools/dotnet-stryker
-
-        - task: PublishMutationReport@0
-          displayName: 'Publish Strkyer Mutator Report'
-          inputs:
-            reportPattern: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.Common.UnitTests/**/mutation-report.html'
-            reportDisplayName: 'Common UnitTests'
-
   - stage: BuildTestPublish
     displayName: "Build, test and publish"
     dependsOn: []
@@ -127,3 +114,105 @@ stages:
     - template: Deployment/templates/build-test-publish.yml  
       parameters:
         DisableDependencyCheck: ${{ parameters.DisableDependencyCheck }}
+        Container: ${{ variables.Container }}
+
+  - stage: Devdeploy
+    dependsOn:
+    - BuildTestPublish
+    displayName: "Dev deploy (inc terraform, webapp deploy)"
+    variables:
+      - group: "Shop-Facade-Dev"
+      - group: "Shop-Facade-Dev-TF"
+    jobs:
+      - template: Deployment/templates/app-deploy.yml
+        parameters:
+          Environment: "Dev"
+          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+          AzureSubscription: "ShopFacade-Dev-A.011.15.12"
+          Container: ${{variables.Container}} 
+          RunTests: false
+
+  - stage: vNextIatdeploy
+    dependsOn:
+    - Devdeploy
+    displayName: "vNextIat Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/develop'),startsWith(variables['Build.SourceBranch'], 'refs/heads/dev/'),startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')))
+    variables:
+      - group: "Shop-Facade-vNextIAT"
+      - group: "Shop-Facade-vNextIAT-TF"
+    jobs:
+      - template: Deployment/templates/app-deploy.yml
+        parameters:
+          Environment: "vNextIAT"
+          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+          AzureSubscription: "ShopFacade vNext-IAT - A.011.15.12 (13917923-6e3a-47de-98b6-ea628e469374)"
+          Container: ${{variables.Container}} 
+          RunTests: false
+
+  - stage: vNextE2Edeploy
+    dependsOn:
+    - vNextIatdeploy
+    displayName: "vNextE2E Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/develop'),startsWith(variables['Build.SourceBranch'], 'refs/heads/dev/'),startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')))
+    variables:
+      - group: "Shop-Facade-vNextE2E"
+      - group: "Shop-Facade-vNextE2E-TF"
+    jobs:
+      - template: Deployment/templates/app-deploy.yml
+        parameters:
+          Environment: "vNextE2E"
+          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+          AzureSubscription: "ShopFacade vNext-E2E - A.011.15.12 (5c4498ee-67cb-4316-a4b4-f4b8fb8beda9)"
+          Container: ${{variables.Container}} 
+          RunTests: false
+
+  - stage: IATdeploy
+    dependsOn:
+    - Devdeploy
+    displayName: "IAT Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    variables:
+      - group: "Shop-Facade-IAT"
+      - group: "Shop-Facade-IAT-TF"
+    jobs:
+      - template: Deployment/templates/app-deploy.yml
+        parameters:
+          Environment: "IAT"
+          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+          AzureSubscription: "ShopFacade IAT - A.011.15.12 (7f278003-0adf-41b2-afed-c67b698f17f7)"
+          Container: ${{variables.Container}} 
+          RunTests: false
+
+  - stage: PreProddeploy
+    dependsOn:
+    - IATdeploy
+    displayName: "PreProd Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    variables:
+      - group: "Shop-Facade-PreProd"
+      - group: "Shop-Facade-PreProd-TF"
+    jobs:
+      - template: Deployment/templates/app-deploy.yml
+        parameters:
+          Environment: "PreProd"
+          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+          AzureSubscription: "ShopFacade PreProd - A.011.15.12 (63614f72-e0ce-4a9b-a3b0-c5d38fc6daf6)"
+          Container: ${{variables.Container}} 
+          RunTests: false
+
+  - stage: Livedeploy
+    dependsOn:
+    - PreProddeploy
+    displayName: "Live Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    variables:
+      - group: "Shop-Facade-Live"
+      - group: "Shop-Facade-Live-TF"
+    jobs:
+      - template: Deployment/templates/app-deploy.yml
+        parameters:
+          Environment: "Live"
+          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+          AzureSubscription: "ShopFacade Live - A.011.15.12 (cdd11fe0-f5ac-4f8f-b960-f0bdce684595)"
+          Container: ${{variables.Container}} 
+          RunTests: false

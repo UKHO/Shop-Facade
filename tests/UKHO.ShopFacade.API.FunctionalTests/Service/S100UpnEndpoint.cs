@@ -16,13 +16,13 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Service
             var serviceProvider = GetServiceProvider();
             _shoFacadeConfiguration = serviceProvider!.GetRequiredService<IOptions<ShopFacadeConfiguration>>().Value;
 
-            _options = new RestClientOptions(_shoFacadeConfiguration.BaseUrl);
+            _options = new RestClientOptions(_shoFacadeConfiguration.BaseUrl!);
             _client = new RestClient(_options);
         }
 
         public async Task<RestResponse> GetUpnResponseAsync(string token, string licenseId)
         {
-            var endPoint = _shoFacadeConfiguration.EndpointUrl.Replace("licenseId", licenseId);
+            var endPoint = _shoFacadeConfiguration.EndpointUrl!.Replace("licenseId", licenseId);
             var request = new RestRequest(endPoint);
 
             request.AddHeader("Authorization", "Bearer " + token);
