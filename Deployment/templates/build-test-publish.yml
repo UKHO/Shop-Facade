@@ -229,3 +229,45 @@ jobs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.GraphApi.MockService/UKHOGraphApiMockService.zip'
         ArtifactName: UKHOGraphMockServiceAPI
 
+- job: PublishFunctionalTests
+  workspace:
+    clean: all
+  displayName: "Publish FunctionalTests Artifact"
+  steps:
+   - task: UseDotNet@2
+     displayName: 'Use .NET 8.0.x sdk'
+     inputs:
+      packageType: sdk
+      useGlobalJson: true
+      workingDirectory: '$(Build.SourcesDirectory)\src'
+
+   - task: DotNetCoreCLI@2
+     displayName: ".Net Core - NuGet restore for non test projects only"
+     inputs:
+     command: "restore"
+     projects: |
+        **/*.csproj
+        !**/UKHO.GraphApi.MockService.csproj
+     feedsToUse: config
+     noCache: true
+     nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
+     workingDirectory: '$(Build.SourcesDirectory)\src'
+     packagesDirectory: '$(Build.SourcesDirectory)\src\packages'
+
+   - task: DotNetCoreCLI@2
+     displayName: "Publish Functional Test Code "
+     inputs:
+      command: "publish"
+      publishWebProjects: false
+      projects: '$(Build.SourcesDirectory)\tests\UKHO.ShopFacade.API.FunctionalTests\UKHO.ShopFacade.API.FunctionalTests.csproj'
+      arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API.FunctionalTests'
+      workingDirectory: '$(Build.SourcesDirectory)\tests\UKHO.ShopFacade.API.FunctionalTests'
+      zipAfterPublish: false
+      modifyOutputPath: true
+
+   - task: PublishBuildArtifacts@1
+     displayName: "Publish Functional test Artifact"
+     inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API.FunctionalTests'
+      ArtifactName: functionaltests
+
