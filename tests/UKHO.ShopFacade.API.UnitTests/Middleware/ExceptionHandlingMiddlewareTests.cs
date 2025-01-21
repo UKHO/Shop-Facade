@@ -2,7 +2,6 @@
 using System.Text;
 using System.Text.Json;
 using FakeItEasy;
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -49,9 +48,9 @@ namespace UKHO.ShopFacade.API.UnitTests.Middleware
                 PropertyNameCaseInsensitive = true
             });
 
-            problemDetails!.Extensions["correlationId"]!.ToString().Should().Be("fakeCorrelationId");
-            _fakeHttpContext.Response.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
-            _fakeHttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
+            Assert.That(problemDetails!.Extensions["correlationId"]!.ToString(), Is.EqualTo("fakeCorrelationId"));
+            Assert.That(_fakeHttpContext.Response.StatusCode, Is.EqualTo((int)HttpStatusCode.InternalServerError));
+            Assert.That(_fakeHttpContext.Response.ContentType, Is.EqualTo("application/json; charset=utf-8"));
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
             && call.GetArgument<LogLevel>(0) == LogLevel.Error
@@ -76,9 +75,9 @@ namespace UKHO.ShopFacade.API.UnitTests.Middleware
                 PropertyNameCaseInsensitive = true
             });
 
-            problemDetails!.Extensions["correlationId"]!.ToString().Should().Be("fakeCorrelationId");
-            _fakeHttpContext.Response.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
-            _fakeHttpContext.Response.ContentType.Should().Be("application/json; charset=utf-8");
+            Assert.That(problemDetails!.Extensions["correlationId"]!.ToString(), Is.EqualTo("fakeCorrelationId"));
+            Assert.That(_fakeHttpContext.Response.StatusCode, Is.EqualTo((int)HttpStatusCode.InternalServerError));
+            Assert.That(_fakeHttpContext.Response.ContentType, Is.EqualTo("application/json; charset=utf-8"));
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
             && call.GetArgument<LogLevel>(0) == LogLevel.Error
