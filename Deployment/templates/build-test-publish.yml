@@ -3,23 +3,22 @@ parameters:
 - name: DisableDependencyCheck
   type: boolean
   default: false
-
-- name: DotNetVersion
+# The Terraform Azure PowerShell container.
+- name: Container
   type: string
-  default: '6.0.x'
-
 jobs:
 - job: Dependencychecker
   condition: eq('${{ parameters.DisableDependencyCheck }}', false)
   workspace:
     clean: all
-  displayName: "Dependencychecker"
+  displayName: "Dependency Checker"
   steps:          
     - task: UseDotNet@2
-      displayName: 'Use .NET SDK'
+      displayName: 'Use .NET 8.0.x sdk'
       inputs:
         packageType: sdk
-        version: $(SdkVersion)
+        useGlobalJson: true
+        workingDirectory: '$(Build.SourcesDirectory)'
 
     - task: DotNetCoreCLI@2
       displayName: ".Net Core - NuGet restore non test projects only"
@@ -36,28 +35,135 @@ jobs:
 
     - template: dependency-checker/windows-dependency-checker.yaml@UKHOTemplates
       parameters:
-        scanName:
-        scanPath:
+        scanName: Shop-Facade
+        scanPath: '$(Build.SourcesDirectory)\src'
         suppressionPath: '$(Build.SourcesDirectory)\NVDSuppressions.xml'
 
 - job: UnitTestsAndCodeCoverage
   workspace:
     clean: all
   displayName: "Dotnet Test and Publish Code Coverage"
+  steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET 8.0.x sdk'
+      inputs:
+        packagetype: sdk
+        useglobaljson: true
+        workingdirectory: '$(build.sourcesdirectory)\src'
+
+    - task: DotNetCoreCLI@2
+      displayName: ".Net Core - NuGet restore test projects only"
+      inputs:
+        command: "restore"
+        projects: "**/*Tests.csproj"
+        feedsToUse: config
+        noCache: true
+        nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
+        workingDirectory: '$(Build.SourcesDirectory)'
+        packagesDirectory: '$(Build.SourcesDirectory)\packagesForTests'
+
+    - task: DotNetCoreCLI@2
+      displayName: "Dotnet test - ShopFacade API Unit Tests"
+      inputs:
+        command: "test"
+        projects: |
+          **/*.UnitTests.csproj
+        arguments: '--configuration $(BuildConfiguration) --settings "$(Build.SourcesDirectory)\test.runsettings" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+        publishTestResults: true
+        testRunTitle: "UnitTests"
+
+    - task: publishcodecoverageresults@2
+      displayName: "publish code coverage report for build quality checks"
+      inputs:
+        summaryfilelocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'              
+        failIfCoverageEmpty: true
+
+    - task: PowerShell@2
+      displayName: "Generate code coverage report"
+      inputs:
+        targetType: filePath
+        filePath: '$(Build.SourcesDirectory)\CodeCoverageReport.ps1'
+        arguments: '-source "$(Build.SourcesDirectory)" -reportFolder "$(Build.ArtifactStagingDirectory)"'
+
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish Code coverage"
+      inputs:
+        PathtoPublish: "$(Build.ArtifactStagingDirectory)/codecoveragereport"
+        ArtifactName: codecoveragereport
+
+    - task: BuildQualityChecks@9
+      displayName: "Code coverage fails if threshold not meet"            
+      inputs:
+        checkCoverage: true
+        coverageFailOption: 'fixed'
+        coverageType: 'lines'
+        coverageThreshold: '$(CoverageThresholdLimit)'
  
 - job: BuildAndPublishAPI
   workspace:
     clean: all
   displayName: "Dotnet Build publish API"
-  
-  
-- job: PublishFunctionalTestsAndTerraform
-  workspace:
-    clean: all
-  displayName: "Publish Functional Tests And Terraform"
-   
-- job: BuildAndPublishMockAPIAndTerraform
-  workspace:
-    clean: all
-  displayName: "Build and Publish Mock API And Terraform"
- 
+  steps:
+    - task: PowerShell@2
+      displayName: "Set assembly version numbers based on build ID"
+      inputs:
+        targetType: filePath
+        filePath: '$(Build.SourcesDirectory)\Apply-AssemblyVersionAndDefaults.ps1'
+        arguments: '-buildNumber "$(Build.BuildNumber)" -solutionDirectory "$(Build.SourcesDirectory)\src\UKHO.ShopFacade.API\" -UKHOAssemblyCompany "$env:UKHOAssemblyCompany" -UKHOAssemblyCopyright "$(UKHOAssemblyCopyright)" -UKHOAssemblyVersionPrefix "$env:UKHOAssemblyVersionPrefix" -UKHOAssemblyProduct "$env:UKHOAssemblyProduct"'
+
+    - task: UseDotNet@2
+      displayName: 'Use .NET 8.0.x sdk'
+      inputs:
+        packageType: sdk
+        useGlobalJson: true
+        workingDirectory: '$(Build.SourcesDirectory)\src'
+              
+    - task: DotNetCoreCLI@2
+      displayName: ".Net Core - NuGet restore for non test projects only"
+      inputs:
+        command: "restore"
+        projects: '**/*.csproj'
+        feedsToUse: config
+        noCache: true
+        nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
+        workingDirectory: '$(Build.SourcesDirectory)\src'
+        packagesDirectory: '$(Build.SourcesDirectory)\src\packages'
+
+    - task: DotNetCoreCLI@2
+      displayName: "dotnet build task"
+      inputs:
+        command: "build"
+        projects: '**/*.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+
+    - task: DotNetCoreCLI@2
+      displayName: "Publish Shop Facade Service API "
+      inputs:
+        command: "publish"
+        publishWebProjects: false
+        projects: '**/*UKHO.ShopFacade.API.csproj'
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API'
+        zipAfterPublish: false
+        modifyOutputPath: false
+
+    - task: ArchiveFiles@2
+      displayName: "Zip Shop Facade Service"
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/UKHO.ShopFacade.API/'
+        includeRootFolder: false
+        archiveType: "zip"
+        archiveFile: '$(Build.ArtifactStagingDirectory)/UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
+        replaceExistingArchive: true
+
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish WebAPI Artifact"
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
+        ArtifactName: UKHOShopFacadeServiceAPI
+
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish terraform Artifacts"
+      inputs:
+        PathtoPublish: '$(Build.SourcesDirectory)\Deployment'
+        ArtifactName: terraformartifact   
+
