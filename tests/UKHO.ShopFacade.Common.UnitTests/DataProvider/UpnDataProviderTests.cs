@@ -30,8 +30,8 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
             var nullLogger = Assert.Throws<ArgumentNullException>(() => new UpnDataProvider(null, _fakeGraphClient));
             Assert.That(nullLogger!.ParamName, Is.EqualTo("logger"));
 
-            var nulGraphClient = Assert.Throws<ArgumentNullException>(() => new UpnDataProvider(_fakeLogger, null));
-            Assert.That(nulGraphClient!.ParamName, Is.EqualTo("graphClient"));
+            var nullGraphClient = Assert.Throws<ArgumentNullException>(() => new UpnDataProvider(_fakeLogger, null));
+            Assert.That(nullGraphClient!.ParamName, Is.EqualTo("graphClient"));
         }
 
         [Test]

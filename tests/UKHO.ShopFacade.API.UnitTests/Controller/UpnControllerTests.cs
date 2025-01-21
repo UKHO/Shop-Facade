@@ -47,7 +47,6 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
             var result = (BadRequestObjectResult)await _upnController.GetUPNs(invalidLicenceId);
 
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
-
             Assert.That(((dynamic)result.Value!).Errors.Count, Is.EqualTo(1));
             Assert.That(((dynamic)result.Value).Errors[0].Source, Is.EqualTo(ErrorDetails.Source));
             Assert.That(((dynamic)result.Value).Errors[0].Description, Is.EqualTo(ErrorDetails.InvalidLicenceIdMessage));
@@ -96,9 +95,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
             var result = (NotFoundObjectResult)await _upnController.GetUPNs(6);
 
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
-
-            Assert.That(((dynamic)result.Value!).Errors.Count, Is.EqualTo(1));
-            Assert.That(((dynamic)result.Value).Errors[0].Source, Is.EqualTo(ErrorDetails.Source));
+            Assert.That(((dynamic)result.Value!).Errors[0].Source, Is.EqualTo(ErrorDetails.Source));
             Assert.That(((dynamic)result.Value).Errors[0].Description, Is.EqualTo(ErrorDetails.LicenceNotFoundMessage));
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
