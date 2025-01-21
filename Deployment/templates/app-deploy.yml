@@ -32,6 +32,7 @@ jobs:
                     ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
                     AzureSubscription: ${{parameters.AzureSubscription}}
 
+
                           
 - deployment: DeployApp
   dependsOn: DevDeployTerraform

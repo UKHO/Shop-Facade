@@ -228,3 +228,4 @@ jobs:
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.GraphApi.MockService/UKHOGraphApiMockService.zip'
         ArtifactName: UKHOGraphMockServiceAPI
+
