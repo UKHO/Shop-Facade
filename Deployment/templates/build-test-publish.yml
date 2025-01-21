@@ -229,9 +229,3 @@ jobs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.GraphApi.MockService/UKHOGraphApiMockService.zip'
         ArtifactName: UKHOGraphMockServiceAPI
 
-    - task: PublishBuildArtifacts@1
-      displayName: "Publish terraform Artifacts"
-      inputs:
-        PathtoPublish: '$(Build.SourcesDirectory)\Deployment'
-        ArtifactName: terraformartifact   
-
