@@ -243,6 +243,7 @@ stages:
     variables:
       - group: "Shop-Facade-PreProd"
       - group: "Shop-Facade-PreProd-TF"
+      - group: "Shop-Facade-PreProd-KV"
       - name: "AzureADConfiguration.TenantId"
         value: $(AzureADConfigurationTenantId)
       - name: "AzureADConfiguration.ClientId"
@@ -272,6 +273,7 @@ stages:
     variables:
       - group: "Shop-Facade-Live"
       - group: "Shop-Facade-Live-TF"
+      - group: "Shop-Facade-Live-KV"
       - name: "AzureADConfiguration.TenantId"
         value: $(AzureADConfigurationTenantId)
       - name: "AzureADConfiguration.ClientId"
