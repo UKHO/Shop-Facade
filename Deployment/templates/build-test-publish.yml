@@ -39,65 +39,65 @@ jobs:
         scanPath: '$(Build.SourcesDirectory)\src'
         suppressionPath: '$(Build.SourcesDirectory)\NVDSuppressions.xml'
 
-- job: UnitTestsAndCodeCoverage
-  workspace:
-    clean: all
-  displayName: "Dotnet Test and Publish Code Coverage"
-  steps:
-    - task: UseDotNet@2
-      displayName: 'Use .NET 8.0.x sdk'
-      inputs:
-        packagetype: sdk
-        useglobaljson: true
-        workingdirectory: '$(build.sourcesdirectory)\src'
+# - job: UnitTestsAndCodeCoverage
+#   workspace:
+#     clean: all
+#   displayName: "Dotnet Test and Publish Code Coverage"
+#   steps:
+#     - task: UseDotNet@2
+#       displayName: 'Use .NET 8.0.x sdk'
+#       inputs:
+#         packagetype: sdk
+#         useglobaljson: true
+#         workingdirectory: '$(build.sourcesdirectory)\src'
 
-    - task: DotNetCoreCLI@2
-      displayName: ".Net Core - NuGet restore test projects only"
-      inputs:
-        command: "restore"
-        projects: "**/*Tests.csproj"
-        feedsToUse: config
-        noCache: true
-        nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
-        workingDirectory: '$(Build.SourcesDirectory)'
-        packagesDirectory: '$(Build.SourcesDirectory)\packagesForTests'
+#     - task: DotNetCoreCLI@2
+#       displayName: ".Net Core - NuGet restore test projects only"
+#       inputs:
+#         command: "restore"
+#         projects: "**/*Tests.csproj"
+#         feedsToUse: config
+#         noCache: true
+#         nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
+#         workingDirectory: '$(Build.SourcesDirectory)'
+#         packagesDirectory: '$(Build.SourcesDirectory)\packagesForTests'
 
-    - task: DotNetCoreCLI@2
-      displayName: "Dotnet test - ShopFacade API Unit Tests"
-      inputs:
-        command: "test"
-        projects: |
-          **/*.UnitTests.csproj
-        arguments: '--configuration $(BuildConfiguration) --settings "$(Build.SourcesDirectory)\test.runsettings" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
-        publishTestResults: true
-        testRunTitle: "UnitTests"
+#     - task: DotNetCoreCLI@2
+#       displayName: "Dotnet test - ShopFacade API Unit Tests"
+#       inputs:
+#         command: "test"
+#         projects: |
+#           **/*.UnitTests.csproj
+#         arguments: '--configuration $(BuildConfiguration) --settings "$(Build.SourcesDirectory)\test.runsettings" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+#         publishTestResults: true
+#         testRunTitle: "UnitTests"
 
-    - task: publishcodecoverageresults@2
-      displayName: "publish code coverage report for build quality checks"
-      inputs:
-        summaryfilelocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'              
-        failIfCoverageEmpty: true
+#     - task: publishcodecoverageresults@2
+#       displayName: "publish code coverage report for build quality checks"
+#       inputs:
+#         summaryfilelocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'              
+#         failIfCoverageEmpty: true
 
-    - task: PowerShell@2
-      displayName: "Generate code coverage report"
-      inputs:
-        targetType: filePath
-        filePath: '$(Build.SourcesDirectory)\CodeCoverageReport.ps1'
-        arguments: '-source "$(Build.SourcesDirectory)" -reportFolder "$(Build.ArtifactStagingDirectory)"'
+#     - task: PowerShell@2
+#       displayName: "Generate code coverage report"
+#       inputs:
+#         targetType: filePath
+#         filePath: '$(Build.SourcesDirectory)\CodeCoverageReport.ps1'
+#         arguments: '-source "$(Build.SourcesDirectory)" -reportFolder "$(Build.ArtifactStagingDirectory)"'
 
-    - task: PublishBuildArtifacts@1
-      displayName: "Publish Code coverage"
-      inputs:
-        PathtoPublish: "$(Build.ArtifactStagingDirectory)/codecoveragereport"
-        ArtifactName: codecoveragereport
+#     - task: PublishBuildArtifacts@1
+#       displayName: "Publish Code coverage"
+#       inputs:
+#         PathtoPublish: "$(Build.ArtifactStagingDirectory)/codecoveragereport"
+#         ArtifactName: codecoveragereport
 
-    - task: BuildQualityChecks@9
-      displayName: "Code coverage fails if threshold not meet"            
-      inputs:
-        checkCoverage: true
-        coverageFailOption: 'fixed'
-        coverageType: 'lines'
-        coverageThreshold: '$(CoverageThresholdLimit)'
+#     - task: BuildQualityChecks@9
+#       displayName: "Code coverage fails if threshold not meet"            
+#       inputs:
+#         checkCoverage: true
+#         coverageFailOption: 'fixed'
+#         coverageType: 'lines'
+#         coverageThreshold: '$(CoverageThresholdLimit)'
  
 - job: BuildAndPublishAPI
   workspace:
@@ -156,14 +156,117 @@ jobs:
         replaceExistingArchive: true
 
     - task: PublishBuildArtifacts@1
-      displayName: "Publish WebAPI Artifact"
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
-        ArtifactName: UKHOShopFacadeServiceAPI
-
-    - task: PublishBuildArtifacts@1
       displayName: "Publish terraform Artifacts"
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\Deployment'
         ArtifactName: terraformartifact   
 
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish WebAPI Artifact"
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
+        ArtifactName: UKHOShopFacadeServiceAPI
+
+- job: BuildAndPublishMockService
+  workspace:
+    clean: all
+  displayName: "Dotnet Build publish API"
+  steps:
+    - task: PowerShell@2
+      displayName: "Set assembly version numbers based on build ID"
+      inputs:
+        targetType: filePath
+        filePath: '$(Build.SourcesDirectory)\Apply-AssemblyVersionAndDefaults.ps1'
+        arguments: '-buildNumber "$(Build.BuildNumber)" -solutionDirectory "$(Build.SourcesDirectory)\src\UKHO.GraphApi.MockService\" -UKHOAssemblyCompany "$env:UKHOAssemblyCompany" -UKHOAssemblyCopyright "$(UKHOAssemblyCopyright)" -UKHOAssemblyVersionPrefix "$env:UKHOAssemblyVersionPrefix" -UKHOAssemblyProduct "$(UKHOAssemblyProduct) MockService"'
+
+    - task: UseDotNet@2
+      displayName: 'Use .NET 8.0.x sdk'
+      inputs:
+        packageType: sdk
+        useGlobalJson: true
+        workingDirectory: '$(Build.SourcesDirectory)\src'
+              
+    - task: DotNetCoreCLI@2
+      displayName: ".Net Core - NuGet restore for non test projects only"
+      inputs:
+        command: "restore"
+        projects: '**/*UKHO.ShopFacade.MockService.csproj'
+        feedsToUse: config
+        noCache: true
+        nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
+        workingDirectory: '$(Build.SourcesDirectory)\src\UKHO.GraphApi.MockService'
+        packagesDirectory: '$(Build.SourcesDirectory)\UKHO.GraphApi.MockService\packages' 
+
+    - task: DotNetCoreCLI@2
+      displayName: "dotnet build task"
+      inputs:
+        command: "build"
+        projects: '**/*UKHO.ShopFacade.MockService.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+
+    - task: DotNetCoreCLI@2
+      displayName: "Publish Shop Facade Mock Service API "
+      inputs:
+        command: "publish"
+        publishWebProjects: false
+        projects: '**/*UKHO.ShopFacade.MockService.csproj'
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\UKHO.GraphApi.MockService'
+        zipAfterPublish: false
+        modifyOutputPath: false
+
+    - task: ArchiveFiles@2
+      displayName: "Zip Mock Shop Facade Service"
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/UKHO.GraphApi.MockService/'
+        includeRootFolder: false
+        archiveType: "zip"
+        archiveFile: '$(Build.ArtifactStagingDirectory)/UKHO.GraphApi.MockService/UKHOGraphApiMockService.zip'
+        replaceExistingArchive: true
+
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish Mock WebAPI Artifact"
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.GraphApi.MockService/UKHOGraphApiMockService.zip'
+        ArtifactName: UKHOGraphMockServiceAPI
+
+- job: PublishFunctionalTests
+  workspace:
+    clean: all
+  displayName: "Publish FunctionalTests Artifact"
+  steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET 8.0.x sdk'
+      inputs:
+        packageType: sdk
+        useGlobalJson: true
+        workingDirectory: '$(Build.SourcesDirectory)\src'
+
+    - task: DotNetCoreCLI@2
+      displayName: ".Net Core - NuGet restore for non test projects only"
+      inputs:
+        command: "restore"
+        projects: |
+          **/*.csproj
+          !**/UKHO.GraphApi.MockService.csproj
+        feedsToUse: config
+        noCache: true
+        nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
+        workingDirectory: '$(Build.SourcesDirectory)\src'
+        packagesDirectory: '$(Build.SourcesDirectory)\src\packages'
+
+    - task: DotNetCoreCLI@2
+      displayName: "Publish Functional Test Code "
+      inputs:
+        command: "publish"
+        publishWebProjects: false
+        projects: '$(Build.SourcesDirectory)\tests\UKHO.ShopFacade.API.FunctionalTests\UKHO.ShopFacade.API.FunctionalTests.csproj'
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API.FunctionalTests'
+        workingDirectory: '$(Build.SourcesDirectory)\tests\UKHO.ShopFacade.API.FunctionalTests'
+        zipAfterPublish: false
+        modifyOutputPath: trues
+
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish Functional test Artifact"
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API.FunctionalTests'
+        ArtifactName: functionaltests

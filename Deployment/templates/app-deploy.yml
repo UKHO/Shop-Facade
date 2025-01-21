@@ -32,6 +32,7 @@ jobs:
                     ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
                     AzureSubscription: ${{parameters.AzureSubscription}}
 
+
                           
 - deployment: DeployApp
   dependsOn: DevDeployTerraform
@@ -46,6 +47,8 @@ jobs:
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
     - name  : "KeyVaultSettings.ServiceUri" 
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
+    - name  : MOCK_WEB_APP_NAME
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.MOCK_WEB_APP_NAME'] ]
   strategy:
     runOnce:
       deploy:
@@ -53,5 +56,24 @@ jobs:
           - checkout: self
             submodules: recursive
           - template: continuous-deployment-app.yml
+            parameters:
+              AzureSubscription: ${{parameters.AzureSubscription}}
+
+- deployment: FunctionalTests
+  dependsOn:
+  - DevDeployTerraform
+  - DeployApp
+  displayName: "${{parameters.Environment}} - Functional Automated Tests"
+  environment: "ShopFacade-${{parameters.Environment}}"
+  pool: $(DeploymentPool)
+  workspace:
+   clean: all
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          - checkout: self
+            submodules: recursive
+          - template: continuous-testing.yml
             parameters:
               AzureSubscription: ${{parameters.AzureSubscription}}
