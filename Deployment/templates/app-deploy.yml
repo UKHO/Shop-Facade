@@ -65,8 +65,7 @@ jobs:
   - DeployApp
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
-  pool: $(DeploymentPoolPE)
-  container: ${{parameters.Container}}
+  pool: $(DeploymentPool)
   workspace:
    clean: all
   strategy:
