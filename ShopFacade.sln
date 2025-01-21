@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKHO.ShopFacade.Common.Unit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKHO.ShopFacade.API.FunctionalTests", "tests\UKHO.ShopFacade.API.FunctionalTests\UKHO.ShopFacade.API.FunctionalTests.csproj", "{F846C90A-5A00-4480-8D25-92F57AF7EFCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKHO.GraphApi.MockService", "src\UKHO.GraphApi.MockService\UKHO.GraphApi.MockService.csproj", "{B0094117-6FBD-48B0-9862-F46F53BDEDDE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKHO.ShopFacade.MockService", "src\UKHO.GraphApi.MockService\UKHO.ShopFacade.MockService.csproj", "{B0094117-6FBD-48B0-9862-F46F53BDEDDE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,10 +1,10 @@
-﻿using UKHO.GraphApi.MockService.Configuration;
+﻿using UKHO.ShopFacade.MockService.Configuration;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
 
-namespace UKHO.GraphApi.MockService.Stubs
+namespace UKHO.ShopFacade.MockService.Stubs
 {
     public class GraphApiStub : IStub
     {

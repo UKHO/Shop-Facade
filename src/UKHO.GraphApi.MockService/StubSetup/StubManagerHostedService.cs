@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
-using UKHO.GraphApi.MockService.Stubs;
+using UKHO.ShopFacade.MockService.Stubs;
 using WireMock.Server;
 using WireMock.Settings;
 
-namespace UKHO.GraphApi.MockService.StubSetup
+namespace UKHO.ShopFacade.MockService.StubSetup
 {
     public class StubManagerHostedService : IHostedService
     {
