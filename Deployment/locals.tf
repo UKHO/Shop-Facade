@@ -5,11 +5,12 @@ locals {
   mock_web_app_name  = "${local.service_name}-${local.env_name}-mock-webapp"
   key_vault_name     = "${local.service_name}-${local.env_name}-kv"
   tags = {
-    SERVICE                   = "SHOP Facade"
+    SERVICE                   = "Shop Facade"
     ENVIRONMENT               = local.env_name
     SERVICE_OWNER             = "UKHO"
     RESPONSIBLE_TEAM          = "Abzu"
     CALLOUT_TEAM              = "On-Call_N/A"
-    COST_CENTRE               = "011.05.12"
+    COST_CENTRE               = "A.011.15.12"
     }
 }
+
