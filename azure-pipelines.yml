@@ -128,7 +128,7 @@ stages:
         value: $(AzureADConfigurationTenantId)
       - name: "AzureADConfiguration.ClientId"
         value: $(AzureADConfigurationClientId)
-       - name: "AzureADConfiguration.AutoTestClientId"
+      - name: "AzureADConfiguration.AutoTestClientId"
         value: $(AzureADConfigurationAutoTestClientId)
       - name: "AzureADConfiguration.ClientSecret"
         value: $(AzureADConfigurationClientSecret)
