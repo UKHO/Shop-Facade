@@ -31,7 +31,7 @@ variable "env_name" {
   type = string
 }
 
-variable "mock_web_app_name" {
+variable "mock_webapp_name" {
   type = string
 }
 
