@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using UKHO.ShopFacade.API.Filters;
+using UKHO.ShopFacade.Common.Authentication;
+using Microsoft.Kiota.Abstractions.Authentication;
 
 namespace UKHO.ShopFacade.API
 {
@@ -25,6 +27,7 @@ namespace UKHO.ShopFacade.API
         private const string AzureAdScheme = "AzureAd";
         private const string AzureAdConfiguration = "AzureAdConfiguration";
         private const string Ukho = "UKHO";
+        private const string GraphApiConfiguration = "GraphApiConfiguration";
         private static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
@@ -74,9 +77,11 @@ namespace UKHO.ShopFacade.API
 
         private static void ConfigureServices(WebApplicationBuilder builder)
         {
+            var configuration = builder.Configuration;
+
             builder.Services.AddLogging(loggingBuilder =>
             {
-                loggingBuilder.AddConfiguration(builder.Configuration.GetSection("Logging"));
+                loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
                 loggingBuilder.AddConsole();
                 loggingBuilder.AddDebug();
 #if DEBUG
@@ -88,8 +93,11 @@ namespace UKHO.ShopFacade.API
 #endif
                 loggingBuilder.AddAzureWebAppDiagnostics();
             });
-            var options = new ApplicationInsightsServiceOptions { ConnectionString = builder.Configuration.GetValue<string>("ApplicationInsights:ConnectionString") };
+            var options = new ApplicationInsightsServiceOptions { ConnectionString = configuration.GetValue<string>("ApplicationInsights:ConnectionString") };
             builder.Services.AddApplicationInsightsTelemetry(options);
+            builder.Services.Configure<EventHubLoggingConfiguration>(configuration.GetSection(EventHubLoggingConfiguration));
+            builder.Services.Configure<GraphApiConfiguration>(configuration.GetSection(GraphApiConfiguration));
+
             builder.Services.AddControllers();
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -109,6 +117,8 @@ namespace UKHO.ShopFacade.API
                     .AddAuthenticationSchemes(AzureAdScheme)
                     .Build())
                 .AddPolicy(ShopFacadeConstants.ShopFacadePolicy, policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePolicy));
+
+            builder.Services.AddScoped<IAuthenticationProvider, ManagedIdentityGraphAuthProvider>();
         }
 
         private static void ConfigureLogging(WebApplication webApplication)
