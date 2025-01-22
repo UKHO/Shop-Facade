@@ -30,3 +30,11 @@ variable "sku_name" {
 variable "env_name" {
   type = string
 }
+
+variable "mock_webapp_name" {
+  type = string
+}
+
+variable "mock_app_settings" {
+  type = map(string)
+}

@@ -19,10 +19,11 @@ steps:
        jsonTargetFiles: '**/appsettings.json'
 
   - task: UseDotNet@2
-    displayName: Use .NET SDK $(DotNetSdkVersion)
+    displayName: 'Use .NET 8.0.x sdk'
     inputs:
       packageType: sdk
-      version: $(DotNetSdkVersion)
+      useGlobalJson: true
+      workingDirectory: '$(Build.SourcesDirectory)'
 
   - task: DotNetCoreCLI@2
     displayName: "Run Functional tests"
