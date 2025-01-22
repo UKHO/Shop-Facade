@@ -115,12 +115,7 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
                             {
                                 Fields = new FieldValueSet
                                 {
-                                    AdditionalData = new Dictionary<string, object>
-                                    {
-                                        { UpnSchema.Title, null },
-                                        { UpnSchema.ECDIS_UPN1_Title, null },
-                                        { UpnSchema.ECDIS_UPN_1, null}
-                                    }
+                                    AdditionalData = new Dictionary<string, object> {}
                                 }
                             }
                         }
