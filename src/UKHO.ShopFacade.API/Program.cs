@@ -91,7 +91,6 @@ namespace UKHO.ShopFacade.API
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.Configure<EventHubLoggingConfiguration>(builder.Configuration.GetSection(EventHubLoggingConfiguration));
-            builder.Services.Configure<SharePointSiteConfiguration>(builder.Configuration.GetSection(SharePointSiteConfiguration));
             builder.Services.AddScoped<IUpnService, UpnService>();
             builder.Services.AddScoped<IUpnDataProvider, UpnDataProvider>();
             builder.Services.AddScoped<IGraphClient, GraphClient>();
