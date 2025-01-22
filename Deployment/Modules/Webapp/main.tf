@@ -31,3 +31,26 @@ resource "azurerm_linux_web_app" "webapp_service" {
   https_only = true
 }
 
+resource "azurerm_linux_web_app_slot" "staging" {
+  name                = "staging"
+  app_service_id      = azurerm_linux_web_app.webapp_service.id
+  tags                = azurerm_linux_web_app.webapp_service.tags 
+
+  site_config {
+    application_stack {    
+      dotnet_version = "8.0"
+    }
+    always_on  = true
+    ftps_state = "Disabled"
+  }
+     
+  app_settings = merge(azurerm_linux_web_app.webapp_service.app_settings, { "WEBJOBS_STOPPED" = "1" })
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  https_only = azurerm_linux_web_app.webapp_service.https_only
+}
+
+

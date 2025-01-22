@@ -19,6 +19,13 @@ module "webapp_service" {
   tags                                                          = local.tags
 }
 
+locals {
+  kv_read_access_list = {
+    "webapp_service" = module.webapp_service.web_app_object_id
+    "webapp_slot"    = module.webapp_service.slot_object_id
+  }
+ }
+
 module "app_insights" {
   source              = "./Modules/AppInsights"
   name                = "${local.service_name}-${local.env_name}-insights"
@@ -43,9 +50,7 @@ module "key_vault" {
   env_name            = local.env_name
   tenant_id           = module.webapp_service.web_app_tenant_id
   location            = azurerm_resource_group.rg.location
-  read_access_objects = {
-     "webapp_service"       = module.webapp_service.web_app_object_id
-  }
+  read_access_objects = local.kv_read_access_list
   secrets = {
     "EventHubLoggingConfiguration--ConnectionString"            = module.eventhub.log_primary_connection_string
     "EventHubLoggingConfiguration--EntityPath"                  = module.eventhub.entity_path
