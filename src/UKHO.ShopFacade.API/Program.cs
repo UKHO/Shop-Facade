@@ -23,7 +23,6 @@ namespace UKHO.ShopFacade.API
     internal class Program
     {
         private const string EventHubLoggingConfiguration = "EventHubLoggingConfiguration";
-        private const string SharePointSiteConfiguration = "SharePointSiteConfiguration";
         private const string GraphApiConfiguration = "GraphApiConfiguration";
         private static void Main(string[] args)
         {
