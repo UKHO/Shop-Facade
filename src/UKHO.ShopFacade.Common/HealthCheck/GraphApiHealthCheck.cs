@@ -5,6 +5,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using UKHO.ShopFacade.Common.ClientProvider;
 using UKHO.ShopFacade.Common.DataProvider;
+using UKHO.ShopFacade.Common.Events;
 
 namespace UKHO.ShopFacade.Common.HealthCheck
 {
@@ -12,11 +13,13 @@ namespace UKHO.ShopFacade.Common.HealthCheck
     {
         private readonly ILogger<UpnDataProvider> _logger;
         private readonly IGraphClient _graphClient;
+
         public GraphApiHealthCheck(ILogger<UpnDataProvider> logger, IGraphClient graphClient)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _graphClient = graphClient ?? throw new ArgumentNullException(nameof(graphClient));
         }
+
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
             try
@@ -28,11 +31,12 @@ namespace UKHO.ShopFacade.Common.HealthCheck
                 const string filterCondition = $"fields/Title eq '1'";
 
                 var listItemCollectionResponse = await _graphClient.GetListItemCollectionResponse(expandFields, filterCondition);
-
+                _logger.LogDebug(EventIds.GraphApiIsHealthy.ToEventId(), "Graph Api is healthy");
                 return HealthCheckResult.Healthy("Graph api is healthy");
             }
             catch (Exception ex)
             {
+                _logger.LogError(EventIds.GraphApiIsUnhealthy.ToEventId(), ex, "Health check for the Graph Api threw an exception");
                 return HealthCheckResult.Unhealthy("Graph api is unhealthy");
             }
         }

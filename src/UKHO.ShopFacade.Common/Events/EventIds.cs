@@ -51,8 +51,17 @@ namespace UKHO.ShopFacade.Common.Events
         /// <summary>
         /// 950009 - Graph client call completed.
         /// </summary>
-        GraphClientCallCompleted = 950009
+        GraphClientCallCompleted = 950009,
 
+        /// <summary>
+        /// 950010 - Graph Api is healthy.
+        /// </summary>
+        GraphApiIsHealthy = 950010,
+
+        /// <summary>
+        /// 950011 - Graph Api is unhealthy.
+        /// </summary>
+        GraphApiIsUnhealthy = 950011
     }
 
     /// <summary>
