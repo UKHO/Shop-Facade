@@ -432,7 +432,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiManagementError'
+                $ref: '#/components/schemas/apiManagementError'
               example:
                 statusCode: 429
                 message: Rate limit is exceeded. Try again in 1 seconds.
@@ -562,7 +562,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiManagementError'
+                $ref: '#/components/schemas/apiManagementError'
               example:
                 statusCode: 429
                 message: Rate limit is exceeded. Try again in 1 seconds.
@@ -676,7 +676,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiManagementError'
+                $ref: '#/components/schemas/apiManagementError'
               example:
                 statusCode: 429
                 message: Rate limit is exceeded. Try again in 1 seconds.
@@ -780,7 +780,7 @@ paths:
           content:
             application/xml:
               schema:
-                $ref: '#/components/schemas/ApiManagementError'
+                $ref: '#/components/schemas/apiManagementError'
             application/json:
               example:
                 statusCode: 429
@@ -813,7 +813,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/fieldError'
-    ApiManagementError:
+    apiManagementError:
       type: object
       properties:
         statusCode:
@@ -1053,22 +1053,22 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ApiManagementError'
+            $ref: '#/components/schemas/apiManagementError'
           example:
             statusCode: 429
             message: Rate limit is exceeded. Try again in 1 seconds.
         application/xml:
           schema:
-            $ref: '#/components/schemas/ApiManagementError'
+            $ref: '#/components/schemas/apiManagementError'
         application/zip:
           schema:
-            $ref: '#/components/schemas/ApiManagementError'
+            $ref: '#/components/schemas/apiManagementError'
         application/enp:
           schema:
-            $ref: '#/components/schemas/ApiManagementError'
+            $ref: '#/components/schemas/apiManagementError'
         application/pdf:
           schema:
-            $ref: '#/components/schemas/ApiManagementError'
+            $ref: '#/components/schemas/apiManagementError'
     InternalServerError:
       description: Internal Server Error.
       headers:
