@@ -19,6 +19,7 @@ namespace UKHO.ShopFacade.MockService.Stubs
         {
             var licenceIdFor200OkResponse = "1";
             var licenceIdFor500InternalServerErrorResponse = "2";
+            var licenceIdForEmptyResponse = "3";
 
             // Mock endpoint for Graph API
             var endpoint = $"/sites/{_graphApiConfiguration.SiteId}/lists/{_graphApiConfiguration.ListId}/items";
@@ -67,6 +68,22 @@ namespace UKHO.ShopFacade.MockService.Stubs
         Response.Create()
                     .WithStatusCode(500)
                     .WithHeader("Content-Type", "application/json")
+            );
+
+            server.Given(
+                Request.Create()
+                    .WithPath(new WildcardMatcher(endpoint))
+                    .WithParam("$filter", $"fields/Title eq '{licenceIdForEmptyResponse}'")
+                    .UsingGet()
+                )
+            .RespondWith(
+                Response.Create()
+                    .WithStatusCode(200)
+                    .WithHeader("Content-Type", "application/json")
+                    .WithBody($@"
+                   {{
+                    ""value"": []
+                    }}")
             );
         }
     }
