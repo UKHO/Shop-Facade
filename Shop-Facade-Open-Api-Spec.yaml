@@ -96,13 +96,6 @@ paths:
             application/zip:
               schema:
                 $ref: '#/components/schemas/errorDescription'
-        "429":
-          description: Too Many Requests.
-          headers:
-            X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
         "500":
           description: Internal Server Error.
           headers:
@@ -197,13 +190,6 @@ paths:
                 errors:
                 - source: licenceId
                   description: Licence not found
-        "429":
-          description: Too Many Requests.
-          headers:
-            X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
         "500":
           description: Internal Server Error.
           headers:
@@ -326,13 +312,6 @@ paths:
             application/zip:
               schema:
                 $ref: '#/components/schemas/errorDescription'
-        "429":
-          description: Too Many Requests.
-          headers:
-            X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
         "500":
           description: Internal Server Error.
           headers:
@@ -427,15 +406,6 @@ paths:
                 errors:
                 - source: licenceId
                   description: Licence not found
-        "429":
-          description: Too Many Requests.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/apiManagementError'
-              example:
-                statusCode: 429
-                message: Rate limit is exceeded. Try again in 1 seconds.
         "500":
           description: Internal Server Error.
           headers:
@@ -557,15 +527,6 @@ paths:
               schema:
                 type: string
           content: {}
-        "429":
-          description: Too Many Requests.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/apiManagementError'
-              example:
-                statusCode: 429
-                message: Rate limit is exceeded. Try again in 1 seconds.
         "500":
           description: Internal Server Error.
           headers:
@@ -671,15 +632,6 @@ paths:
                 - source: OrderId
                   description: Order ID 948213 not found or you do not have permissions
                     to access this order.
-        "429":
-          description: Too Many Requests.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/apiManagementError'
-              example:
-                statusCode: 429
-                message: Rate limit is exceeded. Try again in 1 seconds.
         "500":
           description: Internal Server Error.
           headers:
@@ -775,16 +727,6 @@ paths:
                 errors:
                 - source: catalogueId
                   description: Catalogue ID not found
-        "429":
-          description: Too Many Requests.
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/apiManagementError'
-            application/json:
-              example:
-                statusCode: 429
-                message: Rate limit is exceeded. Try again in 1 seconds.
         "500":
           description: Internal Server Error.
           headers:
