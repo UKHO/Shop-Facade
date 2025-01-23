@@ -22,7 +22,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Service
 
         public async Task<RestResponse> GetUpnResponseAsync(string token, string licenseId)
         {
-            var endPoint = _shoFacadeConfiguration.EndpointUrl!.Replace("licenseId", licenseId);
+            var endPoint = _shoFacadeConfiguration.EndpointUrl!.Replace("licenceId", licenseId);
             var request = new RestRequest(endPoint);
 
             request.AddHeader("Authorization", "Bearer " + token);
