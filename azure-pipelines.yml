@@ -124,17 +124,17 @@ stages:
       - group: "Shop-Facade-Dev"
       - group: "Shop-Facade-Dev-TF"
       - group: "Shop-Facade-Dev-KV"
-      - name: "AzureADConfiguration.TenantId"
+      - name : "AzureADConfiguration.TenantId"
         value: $(AzureADConfigurationTenantId)
-      - name: "AzureADConfiguration.ClientId"
+      - name : "AzureADConfiguration.ClientId"
         value: $(AzureADConfigurationClientId)
-      - name: "AzureADConfiguration.AutoTestClientId"
+      - name : "AzureADConfiguration.AutoTestClientId"
         value: $(AzureADConfigurationAutoTestClientId)
-      - name: "AzureADConfiguration.ClientSecret"
+      - name : "AzureADConfiguration.ClientSecret"
         value: $(AzureADConfigurationClientSecret)
-      - name: "AzureADConfiguration.AutoTestClientIdNoRole"
+      - name : "AzureADConfiguration.AutoTestClientIdNoRole"
         value: $(AzureADConfigurationAutoTestClientIdNoRole)
-      - name: "AzureADConfiguration.ClientSecretNoRole"
+      - name : "AzureADConfiguration.ClientSecretNoRole"
         value: $(AzureADConfigurationClientSecretNoRole)
     jobs:
       - template: Deployment/templates/app-deploy.yml
@@ -154,17 +154,17 @@ stages:
       - group: "Shop-Facade-vNextIAT"
       - group: "Shop-Facade-vNextIAT-TF"
       - group: "Shop-Facade-vNextIAT-KV"
-      - name: "AzureADConfiguration.TenantId"
+      - name : "AzureADConfiguration.TenantId"
         value: $(AzureADConfigurationTenantId)
-      - name: "AzureADConfiguration.ClientId"
+      - name : "AzureADConfiguration.ClientId"
         value: $(AzureADConfigurationClientId)
-      - name: "AzureADConfiguration.AutoTestClientId"
+      - name : "AzureADConfiguration.AutoTestClientId"
         value: $(AzureADConfigurationAutoTestClientId)
-      - name: "AzureADConfiguration.ClientSecret"
+      - name : "AzureADConfiguration.ClientSecret"
         value: $(AzureADConfigurationClientSecret)
-      - name: "AzureADConfiguration.AutoTestClientIdNoRole"
+      - name : "AzureADConfiguration.AutoTestClientIdNoRole"
         value: $(AzureADConfigurationAutoTestClientIdNoRole)
-      - name: "AzureADConfiguration.ClientSecretNoRole"
+      - name : "AzureADConfiguration.ClientSecretNoRole"
         value: $(AzureADConfigurationClientSecretNoRole)
     jobs:
       - template: Deployment/templates/app-deploy.yml
@@ -184,17 +184,17 @@ stages:
       - group: "Shop-Facade-vNextE2E"
       - group: "Shop-Facade-vNextE2E-TF"
       - group: "Shop-Facade-vNextE2E-KV"
-      - name: "AzureADConfiguration.TenantId"
+      - name : "AzureADConfiguration.TenantId"
         value: $(AzureADConfigurationTenantId)
-      - name: "AzureADConfiguration.ClientId"
+      - name : "AzureADConfiguration.ClientId"
         value: $(AzureADConfigurationClientId)
-      - name: "AzureADConfiguration.AutoTestClientId"
+      - name : "AzureADConfiguration.AutoTestClientId"
         value: $(AzureADConfigurationAutoTestClientId)
-      - name: "AzureADConfiguration.ClientSecret"
+      - name : "AzureADConfiguration.ClientSecret"
         value: $(AzureADConfigurationClientSecret)
-      - name: "AzureADConfiguration.AutoTestClientIdNoRole"
+      - name : "AzureADConfiguration.AutoTestClientIdNoRole"
         value: $(AzureADConfigurationAutoTestClientIdNoRole)
-      - name: "AzureADConfiguration.ClientSecretNoRole"
+      - name : "AzureADConfiguration.ClientSecretNoRole"
         value: $(AzureADConfigurationClientSecretNoRole)
     jobs:
       - template: Deployment/templates/app-deploy.yml
@@ -214,17 +214,17 @@ stages:
       - group: "Shop-Facade-IAT"
       - group: "Shop-Facade-IAT-TF"
       - group: "Shop-Facade-IAT-KV"
-      - name: "AzureADConfiguration.TenantId"
+      - name : "AzureADConfiguration.TenantId"
         value: $(AzureADConfigurationTenantId)
-      - name: "AzureADConfiguration.ClientId"
+      - name : "AzureADConfiguration.ClientId"
         value: $(AzureADConfigurationClientId)
-      - name: "AzureADConfiguration.AutoTestClientId"
+      - name : "AzureADConfiguration.AutoTestClientId"
         value: $(AzureADConfigurationAutoTestClientId)
-      - name: "AzureADConfiguration.ClientSecret"
+      - name : "AzureADConfiguration.ClientSecret"
         value: $(AzureADConfigurationClientSecret)
-      - name: "AzureADConfiguration.AutoTestClientIdNoRole"
+      - name : "AzureADConfiguration.AutoTestClientIdNoRole"
         value: $(AzureADConfigurationAutoTestClientIdNoRole)
-      - name: "AzureADConfiguration.ClientSecretNoRole"
+      - name : "AzureADConfiguration.ClientSecretNoRole"
         value: $(AzureADConfigurationClientSecretNoRole)
     jobs:
       - template: Deployment/templates/app-deploy.yml
