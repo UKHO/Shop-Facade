@@ -70,7 +70,7 @@ jobs:
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
-  condition: ${{parameters.RunTests}}
+  condition: and(succeeded('DeployApp'), eq( ${{parameters.RunTests}} , 'true'))
   workspace:
    clean: all
   strategy:
