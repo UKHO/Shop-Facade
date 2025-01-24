@@ -47,12 +47,12 @@ jobs:
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
     - name  : "KeyVaultSettings.ServiceUri" 
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
-    - name : WEB_APP_SLOT_NAME
+    - name  : WEB_APP_SLOT_NAME
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
-    - name : WEB_APP_SLOT_HOST_NAME
+    - name  : WEB_APP_SLOT_HOST_NAME
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
-    - name : "ShopFacadeConfiguration.BaseUrl"
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ShopFacadeBaseUrl'] 
+    # - name  : "ShopFacadeConfiguration.BaseUrl"
+    #   value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ShopFacadeBaseUrl'] 
     - name  : MOCK_WEB_APP_NAME
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.MOCK_WEB_APP_NAME'] ]
   strategy:
