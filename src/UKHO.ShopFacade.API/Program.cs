@@ -107,8 +107,8 @@ namespace UKHO.ShopFacade.API
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(AzureAdScheme, options =>
                 {
-                    options.Audience = azureAdConfiguration.ClientId;
-                    options.Authority = $"{azureAdConfiguration.MicrosoftOnlineLoginUrl}{azureAdConfiguration.TenantId}";
+                    options.Audience = azureAdConfiguration?.ClientId;
+                    options.Authority = $"{azureAdConfiguration?.MicrosoftOnlineLoginUrl}{azureAdConfiguration?.TenantId}";
                 });
 
             builder.Services.AddAuthorizationBuilder()
