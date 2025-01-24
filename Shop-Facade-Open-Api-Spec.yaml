@@ -703,7 +703,7 @@ paths:
               schema:
                 type: string
           content:
-            application/xml:
+            application/json:
               schema:
                 $ref: '#/components/schemas/errorDescription'
         "404":
@@ -714,10 +714,9 @@ paths:
               schema:
                 type: string
           content:
-            application/xml:
+            application/json:
               schema:
                 $ref: '#/components/schemas/errorDescription'
-            application/json:
               example:
                 correlationId: 6c254109-8a0f-4446-8649-721775ba9de2
                 errors:
@@ -731,7 +730,7 @@ paths:
               schema:
                 type: string
           content:
-            application/xml:
+            application/json:
               schema:
                 $ref: '#/components/schemas/exceptionDescription'
                 
@@ -858,7 +857,6 @@ components:
           - S102
           - S104
           - S111
-          - S122
         productId:
           type: string
           description: "Required. The product ID of the product to be ordered from\
