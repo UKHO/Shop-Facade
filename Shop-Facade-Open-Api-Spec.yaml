@@ -129,14 +129,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/getUserPermitsResponse'
               example:
-                licenceId: 12345678
-                userPermits:
-                - title: Master
-                  upn: C23DAD797C966EC9F6A55B66ED98281599B3A231859868
-                - title: Backup
-                  upn: BA2DAD797C966EC9F6A55B66ED98281599B3C7B1859868
-                - title: Port Radar
-                  upn: AD1DAD797C966EC9F6A55B66ED98281599BA9B23859868
+                - title: "Port Radar"
+                  upn: "C23DAD797C966EC9F6A55B66ED98281599B3A231859868"
+                - title: "Back up"
+                  upn: "AD1DAD797C966EC9F6A55B66ED98281599BA9B23859868"
         "204":
           description: No Content - There are no UPNs for the licence.
           headers:
@@ -770,14 +766,10 @@ components:
         description:
           type: string
     getUserPermitsResponse:
-      type: object
-      properties:
-        licenceId:
-          type: integer
-        userPermits:
-          type: array
-          items:
-            $ref: '#/components/schemas/userPermit'
+      type: array
+      items:
+        type: object
+        $ref: '#/components/schemas/userPermit'
     userPermit:
       type: object
       properties:
