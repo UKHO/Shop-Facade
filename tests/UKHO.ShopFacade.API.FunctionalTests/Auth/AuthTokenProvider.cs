@@ -21,11 +21,11 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Auth
 
             if (noRole)
             {
-                azureADToken = await GenerateAzureADTokenAsync(_azureADConfiguration.AutoTestClientIdNoRole, _azureADConfiguration.ClientSecretNoRole);
+                azureADToken = await GenerateAzureADTokenAsync(_azureADConfiguration.AutoTestClientIdNoRole!, _azureADConfiguration.ClientSecretNoRole!);
             }
             else
             {
-                azureADToken = await GenerateAzureADTokenAsync(_azureADConfiguration.AutoTestClientId, _azureADConfiguration.ClientSecret);
+                azureADToken = await GenerateAzureADTokenAsync(_azureADConfiguration.AutoTestClientId!, _azureADConfiguration.ClientSecret!);
             }
             return azureADToken;
         }
@@ -36,11 +36,10 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Auth
             {
                 string[] scopes = { $"{_azureADConfiguration.ClientId}/.default" };
 
-                IPublicClientApplication publicClientApp;
 
                 if (_azureADConfiguration.IsRunningOnLocalMachine)
                 {
-                    publicClientApp = PublicClientApplicationBuilder.Create(_azureADConfiguration.ClientId)
+                    IPublicClientApplication publicClientApp = PublicClientApplicationBuilder.Create(_azureADConfiguration.ClientId)
                                                        .WithRedirectUri("http://localhost")
                                                        .WithTenantId(_azureADConfiguration.TenantId).Build();
 
@@ -65,7 +64,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Auth
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return null;
+                return "";
             }
         }
     }
