@@ -64,6 +64,49 @@ resources:
     ref: refs/heads/main
 
 stages:
+  - stage: Stryker_Mutator
+    displayName: "Stryker Mutator"
+    condition: eq('${{ parameters.DisableDependencyCheck }}', false)  
+    dependsOn: []
+    jobs:
+    - job: Stryker
+      workspace:
+        clean: all
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Use .NET SDK'
+          inputs:
+            packageType: sdk
+            version: $(SdkVersion)
+
+        - task: UseDotNet@2
+          displayName: 'Use .NET SDK for Stryker'
+          inputs:
+            packageType: sdk
+            version: $(SdkVersion)
+
+        - task: DotNetCoreCLI@2
+          displayName: "Install Stryker"
+          inputs:
+            command: custom
+            custom: tool
+            workingDirectory: $(Agent.TempDirectory)
+            arguments: install dotnet-stryker --tool-path $(Agent.BuildDirectory)/tools
+
+        - task: Powershell@2
+          displayName: "Run Stryker for UnitTests"
+          inputs:
+            workingDirectory: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.API.UnitTests'
+            targetType: 'inline'
+            pwsh: true
+            script: $(Agent.BuildDirectory)/tools/dotnet-stryker
+
+        - task: PublishMutationReport@0
+          displayName: 'Publish Strkyer Mutator Report'
+          inputs:
+            reportPattern: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.API.UnitTests/**/mutation-report.html'
+            reportDisplayName: 'API UnitTests'
+
   - stage: BuildTestPublish
     displayName: "Build, test and publish"
     dependsOn: []
@@ -80,6 +123,19 @@ stages:
     variables:
       - group: "Shop-Facade-Dev"
       - group: "Shop-Facade-Dev-TF"
+      - group: "Shop-Facade-Dev-KV"
+      - name: "AzureADConfiguration.TenantId"
+        value: $(AzureADConfigurationTenantId)
+      - name: "AzureADConfiguration.ClientId"
+        value: $(AzureADConfigurationClientId)
+      - name: "AzureADConfiguration.AutoTestClientId"
+        value: $(AzureADConfigurationAutoTestClientId)
+      - name: "AzureADConfiguration.ClientSecret"
+        value: $(AzureADConfigurationClientSecret)
+      - name: "AzureADConfiguration.AutoTestClientIdNoRole"
+        value: $(AzureADConfigurationAutoTestClientIdNoRole)
+      - name: "AzureADConfiguration.ClientSecretNoRole"
+        value: $(AzureADConfigurationClientSecretNoRole)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -87,7 +143,7 @@ stages:
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade-Dev-A.011.15.12"
           Container: ${{variables.Container}} 
-          RunTests: false
+          RunTests: true
 
   - stage: vNextIatdeploy
     dependsOn:
@@ -97,6 +153,19 @@ stages:
     variables:
       - group: "Shop-Facade-vNextIAT"
       - group: "Shop-Facade-vNextIAT-TF"
+      - group: "Shop-Facade-vNextIAT-KV"
+      - name: "AzureADConfiguration.TenantId"
+        value: $(AzureADConfigurationTenantId)
+      - name: "AzureADConfiguration.ClientId"
+        value: $(AzureADConfigurationClientId)
+      - name: "AzureADConfiguration.AutoTestClientId"
+        value: $(AzureADConfigurationAutoTestClientId)
+      - name: "AzureADConfiguration.ClientSecret"
+        value: $(AzureADConfigurationClientSecret)
+      - name: "AzureADConfiguration.AutoTestClientIdNoRole"
+        value: $(AzureADConfigurationAutoTestClientIdNoRole)
+      - name: "AzureADConfiguration.ClientSecretNoRole"
+        value: $(AzureADConfigurationClientSecretNoRole)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -114,6 +183,19 @@ stages:
     variables:
       - group: "Shop-Facade-vNextE2E"
       - group: "Shop-Facade-vNextE2E-TF"
+      - group: "Shop-Facade-vNextE2E-KV"
+      - name: "AzureADConfiguration.TenantId"
+        value: $(AzureADConfigurationTenantId)
+      - name: "AzureADConfiguration.ClientId"
+        value: $(AzureADConfigurationClientId)
+      - name: "AzureADConfiguration.AutoTestClientId"
+        value: $(AzureADConfigurationAutoTestClientId)
+      - name: "AzureADConfiguration.ClientSecret"
+        value: $(AzureADConfigurationClientSecret)
+      - name: "AzureADConfiguration.AutoTestClientIdNoRole"
+        value: $(AzureADConfigurationAutoTestClientIdNoRole)
+      - name: "AzureADConfiguration.ClientSecretNoRole"
+        value: $(AzureADConfigurationClientSecretNoRole)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -131,6 +213,19 @@ stages:
     variables:
       - group: "Shop-Facade-IAT"
       - group: "Shop-Facade-IAT-TF"
+      - group: "Shop-Facade-IAT-KV"
+      - name: "AzureADConfiguration.TenantId"
+        value: $(AzureADConfigurationTenantId)
+      - name: "AzureADConfiguration.ClientId"
+        value: $(AzureADConfigurationClientId)
+      - name: "AzureADConfiguration.AutoTestClientId"
+        value: $(AzureADConfigurationAutoTestClientId)
+      - name: "AzureADConfiguration.ClientSecret"
+        value: $(AzureADConfigurationClientSecret)
+      - name: "AzureADConfiguration.AutoTestClientIdNoRole"
+        value: $(AzureADConfigurationAutoTestClientIdNoRole)
+      - name: "AzureADConfiguration.ClientSecretNoRole"
+        value: $(AzureADConfigurationClientSecretNoRole)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
