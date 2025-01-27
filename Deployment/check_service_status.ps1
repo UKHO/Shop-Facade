@@ -15,9 +15,7 @@ do
     Write-Host "Polling url: $healthEndPointUrl ..."
     try{
         $HttpRequest  = [System.Net.WebRequest]::Create("$healthEndPointUrl")
-        Write-Host "Polling url: $HttpRequest ..."
         $HttpResponse = $HttpRequest.GetResponse()
-        Write-Host "Polling url: $HttpResponse ..."
         $HttpStatus   = $HttpResponse.StatusCode
         Write-Host "Status code of web is $HttpStatus ..."
     
