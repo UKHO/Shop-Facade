@@ -1,4 +1,4 @@
-﻿namespace UKHO.GraphApi.MockService.Configuration
+﻿namespace UKHO.ShopFacade.MockService.Configuration
 {
     public class GraphApiConfiguration
     {

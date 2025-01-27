@@ -2,6 +2,7 @@ locals {
   env_name           = lower(terraform.workspace)
   service_name       = "shopfacade"  
   web_app_name       = "${local.service_name}-${local.env_name}-api-webapp"
+  mock_web_app_name  = "${local.service_name}-${local.env_name}-mock-webapp"
   key_vault_name     = "${local.service_name}-${local.env_name}-kv"
   tags = {
     SERVICE                   = "Shop Facade"
@@ -12,4 +13,3 @@ locals {
     COST_CENTRE               = "A.011.15.12"
     }
 }
-

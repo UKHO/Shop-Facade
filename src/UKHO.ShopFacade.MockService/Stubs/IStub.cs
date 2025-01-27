@@ -1,6 +1,6 @@
 ﻿using WireMock.Server;
 
-namespace UKHO.GraphApi.MockService.Stubs
+namespace UKHO.ShopFacade.MockService.Stubs
 {
     public interface IStub
     {

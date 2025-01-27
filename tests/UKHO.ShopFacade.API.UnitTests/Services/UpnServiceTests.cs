@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using FakeItEasy;
-using FluentAssertions;
 using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.DataProvider;
@@ -24,8 +23,8 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
         [Test]
         public void WhenParameterIsNull_ThenConstructorThrowsArgumentNullException()
         {
-            Action nullupnDataProvider = () => new UpnService(null);
-            nullupnDataProvider.Should().ThrowExactly<ArgumentNullException>().And.ParamName.Should().Be("upnDataProvider");
+            var nullUpnDataProvider = Assert.Throws<ArgumentNullException>(() => new UpnService(null));
+            Assert.That(nullUpnDataProvider!.ParamName, Is.EqualTo("upnDataProvider"));
         }
 
         [Test]
@@ -35,10 +34,9 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
 
             var result = await _upnService.GetUpnDetails(123, "correlationId");
 
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
-            result.Value.Should().NotBeNull();
-            result.Value.LicenceId.Should().Be(123);
-            result.Value.UserPermits.Count.Should().Be(5);
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(result.Value.LicenceId, Is.EqualTo(123));
+            Assert.That(result.Value.UserPermits.Count, Is.EqualTo(5));
         }
 
         [Test]
@@ -48,12 +46,10 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
 
             var result = await _upnService.GetUpnDetails(123, "correlationId");
 
-            result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-
-            result.ErrorResponse.Errors.Should().BeEquivalentTo(new List<ErrorDetail>
-            {
-                new() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }
-            });
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            Assert.That(result.ErrorResponse.Errors.Count, Is.EqualTo(1));
+            Assert.That(result.ErrorResponse.Errors[0].Source, Is.EqualTo(ErrorDetails.Source));
+            Assert.That(result.ErrorResponse.Errors[0].Description, Is.EqualTo(ErrorDetails.LicenceNotFoundMessage));
         }
 
         private static UpnDataProviderResult GetUpnDataProviderResult(HttpStatusCode httpStatusCode)
