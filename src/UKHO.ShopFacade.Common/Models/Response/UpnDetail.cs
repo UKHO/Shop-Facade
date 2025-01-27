@@ -6,14 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 namespace UKHO.ShopFacade.Common.Models.Response
 {
     [ExcludeFromCodeCoverage]
-    public class UpnDetail
-    {
-        public int LicenceId { get; set; }
-
-        public List<UserPermit> UserPermits { get; set; }
-    }
-
-    [ExcludeFromCodeCoverage]
     public class UserPermit
     {
         public string Title { get; set; }

@@ -5,19 +5,19 @@ using UKHO.ShopFacade.Common.Models.Response;
 namespace UKHO.ShopFacade.Common.Models
 {
     [ExcludeFromCodeCoverage]
-    public class UpnServiceResult : ServiceResponseResult<UpnDetail>
+    public class UpnServiceResult : ServiceResponseResult<List<UserPermit>>
     {
         public new ErrorResponse ErrorResponse { get; }
         public new HttpStatusCode StatusCode { get; }
 
-        private UpnServiceResult(UpnDetail value, HttpStatusCode statusCode, ErrorResponse errorResponse = null)
+        private UpnServiceResult(List<UserPermit> value, HttpStatusCode statusCode, ErrorResponse errorResponse = null)
             : base(value, statusCode, errorResponse)
         {
             StatusCode = statusCode;
             ErrorResponse = errorResponse;
         }
 
-        public static new UpnServiceResult Success(UpnDetail value) => new(value, HttpStatusCode.OK);
+        public static new UpnServiceResult Success(List<UserPermit> value) => new(value, HttpStatusCode.OK);
 
         public static new UpnServiceResult NotFound(ErrorResponse errorResponse) => new(null, HttpStatusCode.NotFound, errorResponse);
 

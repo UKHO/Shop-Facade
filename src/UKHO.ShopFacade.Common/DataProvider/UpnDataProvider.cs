@@ -20,7 +20,7 @@ namespace UKHO.ShopFacade.Common.DataProvider
 
         public async Task<UpnDataProviderResult> GetUpnDetailsByLicenseId(int licenceId, string correlationId)
         {
-            const string expandFields = "fields($select=Title,ECDIS_UPN1_Title,ECDIS_UPN_1,ECDIS_UPN2_Title,ECDIS_UPN_2,ECDIS_UPN3_Title,ECDIS_UPN_3,ECDIS_UPN4_Title,ECDIS_UPN_4,ECDIS_UPN5_Title,ECDIS_UPN_5)";
+            const string expandFields = "fields($select=ECDIS_UPN1_Title,ECDIS_UPN_1,ECDIS_UPN2_Title,ECDIS_UPN_2,ECDIS_UPN3_Title,ECDIS_UPN_3,ECDIS_UPN4_Title,ECDIS_UPN_4,ECDIS_UPN5_Title,ECDIS_UPN_5)";
             var filterCondition = $"fields/Title eq '{licenceId}'";
 
             _logger.LogInformation(EventIds.GraphClientCallStarted.ToEventId(), ErrorDetails.GraphClientCallStartedMessage);
@@ -50,7 +50,6 @@ namespace UKHO.ShopFacade.Common.DataProvider
 
         private static S100UpnRecord GetS100UpnRecord(ListItemCollectionResponse s100UpnCollection) => s100UpnCollection.Value!.Select(item => new S100UpnRecord
         {
-            LicenceId = item.Fields!.AdditionalData.TryGetValue(UpnSchema.Title, out var title) ? title?.ToString() : string.Empty,
             ECDIS_UPN1_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN1_Title, out var upn1Title) ? upn1Title?.ToString() : string.Empty,
             ECDIS_UPN_1 = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN_1, out var upn1) ? upn1?.ToString() : string.Empty,
             ECDIS_UPN2_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN2_Title, out var upn2Title) ? upn2Title?.ToString() : string.Empty,

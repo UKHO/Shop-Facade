@@ -25,10 +25,8 @@ namespace UKHO.ShopFacade.API.Services
             };
         }
 
-        private static UpnDetail SetUpnDetailResponse(UpnDataProviderResult upnDataProviderResult)
+        private static List<UserPermit> SetUpnDetailResponse(UpnDataProviderResult upnDataProviderResult)
         {
-            var upnDetail = new UpnDetail();
-            int.TryParse(upnDataProviderResult.Value.LicenceId, out var licnceid);
             var userPermits = new List<UserPermit>{
                 new()
                 {
@@ -73,10 +71,7 @@ namespace UKHO.ShopFacade.API.Services
                 });
             }
 
-            upnDetail.LicenceId = licnceid;
-            upnDetail.UserPermits = userPermits;
-
-            return upnDetail;
+            return userPermits;
         }
     }
 }

@@ -61,7 +61,6 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
             var result = await _upnDataProvider.GetUpnDetailsByLicenseId(123, "correlationId");
 
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(result.Value.LicenceId, Is.EqualTo("123"));
             Assert.That(result.Value.ECDIS_UPN1_Title, Is.EqualTo("UPN1"));
             Assert.That(result.Value.ECDIS_UPN_1, Is.EqualTo("ECDIS1"));
 

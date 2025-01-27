@@ -28,7 +28,7 @@ namespace UKHO.ShopFacade.MockService.Stubs
                 Request.Create()
                     .WithPath(new WildcardMatcher(endpoint))
                     .WithParam("$filter", $"fields/Title eq '{licenceIdFor200OkResponse}'")
-                    .WithParam("$expand", "fields($select=Title,ECDIS_UPN1_Title,ECDIS_UPN_1,ECDIS_UPN2_Title,ECDIS_UPN_2,ECDIS_UPN3_Title,ECDIS_UPN_3,ECDIS_UPN4_Title,ECDIS_UPN_4,ECDIS_UPN5_Title,ECDIS_UPN_5)")
+                    .WithParam("$expand", "fields($select=ECDIS_UPN1_Title,ECDIS_UPN_1,ECDIS_UPN2_Title,ECDIS_UPN_2,ECDIS_UPN3_Title,ECDIS_UPN_3,ECDIS_UPN4_Title,ECDIS_UPN_4,ECDIS_UPN5_Title,ECDIS_UPN_5)")
                     .UsingGet()
             )
             .RespondWith(

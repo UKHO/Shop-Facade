@@ -69,12 +69,11 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
             var result = (OkObjectResult)await _upnController.GetUPNs(1);
 
-            var upnRecord = result.Value as UpnDetail;
+            var userPermits = result.Value as List<UserPermit>;
 
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
-            Assert.That(upnRecord!.LicenceId, Is.EqualTo(1));
-            Assert.That(upnRecord.UserPermits[0].Title, Is.EqualTo("upn1"));
-            Assert.That(upnRecord.UserPermits[0].Upn, Is.EqualTo("1A1DAD797C"));
+            Assert.That(userPermits![0].Title, Is.EqualTo("upn1"));
+            Assert.That(userPermits[0].Upn, Is.EqualTo("1A1DAD797C"));
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                   && call.GetArgument<LogLevel>(0) == LogLevel.Information
@@ -133,7 +132,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         {
             return httpStatusCode switch
             {
-                HttpStatusCode.OK => UpnServiceResult.Success(new UpnDetail() { LicenceId = 1, UserPermits = [new() { Title = "upn1", Upn = "1A1DAD797C" }] }),
+                HttpStatusCode.OK => UpnServiceResult.Success(new List<UserPermit>() { new() { Title = "upn1", Upn = "1A1DAD797C" } }),
                 HttpStatusCode.NotFound => UpnServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
                 _ => UpnServiceResult.InternalServerError()
             };
