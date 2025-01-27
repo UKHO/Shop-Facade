@@ -22,6 +22,6 @@ output "webapp_slot_default_site_hostname" {
   value = module.webapp_service.slot_default_site_hostname
 }
 
-output "shop_facade_web_app_public_url" {
-  value = "https://shopfacade${local.env_name}.admiralty.co.uk"
+output "webapp_default_site_hostname" {
+  value = azurerm_linux_web_app.webapp_service.default_hostname
 }

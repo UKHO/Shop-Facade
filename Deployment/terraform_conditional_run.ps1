@@ -58,5 +58,5 @@ Write-Host "##vso[task.setvariable variable=MOCK_WEB_APP_NAME;isOutput=true]$($t
 Write-Host "##vso[task.setvariable variable=ResourceGroup;isOutput=true]$($terraformOutput.resource_group.value)"
 Write-Host "##vso[task.setvariable variable=ShopFacadeBaseUrl;isOutput=true]$($terraformOutput.shop_facade_web_app_public_url.value)"
 Write-Host "##vso[task.setvariable variable=WEB_APP_SLOT_NAME;isOutput=true]$($terraformOutput.webapp_slot_name.value)"
-Write-Host "##vso[task.setvariable variable=WEB_APP_SLOT_HOST_NAME;isOutput=true]$($terraformOutput.webapp_slot_default_site_hostname.value)"
+Write-Host "##vso[task.setvariable variable=WEB_APP_DEFAULT_HOST_NAME;isOutput=true]$($terraformOutput.webapp_default_site_hostname.value)"
 $terraformOutput | ConvertTo-Json -Depth 5 > $terraformJsonOutputFile
