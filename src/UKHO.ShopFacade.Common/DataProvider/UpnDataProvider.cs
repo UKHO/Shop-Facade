@@ -50,9 +50,9 @@ namespace UKHO.ShopFacade.Common.DataProvider
 
         private static S100UpnRecord GetS100UpnRecord(ListItemCollectionResponse s100UpnCollection) => s100UpnCollection.Value!.Select(item => new S100UpnRecord
         {
-            LicenceId = item.Fields.AdditionalData.TryGetValue(UpnSchema.Title, out var title) ? title?.ToString() ?? string.Empty : string.Empty,
-            ECDIS_UPN1_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN1_Title, out var upn1Title) ? upn1Title?.ToString() ?? string.Empty : string.Empty,
-            ECDIS_UPN_1 = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN_1, out var upn1) ? upn1?.ToString() ?? string.Empty : string.Empty,
+            LicenceId = item.Fields!.AdditionalData.TryGetValue(UpnSchema.Title, out var title) ? title?.ToString() : string.Empty,
+            ECDIS_UPN1_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN1_Title, out var upn1Title) ? upn1Title?.ToString() : string.Empty,
+            ECDIS_UPN_1 = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN_1, out var upn1) ? upn1?.ToString() : string.Empty,
             ECDIS_UPN2_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN2_Title, out var upn2Title) ? upn2Title?.ToString() : string.Empty,
             ECDIS_UPN_2 = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN_2, out var upn2) ? upn2?.ToString() : string.Empty,
             ECDIS_UPN3_Title = item.Fields.AdditionalData.TryGetValue(UpnSchema.ECDIS_UPN3_Title, out var upn3Title) ? upn3Title?.ToString() : string.Empty,

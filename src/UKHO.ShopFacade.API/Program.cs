@@ -8,6 +8,10 @@ using Microsoft.Extensions.Options;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Serilog;
 using Serilog.Events;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
+using UKHO.ShopFacade.API.Filters;
 using UKHO.Logging.EventHubLogProvider;
 using UKHO.ShopFacade.API.Middleware;
 using UKHO.ShopFacade.API.Services;
@@ -24,7 +28,9 @@ namespace UKHO.ShopFacade.API
     internal class Program
     {
         private const string EventHubLoggingConfiguration = "EventHubLoggingConfiguration";
-        private const string SharePointSiteConfiguration = "SharePointSiteConfiguration";
+        private const string AzureAdScheme = "AzureAd";
+        private const string AzureAdConfiguration = "AzureAdConfiguration";
+        private const string Ukho = "UKHO";
         private const string GraphApiConfiguration = "GraphApiConfiguration";
         private static void Main(string[] args)
         {
@@ -32,10 +38,18 @@ namespace UKHO.ShopFacade.API
 
             ConfigureConfiguration(builder);
             ConfigureServices(builder);
+            ConfigureSwagger(builder);
 
             // Add services to the container.
 
             var app = builder.Build();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "UKHO Shop Facade Service APIs");
+                c.RoutePrefix = "swagger";
+            });
 
             app.UseCorrelationIdMiddleware();
             app.UseExceptionHandlingMiddleware();
@@ -91,8 +105,22 @@ namespace UKHO.ShopFacade.API
             builder.Services.AddControllers();
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            builder.Services.Configure<EventHubLoggingConfiguration>(builder.Configuration.GetSection(EventHubLoggingConfiguration));
-            builder.Services.Configure<SharePointSiteConfiguration>(builder.Configuration.GetSection(SharePointSiteConfiguration));
+          
+            var azureAdConfiguration = builder.Configuration.GetSection(AzureAdConfiguration).Get<AzureAdConfiguration>();
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(AzureAdScheme, options =>
+                {
+                    options.Audience = azureAdConfiguration?.ClientId;
+                    options.Authority = $"{azureAdConfiguration?.MicrosoftOnlineLoginUrl}{azureAdConfiguration?.TenantId}";
+                });
+
+            builder.Services.AddAuthorizationBuilder()
+                .SetDefaultPolicy(new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .AddAuthenticationSchemes(AzureAdScheme)
+                    .Build())
+                .AddPolicy(ShopFacadeConstants.ShopFacadePolicy, policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePolicy));
+
             builder.Services.AddScoped<IUpnService, UpnService>();
             builder.Services.AddScoped<IUpnDataProvider, UpnDataProvider>();
             builder.Services.AddScoped<IGraphClient, GraphClient>();
@@ -115,8 +143,7 @@ namespace UKHO.ShopFacade.API
                         additionalValues["_RemoteIPAddress"] = httpContextAccessor.HttpContext.Connection.RemoteIpAddress!.ToString();
                         additionalValues["_User-Agent"] = httpContextAccessor.HttpContext.Request.Headers.UserAgent.FirstOrDefault() ?? string.Empty;
                         additionalValues["_AssemblyVersion"] = Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyFileVersionAttribute>().Single().Version;
-                        additionalValues["_X-Correlation-ID"] =
-                            httpContextAccessor.HttpContext.Request.Headers?[ApiHeaderKeys.XCorrelationIdHeaderKey].FirstOrDefault() ?? string.Empty;
+                        additionalValues["_X-Correlation-ID"] = httpContextAccessor.HttpContext.Request.Headers?[ApiHeaderKeys.XCorrelationIdHeaderKey].FirstOrDefault() ?? string.Empty;
                     }
                 }
 
@@ -135,6 +162,53 @@ namespace UKHO.ShopFacade.API
                     config.AdditionalValuesProvider = ConfigAdditionalValuesProvider;
                 });
             }
+        }
+
+        public static void ConfigureSwagger(WebApplicationBuilder builder)
+        {
+            var swaggerConfiguration = new SwaggerConfiguration();
+            builder.Configuration.Bind("Swagger", swaggerConfiguration);
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = swaggerConfiguration.Version,
+                    Title = swaggerConfiguration.Title,
+                    Description = swaggerConfiguration.Description,
+                    Contact = new OpenApiContact
+                    {
+                        Name = Ukho,
+                        Email = swaggerConfiguration.Email
+                    }
+                });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+                c.EnableAnnotations();
+                c.OperationFilter<AddHeaderOperationFilter>();
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Please Enter Token",
+                    Name = "Authorization"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            });
         }
     }
 }
