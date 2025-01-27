@@ -59,4 +59,4 @@ steps:
     inputs:
       targetType: filePath
       filePath: "$(Pipeline.Workspace)/terraformartifact/check_service_status.ps1"
-      arguments: "-healthEndPointUrl https://$(WEB_APP_DEFAULT_HOST_NAME)/health -waitTimeInMinute $(waitTimeInMinute)"
+      arguments: "-healthEndPointUrl $(ShopFacadeConfiguration.BaseUrl)/health -waitTimeInMinute $(waitTimeInMinute)"

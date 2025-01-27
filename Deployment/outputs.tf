@@ -21,7 +21,3 @@ output "webapp_slot_name" {
 output "webapp_slot_default_site_hostname" {
   value = module.webapp_service.slot_default_site_hostname
 }
-
-output "webapp_default_site_hostname" {
-  value = module.webapp_service.default_site_hostname
-}
