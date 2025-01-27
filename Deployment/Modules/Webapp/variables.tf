@@ -32,6 +32,9 @@ variable "env_name" {
 }
 
 variable "mock_webapp_name" {
+  type = string
+}
+
 variable "subnet_id" {
   type = string
 }
