@@ -53,7 +53,7 @@ steps:
       action: "Swap Slots"
       swapWithProduction: true
       sourceSlot: $(WEB_APP_SLOT_NAME)
-   #   targetSlot: $(WEB_APP_NAME)
+      targetSlot: $(WEB_APP_NAME)
 
   - task: PowerShell@2
     displayName: "Check the status of production slot"
