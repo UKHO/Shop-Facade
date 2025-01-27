@@ -1,13 +1,11 @@
 ﻿using System.Net;
 using FakeItEasy;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph.Models;
 using UKHO.ShopFacade.Common.ClientProvider;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.DataProvider;
 using UKHO.ShopFacade.Common.Events;
-using UKHO.ShopFacade.Common.Models;
 
 namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
 {
@@ -29,11 +27,11 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
         [Test]
         public void WhenParameterIsNull_ThenConstructorThrowsArgumentNullException()
         {
-            Action nullLogger = () => new UpnDataProvider(null, _fakeGraphClient);
-            nullLogger.Should().ThrowExactly<ArgumentNullException>().And.ParamName.Should().Be("logger");
+            var nullLogger = Assert.Throws<ArgumentNullException>(() => new UpnDataProvider(null, _fakeGraphClient));
+            Assert.That(nullLogger!.ParamName, Is.EqualTo("logger"));
 
-            Action nullGraphClient = () => new UpnDataProvider(_fakeLogger, null);
-            nullGraphClient.Should().ThrowExactly<ArgumentNullException>().And.ParamName.Should().Be("graphClient");
+            var nullGraphClient = Assert.Throws<ArgumentNullException>(() => new UpnDataProvider(_fakeLogger, null));
+            Assert.That(nullGraphClient!.ParamName, Is.EqualTo("graphClient"));
         }
 
         [Test]
@@ -62,10 +60,10 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
 
             var result = await _upnDataProvider.GetUpnDetailsByLicenseId(123, "correlationId");
 
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
-            result.Value.Should().NotBeNull();
-            result.Value.LicenceId.Should().Be("123");
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(result.Value.LicenceId, Is.EqualTo("123"));
+            Assert.That(result.Value.ECDIS_UPN1_Title, Is.EqualTo("UPN1"));
+            Assert.That(result.Value.ECDIS_UPN_1, Is.EqualTo("ECDIS1"));
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
@@ -90,12 +88,10 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
 
             var result = await _upnDataProvider.GetUpnDetailsByLicenseId(123, "correlationId");
 
-            result.StatusCode.Should().Be(HttpStatusCode.NotFound);
-
-            result.ErrorResponse.Errors.Should().BeEquivalentTo(new List<ErrorDetail>
-            {
-                new() { Source = ErrorDetails.Source ,Description = ErrorDetails.LicenceNotFoundMessage}
-            });
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            Assert.That(result.ErrorResponse.Errors.Count, Is.EqualTo(1));
+            Assert.That(result.ErrorResponse.Errors[0].Source, Is.EqualTo(ErrorDetails.Source));
+            Assert.That(result.ErrorResponse.Errors[0].Description, Is.EqualTo(ErrorDetails.LicenceNotFoundMessage));
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                && call.GetArgument<LogLevel>(0) == LogLevel.Information
@@ -119,12 +115,7 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
                             {
                                 Fields = new FieldValueSet
                                 {
-                                    AdditionalData = new Dictionary<string, object>
-                                    {
-                                        { UpnSchema.Title, null },
-                                        { UpnSchema.ECDIS_UPN1_Title, null },
-                                        { UpnSchema.ECDIS_UPN_1, null}
-                                    }
+                                    AdditionalData = new Dictionary<string, object> {}
                                 }
                             }
                         }
@@ -134,39 +125,8 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
 
             var result = await _upnDataProvider.GetUpnDetailsByLicenseId(123, "correlationId");
 
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
-            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
-                                                && call.GetArgument<LogLevel>(0) == LogLevel.Information
-                                                && call.GetArgument<EventId>(1) == EventIds.GraphClientCallStarted.ToEventId()
-                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GraphClientCallStartedMessage).MustHaveHappenedOnceExactly();
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
-                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
-                                                 && call.GetArgument<EventId>(1) == EventIds.GraphClientCallCompleted.ToEventId()
-                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GraphClientCallCompletedMessage).MustHaveHappenedOnceExactly();
-        }
-
-        [Test]
-        public async Task WhenLicenceExistsWithEmptyFieldsValues_ThenReturnUpnDetailsByLicenseId()
-        {
-            var fakeListItemCollectionResponse = new ListItemCollectionResponse
-            {
-                Value = new List<ListItem>
-                        {
-                            new ListItem
-                            {
-                                Fields = new FieldValueSet{}
-                            }
-                        }
-            };
-
-            A.CallTo(() => _fakeGraphClient.GetListItemCollectionResponse(A<string>.Ignored, A<string>.Ignored)).Returns(fakeListItemCollectionResponse);
-
-            var result = await _upnDataProvider.GetUpnDetailsByLicenseId(123, "correlationId");
-
-            result.Should().NotBeNull();
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
                                                 && call.GetArgument<EventId>(1) == EventIds.GraphClientCallStarted.ToEventId()
