@@ -49,6 +49,8 @@ jobs:
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
     - name  : ResourceGroup
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ResourceGroup'] ]
+    - name  : "ShopFacadeConfiguration.BaseUrl"
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ShopFacadeBaseUrl'] ]
     - name  : WEB_APP_SLOT_NAME
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
     - name  : WEB_APP_SLOT_HOST_NAME
