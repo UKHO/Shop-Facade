@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
-using UKHO.GraphApi.MockService.Configuration;
-using UKHO.GraphApi.MockService.Stubs;
+using UKHO.ShopFacade.MockService.Configuration;
+using UKHO.ShopFacade.MockService.Stubs;
 
-namespace UKHO.GraphApi.MockService.StubSetup
+namespace UKHO.ShopFacade.MockService.StubSetup
 {
     public class StubFactory
     {
@@ -15,8 +15,7 @@ namespace UKHO.GraphApi.MockService.StubSetup
 
         public IStub CreateSapStub()
         {
-            return
-                new GraphApiStub(_graphApiConfiguration);
+            return new GraphApiStub(_graphApiConfiguration);
         }
     }
 }
