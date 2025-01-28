@@ -1,3 +1,4 @@
+
 variable "name" {
   type = string
 }
@@ -29,4 +30,3 @@ variable "secrets" {
 variable "tags" {
 
 }
-
