@@ -20,3 +20,6 @@ steps:
        ARM_SUBSCRIPTION_ID: $(TERRAFORM-SUBSCRIPTION-ID)
        ARM_ACCESS_KEY: $(TERRAFORM-ACCESS-KEY)
        TF_VAR_ARM_OBJECT_ID: $(TERRAFORM-CLIENT-OBJECT-ID)
+       TF_VAR_spoke_rg: $(spokeRG)
+       TF_VAR_spoke_vnet_name: $(spokeVnetName)
+       TF_VAR_spoke_subnet_name: $(spokeSubnetName)
