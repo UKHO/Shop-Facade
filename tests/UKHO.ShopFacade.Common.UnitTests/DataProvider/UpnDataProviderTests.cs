@@ -27,10 +27,10 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
         [Test]
         public void WhenParameterIsNull_ThenConstructorThrowsArgumentNullException()
         {
-            var nullLogger = Assert.Throws<ArgumentNullException>(() => new UpnDataProvider(null, _fakeGraphClient));
+            var nullLogger = Assert.Throws<ArgumentNullException>(() => new UpnDataProvider(null!, _fakeGraphClient));
             Assert.That(nullLogger!.ParamName, Is.EqualTo("logger"));
 
-            var nullGraphClient = Assert.Throws<ArgumentNullException>(() => new UpnDataProvider(_fakeLogger, null));
+            var nullGraphClient = Assert.Throws<ArgumentNullException>(() => new UpnDataProvider(_fakeLogger, null!));
             Assert.That(nullGraphClient!.ParamName, Is.EqualTo("graphClient"));
         }
 
@@ -88,7 +88,7 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
             var result = await _upnDataProvider.GetUpnDetailsByLicenseId(123, "correlationId");
 
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-            Assert.That(result.ErrorResponse.Errors.Count, Is.EqualTo(1));
+            Assert.That(result.ErrorResponse.Errors!.Count, Is.EqualTo(1));
             Assert.That(result.ErrorResponse.Errors[0].Source, Is.EqualTo(ErrorDetails.Source));
             Assert.That(result.ErrorResponse.Errors[0].Description, Is.EqualTo(ErrorDetails.LicenceNotFoundMessage));
 

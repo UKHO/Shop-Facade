@@ -23,7 +23,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
         [Test]
         public void WhenParameterIsNull_ThenConstructorThrowsArgumentNullException()
         {
-            var nullUpnDataProvider = Assert.Throws<ArgumentNullException>(() => new UpnService(null));
+            var nullUpnDataProvider = Assert.Throws<ArgumentNullException>(() => new UpnService(null!));
             Assert.That(nullUpnDataProvider!.ParamName, Is.EqualTo("upnDataProvider"));
         }
 
@@ -46,7 +46,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
             var result = await _upnService.GetUpnDetails(123, "correlationId");
 
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
-            Assert.That(result.ErrorResponse.Errors.Count, Is.EqualTo(1));
+            Assert.That(result.ErrorResponse.Errors!.Count, Is.EqualTo(1));
             Assert.That(result.ErrorResponse.Errors[0].Source, Is.EqualTo(ErrorDetails.Source));
             Assert.That(result.ErrorResponse.Errors[0].Description, Is.EqualTo(ErrorDetails.LicenceNotFoundMessage));
         }

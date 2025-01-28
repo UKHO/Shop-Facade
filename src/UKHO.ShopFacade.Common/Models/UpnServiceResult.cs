@@ -10,11 +10,11 @@ namespace UKHO.ShopFacade.Common.Models
         public new ErrorResponse ErrorResponse { get; }
         public new HttpStatusCode StatusCode { get; }
 
-        private UpnServiceResult(List<UserPermit> value, HttpStatusCode statusCode, ErrorResponse errorResponse = null)
-            : base(value, statusCode, errorResponse)
+        private UpnServiceResult(List<UserPermit>? value, HttpStatusCode statusCode, ErrorResponse? errorResponse = null)
+            : base(value, statusCode, errorResponse!)
         {
             StatusCode = statusCode;
-            ErrorResponse = errorResponse;
+            ErrorResponse = errorResponse!;
         }
 
         public static new UpnServiceResult Success(List<UserPermit> value) => new(value, HttpStatusCode.OK);

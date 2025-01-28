@@ -32,10 +32,10 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         [Test]
         public void WhenParameterIsNull_ThenConstructorThrowsArgumentNullException()
         {
-            var nullLogger = Assert.Throws<ArgumentNullException>(() => new UpnController(_fakeHttpContextAccessor, null, _fakeUpnService));
+            var nullLogger = Assert.Throws<ArgumentNullException>(() => new UpnController(_fakeHttpContextAccessor, null!, _fakeUpnService));
             Assert.That(nullLogger!.ParamName, Is.EqualTo("logger"));
 
-            var nullUpnService = Assert.Throws<ArgumentNullException>(() => new UpnController(_fakeHttpContextAccessor, _fakeLogger, null));
+            var nullUpnService = Assert.Throws<ArgumentNullException>(() => new UpnController(_fakeHttpContextAccessor, _fakeLogger, null!));
             Assert.That(nullUpnService!.ParamName, Is.EqualTo("upnService"));
         }
 
