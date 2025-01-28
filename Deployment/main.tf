@@ -1,3 +1,9 @@
+data "azurerm_subnet" "main_subnet" {
+  name                 = var.spoke_subnet_name
+  virtual_network_name = var.spoke_vnet_name
+  resource_group_name  = var.spoke_rg
+}
+
 module "webapp_service" {
   source                    = "./Modules/Webapp"
   name                      = local.web_app_name
@@ -6,6 +12,7 @@ module "webapp_service" {
   resource_group_name       = azurerm_resource_group.rg.name
   env_name                  = local.env_name
   location                  = azurerm_resource_group.rg.location
+  subnet_id                 = data.azurerm_subnet.main_subnet.id
   sku_name                  = var.sku_name[local.env_name]
   app_settings = {
     "KeyVaultSettings__ServiceUri"                              = "https://${local.key_vault_name}.vault.azure.net/"
