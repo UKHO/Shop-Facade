@@ -61,7 +61,6 @@ namespace UKHO.ShopFacade.MockService.Stubs
                 Request.Create()
                     .WithPath(new WildcardMatcher(endpoint))
                     .WithParam("$filter", $"fields/Title eq '{licenceIdFor500InternalServerErrorResponse}'")
-                    .WithParam("$expand", "fields")
                     .UsingGet()
                 )
             .RespondWith(
