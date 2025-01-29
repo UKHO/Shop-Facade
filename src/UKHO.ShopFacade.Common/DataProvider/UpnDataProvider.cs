@@ -20,7 +20,9 @@ namespace UKHO.ShopFacade.Common.DataProvider
 
         public async Task<UpnDataProviderResult> GetUpnDetailsByLicenseId(int licenceId, string correlationId)
         {
+            // The expandFields is used to select the fields from the Sharepoint list.
             const string expandFields = "fields($select=ECDIS_UPN1_Title,ECDIS_UPN_1,ECDIS_UPN2_Title,ECDIS_UPN_2,ECDIS_UPN3_Title,ECDIS_UPN_3,ECDIS_UPN4_Title,ECDIS_UPN_4,ECDIS_UPN5_Title,ECDIS_UPN_5)";
+            // The filterCondition is used to filter the Sharepoint list based on the licenceId.
             var filterCondition = $"fields/Title eq '{licenceId}'";
 
             _logger.LogInformation(EventIds.GraphClientCallStarted.ToEventId(), ErrorDetails.GraphClientCallStartedMessage);
@@ -40,6 +42,7 @@ namespace UKHO.ShopFacade.Common.DataProvider
             }
             else
             {
+                // When the licence is not found in Sharepoint list then it will return Not Found response with custom message.
                 upnDataProviderResult = UpnDataProviderResult.NotFound(UpnDataProviderResult.SetErrorResponse(correlationId, ErrorDetails.Source, ErrorDetails.LicenceNotFoundMessage));
             }
 

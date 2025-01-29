@@ -35,6 +35,7 @@ namespace UKHO.ShopFacade.API.Services
                 }
             };
 
+            // Include the UPN details in the response model when both the title and its corresponding UPN values are not null.
             if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN2_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_2))
             {
                 userPermits.Add(new UserPermit
@@ -44,6 +45,7 @@ namespace UKHO.ShopFacade.API.Services
                 });
             }
 
+            // Include the UPN details in the response model when both the title and its corresponding UPN values are not null.
             if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN3_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_3))
             {
                 userPermits.Add(new UserPermit
@@ -53,6 +55,7 @@ namespace UKHO.ShopFacade.API.Services
                 });
             }
 
+            // Include the UPN details in the response model when both the title and its corresponding UPN values are not null.
             if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN4_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_4))
             {
                 userPermits.Add(new UserPermit
@@ -62,6 +65,7 @@ namespace UKHO.ShopFacade.API.Services
                 });
             }
 
+            // Include the UPN details in the response model when both the title and its corresponding UPN values are not null.
             if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN5_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_5))
             {
                 userPermits.Add(new UserPermit
