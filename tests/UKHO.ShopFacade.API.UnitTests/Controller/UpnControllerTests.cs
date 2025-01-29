@@ -57,7 +57,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallStartedMessage).MustHaveHappenedOnceExactly();
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
-                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Warning
                                                  && call.GetArgument<EventId>(1) == EventIds.InvalidLicenceId.ToEventId()
                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.InvalidLicenceIdMessage).MustHaveHappenedOnceExactly();
         }
@@ -103,7 +103,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                   && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallStartedMessage).MustHaveHappenedOnceExactly();
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
-                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Warning
                                                  && call.GetArgument<EventId>(1) == EventIds.LicenceNotFound.ToEventId()
                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.LicenceNotFoundMessage).MustHaveHappenedOnceExactly();
         }
@@ -123,7 +123,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                   && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallStartedMessage).MustHaveHappenedOnceExactly();
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
-                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Error
                                                  && call.GetArgument<EventId>(1) == EventIds.InternalError.ToEventId()
                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.InternalErrorMessage).MustHaveHappenedOnceExactly();
         }

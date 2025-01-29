@@ -52,7 +52,7 @@ namespace UKHO.ShopFacade.API.Controllers
 
             if (licenceId <= 0)
             {
-                _logger.LogInformation(EventIds.InvalidLicenceId.ToEventId(), ErrorDetails.InvalidLicenceIdMessage);
+                _logger.LogWarning(EventIds.InvalidLicenceId.ToEventId(), ErrorDetails.InvalidLicenceIdMessage);
                 return BadRequest(UpnServiceResult.SetErrorResponse(GetCorrelationId(), ErrorDetails.Source, ErrorDetails.InvalidLicenceIdMessage));
             }
 
@@ -64,10 +64,10 @@ namespace UKHO.ShopFacade.API.Controllers
                     _logger.LogInformation(EventIds.GetUPNsCallCompleted.ToEventId(), ErrorDetails.GetUPNsCallCompletedMessage);
                     return Ok(upnServiceResult.Value);
                 case HttpStatusCode.NotFound:
-                    _logger.LogInformation(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
+                    _logger.LogWarning(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
                     return NotFound(upnServiceResult.ErrorResponse);
                 default:
-                    _logger.LogInformation(EventIds.InternalError.ToEventId(), ErrorDetails.InternalErrorMessage);
+                    _logger.LogError(EventIds.InternalError.ToEventId(), ErrorDetails.InternalErrorMessage);
                     return StatusCode((int)upnServiceResult.StatusCode);
             }
         }
