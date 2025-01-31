@@ -1,9 +1,9 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace UKHO.ShopFacade.Common.Constants
 {
-    public class ShopFacadeConstants
+    [ExcludeFromCodeCoverage]
+    public static class ShopFacadeConstants
     {
         public const string ShopFacadePolicy = "UpnReader";
     }

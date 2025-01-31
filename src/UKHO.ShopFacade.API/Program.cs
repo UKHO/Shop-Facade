@@ -1,22 +1,25 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using UKHO.ShopFacade.API.Middleware;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.Extensions.Options;
-using System.Reflection;
-using UKHO.ShopFacade.Common.Configuration;
-using UKHO.ShopFacade.Common.Constants;
-using UKHO.Logging.EventHubLogProvider;
+using Microsoft.Kiota.Abstractions.Authentication;
 using Serilog;
 using Serilog.Events;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using UKHO.ShopFacade.API.Filters;
+using UKHO.Logging.EventHubLogProvider;
+using UKHO.ShopFacade.API.Middleware;
+using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Authentication;
-using Microsoft.Kiota.Abstractions.Authentication;
+using UKHO.ShopFacade.Common.ClientProvider;
+using UKHO.ShopFacade.Common.Configuration;
+using UKHO.ShopFacade.Common.Constants;
+using UKHO.ShopFacade.Common.DataProvider;
 
 namespace UKHO.ShopFacade.API
 {
@@ -101,8 +104,7 @@ namespace UKHO.ShopFacade.API
             builder.Services.AddControllers();
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            builder.Services.Configure<EventHubLoggingConfiguration>(builder.Configuration.GetSection(EventHubLoggingConfiguration));
-
+          
             var azureAdConfiguration = builder.Configuration.GetSection(AzureAdConfiguration).Get<AzureAdConfiguration>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(AzureAdScheme, options =>
@@ -118,6 +120,9 @@ namespace UKHO.ShopFacade.API
                     .Build())
                 .AddPolicy(ShopFacadeConstants.ShopFacadePolicy, policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePolicy));
 
+            builder.Services.AddScoped<IUpnService, UpnService>();
+            builder.Services.AddScoped<IUpnDataProvider, UpnDataProvider>();
+            builder.Services.AddScoped<IGraphClient, GraphClient>();
             builder.Services.AddScoped<IAuthenticationProvider, ManagedIdentityGraphAuthProvider>();
         }
 
@@ -136,8 +141,7 @@ namespace UKHO.ShopFacade.API
                         additionalValues["_RemoteIPAddress"] = httpContextAccessor.HttpContext.Connection.RemoteIpAddress!.ToString();
                         additionalValues["_User-Agent"] = httpContextAccessor.HttpContext.Request.Headers.UserAgent.FirstOrDefault() ?? string.Empty;
                         additionalValues["_AssemblyVersion"] = Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyFileVersionAttribute>().Single().Version;
-                        additionalValues["_X-Correlation-ID"] =
-                            httpContextAccessor.HttpContext.Request.Headers?[ApiHeaderKeys.XCorrelationIdHeaderKey].FirstOrDefault() ?? string.Empty;
+                        additionalValues["_X-Correlation-ID"] = httpContextAccessor.HttpContext.Request.Headers?[ApiHeaderKeys.XCorrelationIdHeaderKey].FirstOrDefault() ?? string.Empty;
                     }
                 }
 

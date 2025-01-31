@@ -15,8 +15,7 @@ namespace UKHO.ShopFacade.MockService.StubSetup
 
         public IStub CreateSapStub()
         {
-            return
-                new GraphApiStub(_graphApiConfiguration);
+            return new GraphApiStub(_graphApiConfiguration);
         }
     }
 }

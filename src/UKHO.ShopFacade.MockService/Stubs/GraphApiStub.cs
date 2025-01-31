@@ -19,6 +19,7 @@ namespace UKHO.ShopFacade.MockService.Stubs
         {
             var licenceIdFor200OkResponse = "1";
             var licenceIdFor500InternalServerErrorResponse = "2";
+            var licenceIdForEmptyResponse = "3";
 
             // Mock endpoint for Graph API
             var endpoint = $"/sites/{_graphApiConfiguration.SiteId}/lists/{_graphApiConfiguration.ListId}/items";
@@ -27,7 +28,7 @@ namespace UKHO.ShopFacade.MockService.Stubs
                 Request.Create()
                     .WithPath(new WildcardMatcher(endpoint))
                     .WithParam("$filter", $"fields/Title eq '{licenceIdFor200OkResponse}'")
-                    .WithParam("$expand", "fields")
+                    .WithParam("$expand", "fields($select=ECDIS_UPN1_Title,ECDIS_UPN_1,ECDIS_UPN2_Title,ECDIS_UPN_2,ECDIS_UPN3_Title,ECDIS_UPN_3,ECDIS_UPN4_Title,ECDIS_UPN_4,ECDIS_UPN5_Title,ECDIS_UPN_5)")
                     .UsingGet()
             )
             .RespondWith(
@@ -35,47 +36,53 @@ namespace UKHO.ShopFacade.MockService.Stubs
                     .WithStatusCode(200)
                     .WithHeader("Content-Type", "application/json")
                     .WithBody($@"
-                    {{
-                        {{
-                          ""licenceId"": {licenceIdFor200OkResponse},
-                          ""userPermits"":
-                            [
-                                {{
-                                  ""title"": ""Master"",
-                                  ""upn"": ""C23DAD797C966EC9F6A55B66ED98281599B3A231859868""
-                                }},
-                                {{
-                                  ""title"": ""Backup 1"",
-                                  ""upn"": ""BA2DAD797C966EC9F6A55B66ED98281599B3C7B1859868""
-                                }},
-                                {{
-                                  ""title"": ""Backup 2"",
-                                  ""upn"": ""A39E2BD79F867CA1B52A44C16FD98281599FA2C31595878E""
-                                }},
-                                {{
-                                  ""title"": ""Backup 3"",
-                                  ""upn"": ""D43BFA197C562EB8F73A23D45ED98270599B1C54784968D""
-                                }},
-                                {{
-                                  ""title"": ""Backup 4"",
-                                  ""upn"": ""E18ACD947B726FC3A85C66B19AD98231589D3A42765987A""
+                       {{
+                        ""value"": [
+                            {{
+                                ""fields"": {{
+                                    ""Title"": ""{licenceIdFor200OkResponse}"",
+                                    ""ECDIS_UPN1_Title"": ""Master"",
+                                    ""ECDIS_UPN_1"": ""C23DAD797C966EC9F6A55B66ED98281599B3A231859868"",
+                                    ""ECDIS_UPN2_Title"": ""Backup 1"",
+                                    ""ECDIS_UPN_2"": ""BA2DAD797C966EC9F6A55B66ED98281599B3C7B1859868"",
+                                    ""ECDIS_UPN3_Title"": ""Backup 2"",
+                                    ""ECDIS_UPN_3"": ""A39E2BD79F867CA1B52A44C16FD98281599FA2C31595878E"",
+                                    ""ECDIS_UPN4_Title"": ""Backup 3"",
+                                    ""ECDIS_UPN_4"": ""D43BFA197C562EB8F73A23D45ED98270599B1C54784968D"",
+                                    ""ECDIS_UPN5_Title"": ""Backup 4"",
+                                    ""ECDIS_UPN_5"": ""E18ACD947B726FC3A85C66B19AD98231589D3A42765987A""
                                 }}
+                            }}
                             ]
-                        }}
-                    }}")
+                        }}")
             );
 
             server.Given(
                 Request.Create()
                     .WithPath(new WildcardMatcher(endpoint))
                     .WithParam("$filter", $"fields/Title eq '{licenceIdFor500InternalServerErrorResponse}'")
-                    .WithParam("$expand", "fields")
                     .UsingGet()
                 )
             .RespondWith(
         Response.Create()
                     .WithStatusCode(500)
                     .WithHeader("Content-Type", "application/json")
+            );
+
+            server.Given(
+                Request.Create()
+                    .WithPath(new WildcardMatcher(endpoint))
+                    .WithParam("$filter", $"fields/Title eq '{licenceIdForEmptyResponse}'")
+                    .UsingGet()
+                )
+            .RespondWith(
+                Response.Create()
+                    .WithStatusCode(200)
+                    .WithHeader("Content-Type", "application/json")
+                    .WithBody($@"
+                   {{
+                    ""value"": []
+                    }}")
             );
         }
     }
