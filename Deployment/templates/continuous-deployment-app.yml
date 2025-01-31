@@ -24,7 +24,7 @@ steps:
     displayName: "File Transform: WebAppSettings"
     inputs:
       folderPath: '$(Pipeline.Workspace)/UKHOShopFacadeServiceAPI/*.zip'
-      fileType: 'json'
+      xmlTransformationRules: ''
       targetFiles: '**/appsettings.json'
            
   - task: AzureWebApp@1
