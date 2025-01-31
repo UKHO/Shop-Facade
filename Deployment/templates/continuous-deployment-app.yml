@@ -24,7 +24,6 @@ steps:
     displayName: "File Transform: WebAppSettings"
     inputs:
       folderPath: '$(Pipeline.Workspace)/UKHOShopFacadeServiceAPI/*.zip'
-      enableXmlTransform: false
       xmlTransformationRules: ''
       targetFiles: '**/appsettings.json'
  
