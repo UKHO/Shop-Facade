@@ -1,19 +1,18 @@
-﻿using UKHO.GraphApi.MockService.Configuration;
-using UKHO.GraphApi.MockService.StubSetup;
+using UKHO.ShopFacade.MockService.Configuration;
+using UKHO.ShopFacade.MockService.StubSetup;
 using WireMock.Settings;
 
-namespace UKHO.GraphApi.MockService
+namespace UKHO.ShopFacade.MockService
 {
-    internal static class Program
+    internal class Program
     {
-        public static void Main(string[] args)
+        private static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
         }
-
         private static IHostBuilder CreateHostBuilder(string[] args)
-        => Host.CreateDefaultBuilder(args)
-            .ConfigureServices((host, services) => ConfigureServices(services, host.Configuration));
+       => Host.CreateDefaultBuilder(args)
+           .ConfigureServices((host, services) => ConfigureServices(services, host.Configuration));
 
         private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {

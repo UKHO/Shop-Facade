@@ -9,11 +9,11 @@ namespace UKHO.ShopFacade.Common.Models
         public new ErrorResponse ErrorResponse { get; }
         public new HttpStatusCode StatusCode { get; }
 
-        private UpnDataProviderResult(S100UpnRecord value, HttpStatusCode statusCode, ErrorResponse errorResponse = null)
-            : base(value, statusCode, errorResponse)
+        private UpnDataProviderResult(S100UpnRecord? value, HttpStatusCode statusCode, ErrorResponse? errorResponse = null)
+            : base(value!, statusCode, errorResponse!)
         {
             StatusCode = statusCode;
-            ErrorResponse = errorResponse;
+            ErrorResponse = errorResponse!;
         }
 
         public static new UpnDataProviderResult Success(S100UpnRecord value) => new(value, HttpStatusCode.OK);

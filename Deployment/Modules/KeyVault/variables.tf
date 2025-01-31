@@ -29,4 +29,3 @@ variable "secrets" {
 variable "tags" {
 
 }
-

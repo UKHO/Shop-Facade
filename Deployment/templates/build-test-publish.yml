@@ -156,14 +156,117 @@ jobs:
         replaceExistingArchive: true
 
     - task: PublishBuildArtifacts@1
-      displayName: "Publish WebAPI Artifact"
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
-        ArtifactName: UKHOShopFacadeServiceAPI
-
-    - task: PublishBuildArtifacts@1
       displayName: "Publish terraform Artifacts"
       inputs:
         PathtoPublish: '$(Build.SourcesDirectory)\Deployment'
         ArtifactName: terraformartifact   
 
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish WebAPI Artifact"
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
+        ArtifactName: UKHOShopFacadeServiceAPI
+
+- job: BuildAndPublishMockService
+  workspace:
+    clean: all
+  displayName: "Dotnet Build publish API"
+  steps:
+    - task: PowerShell@2
+      displayName: "Set assembly version numbers based on build ID"
+      inputs:
+        targetType: filePath
+        filePath: '$(Build.SourcesDirectory)\Apply-AssemblyVersionAndDefaults.ps1'
+        arguments: '-buildNumber "$(Build.BuildNumber)" -solutionDirectory "$(Build.SourcesDirectory)\src\UKHO.ShopFacade.MockService\" -UKHOAssemblyCompany "$env:UKHOAssemblyCompany" -UKHOAssemblyCopyright "$(UKHOAssemblyCopyright)" -UKHOAssemblyVersionPrefix "$env:UKHOAssemblyVersionPrefix" -UKHOAssemblyProduct "$(UKHOAssemblyProduct) MockService"'
+
+    - task: UseDotNet@2
+      displayName: 'Use .NET 8.0.x sdk'
+      inputs:
+        packageType: sdk
+        useGlobalJson: true
+        workingDirectory: '$(Build.SourcesDirectory)\src'
+              
+    - task: DotNetCoreCLI@2
+      displayName: ".Net Core - NuGet restore for non test projects only"
+      inputs:
+        command: "restore"
+        projects: '**/*UKHO.ShopFacade.MockService.csproj'
+        feedsToUse: config
+        noCache: true
+        nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
+        workingDirectory: '$(Build.SourcesDirectory)\src\UKHO.ShopFacade.MockService'
+        packagesDirectory: '$(Build.SourcesDirectory)\UKHO.ShopFacade.MockService\packages' 
+
+    - task: DotNetCoreCLI@2
+      displayName: "dotnet build task"
+      inputs:
+        command: "build"
+        projects: '**/*UKHO.ShopFacade.MockService.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+
+    - task: DotNetCoreCLI@2
+      displayName: "Publish ShopFacade Mock Service API "
+      inputs:
+        command: "publish"
+        publishWebProjects: false
+        projects: '**/*UKHO.ShopFacade.MockService.csproj'
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.MockService'
+        zipAfterPublish: false
+        modifyOutputPath: false
+
+    - task: ArchiveFiles@2
+      displayName: "Zip ShopFacade Mock Service"
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/UKHO.ShopFacade.MockService/'
+        includeRootFolder: false
+        archiveType: "zip"
+        archiveFile: '$(Build.ArtifactStagingDirectory)/UKHO.ShopFacade.MockService/UKHOShopFacadeMockService.zip'
+        replaceExistingArchive: true
+
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish ShopFacade Mock WebAPI Artifact"
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.MockService/UKHOShopFacadeMockService.zip'
+        ArtifactName: UKHOShopFacadeMockServiceAPI
+
+- job: PublishFunctionalTests
+  workspace:
+    clean: all
+  displayName: "Publish FunctionalTests Artifact"
+  steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET 8.0.x sdk'
+      inputs:
+        packageType: sdk
+        useGlobalJson: true
+        workingDirectory: '$(Build.SourcesDirectory)\src'
+
+    - task: DotNetCoreCLI@2
+      displayName: ".Net Core - NuGet restore for non test projects only"
+      inputs:
+        command: "restore"
+        projects: |
+          **/*.csproj
+          !**/UKHO.ShopFacade.MockService.csproj
+        feedsToUse: config
+        noCache: true
+        nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
+        workingDirectory: '$(Build.SourcesDirectory)\src'
+        packagesDirectory: '$(Build.SourcesDirectory)\src\packages'
+
+    - task: DotNetCoreCLI@2
+      displayName: "Publish Functional Test Code "
+      inputs:
+        command: "publish"
+        publishWebProjects: false
+        projects: '$(Build.SourcesDirectory)\tests\UKHO.ShopFacade.API.FunctionalTests\UKHO.ShopFacade.API.FunctionalTests.csproj'
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API.FunctionalTests'
+        workingDirectory: '$(Build.SourcesDirectory)\tests\UKHO.ShopFacade.API.FunctionalTests'
+        zipAfterPublish: false
+        modifyOutputPath: trues
+
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish Functional test Artifact"
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API.FunctionalTests'
+        ArtifactName: functionaltests

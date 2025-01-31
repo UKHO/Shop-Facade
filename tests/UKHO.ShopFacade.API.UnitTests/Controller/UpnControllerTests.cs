@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using FakeItEasy;
-using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -33,11 +32,11 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         [Test]
         public void WhenParameterIsNull_ThenConstructorThrowsArgumentNullException()
         {
-            Action nullLogger = () => new UpnController(_fakeHttpContextAccessor, null, _fakeUpnService);
-            nullLogger.Should().ThrowExactly<ArgumentNullException>().And.ParamName.Should().Be("logger");
+            var nullLogger = Assert.Throws<ArgumentNullException>(() => new UpnController(_fakeHttpContextAccessor, null!, _fakeUpnService));
+            Assert.That(nullLogger!.ParamName, Is.EqualTo("logger"));
 
-            Action nullUpnService = () => new UpnController(_fakeHttpContextAccessor, _fakeLogger, null);
-            nullUpnService.Should().ThrowExactly<ArgumentNullException>().And.ParamName.Should().Be("upnService");
+            var nullUpnService = Assert.Throws<ArgumentNullException>(() => new UpnController(_fakeHttpContextAccessor, _fakeLogger, null!));
+            Assert.That(nullUpnService!.ParamName, Is.EqualTo("upnService"));
         }
 
         [Test]
@@ -47,15 +46,10 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
             var result = (BadRequestObjectResult)await _upnController.GetUPNs(invalidLicenceId);
 
-            result.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-
-            result.Value.Should().BeEquivalentTo(new
-            {
-                Errors = new List<ErrorDetail>
-                {
-                    new() { Source = ErrorDetails.Source, Description = ErrorDetails.InvalidLicenceIdMessage }
-                }
-            });
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
+            Assert.That(((dynamic)result.Value!).Errors.Count, Is.EqualTo(1));
+            Assert.That(((dynamic)result.Value).Errors[0].Source, Is.EqualTo(ErrorDetails.Source));
+            Assert.That(((dynamic)result.Value).Errors[0].Description, Is.EqualTo(ErrorDetails.InvalidLicenceIdMessage));
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                  && call.GetArgument<LogLevel>(0) == LogLevel.Information
@@ -63,7 +57,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallStartedMessage).MustHaveHappenedOnceExactly();
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
-                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Warning
                                                  && call.GetArgument<EventId>(1) == EventIds.InvalidLicenceId.ToEventId()
                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.InvalidLicenceIdMessage).MustHaveHappenedOnceExactly();
         }
@@ -75,12 +69,11 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
             var result = (OkObjectResult)await _upnController.GetUPNs(1);
 
-            var upnRecord = result.Value as UpnDetail;
+            var userPermits = result.Value as List<UserPermit>;
 
-            result.StatusCode.Should().Be((int)HttpStatusCode.OK);
-            upnRecord.LicenceId.Should().Be(1);
-            upnRecord.UserPermits[0].Title.Should().Be("upn1");
-            upnRecord.UserPermits[0].Upn.Should().Be("1A1DAD797C");
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
+            Assert.That(userPermits![0].Title, Is.EqualTo("upn1"));
+            Assert.That(userPermits[0].Upn, Is.EqualTo("1A1DAD797C"));
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                   && call.GetArgument<LogLevel>(0) == LogLevel.Information
@@ -100,15 +93,9 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
             var result = (NotFoundObjectResult)await _upnController.GetUPNs(6);
 
-            result.StatusCode.Should().Be((int)HttpStatusCode.NotFound);
-
-            result.Value.Should().BeEquivalentTo(new
-            {
-                Errors = new List<ErrorDetail>
-                {
-                    new() { Source = ErrorDetails.Source ,Description = ErrorDetails.LicenceNotFoundMessage}
-                }
-            });
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
+            Assert.That(((dynamic)result.Value!).Errors[0].Source, Is.EqualTo(ErrorDetails.Source));
+            Assert.That(((dynamic)result.Value).Errors[0].Description, Is.EqualTo(ErrorDetails.LicenceNotFoundMessage));
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                   && call.GetArgument<LogLevel>(0) == LogLevel.Information
@@ -116,7 +103,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                   && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallStartedMessage).MustHaveHappenedOnceExactly();
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
-                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Warning
                                                  && call.GetArgument<EventId>(1) == EventIds.LicenceNotFound.ToEventId()
                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.LicenceNotFoundMessage).MustHaveHappenedOnceExactly();
         }
@@ -128,7 +115,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
             var result = (StatusCodeResult)await _upnController.GetUPNs(1);
 
-            result.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.InternalServerError));
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                   && call.GetArgument<LogLevel>(0) == LogLevel.Information
@@ -136,7 +123,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                   && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallStartedMessage).MustHaveHappenedOnceExactly();
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
-                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Error
                                                  && call.GetArgument<EventId>(1) == EventIds.InternalError.ToEventId()
                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.InternalErrorMessage).MustHaveHappenedOnceExactly();
         }
@@ -145,11 +132,10 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         {
             return httpStatusCode switch
             {
-                HttpStatusCode.OK => UpnServiceResult.Success(new UpnDetail() { LicenceId = 1, UserPermits = [new() { Title = "upn1", Upn = "1A1DAD797C" }] }),
+                HttpStatusCode.OK => UpnServiceResult.Success(new List<UserPermit>() { new() { Title = "upn1", Upn = "1A1DAD797C" } }),
                 HttpStatusCode.NotFound => UpnServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
                 _ => UpnServiceResult.InternalServerError()
             };
         }
-
     }
 }

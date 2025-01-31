@@ -1,10 +1,18 @@
+data "azurerm_subnet" "main_subnet" {
+  name                 = var.spoke_subnet_name
+  virtual_network_name = var.spoke_vnet_name
+  resource_group_name  = var.spoke_rg
+}
+
 module "webapp_service" {
   source                    = "./Modules/Webapp"
   name                      = local.web_app_name
+  mock_webapp_name          = local.mock_web_app_name
   service_name              = local.service_name                 
   resource_group_name       = azurerm_resource_group.rg.name
   env_name                  = local.env_name
   location                  = azurerm_resource_group.rg.location
+  subnet_id                 = data.azurerm_subnet.main_subnet.id
   sku_name                  = var.sku_name[local.env_name]
   app_settings = {
     "KeyVaultSettings__ServiceUri"                              = "https://${local.key_vault_name}.vault.azure.net/"
@@ -16,8 +24,25 @@ module "webapp_service" {
     "WEBSITE_ENABLE_SYNC_UPDATE_SITE"                           = "true"
     "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG"           = "1"    
   }
+  mock_app_settings = {
+    "KeyVaultSettings__ServiceUri"                              = "https://${local.key_vault_name}.vault.azure.net/"
+    "ASPNETCORE_ENVIRONMENT"                                   = local.env_name
+    "WEBSITE_RUN_FROM_PACKAGE"                                 = "1"
+    "WEBSITE_ENABLE_SYNC_UPDATE_SITE"                          = "true"
+  }
   tags                                                          = local.tags
 }
+
+locals {
+  kv_read_access_list = {
+    "webapp_service" = module.webapp_service.web_app_object_id
+  }
+  
+  kv_read_access_list_with_mock = merge(local.kv_read_access_list, {
+    "mock_service" = local.env_name == "dev" ? module.webapp_service.mock_web_app_object_id : ""
+    })
+}
+
 
 module "app_insights" {
   source              = "./Modules/AppInsights"
@@ -43,9 +68,7 @@ module "key_vault" {
   env_name            = local.env_name
   tenant_id           = module.webapp_service.web_app_tenant_id
   location            = azurerm_resource_group.rg.location
-  read_access_objects = {
-     "webapp_service"       = module.webapp_service.web_app_object_id
-  }
+  read_access_objects = local.env_name == "dev" ? local.kv_read_access_list_with_mock : local.kv_read_access_list
   secrets = {
     "EventHubLoggingConfiguration--ConnectionString"            = module.eventhub.log_primary_connection_string
     "EventHubLoggingConfiguration--EntityPath"                  = module.eventhub.entity_path
