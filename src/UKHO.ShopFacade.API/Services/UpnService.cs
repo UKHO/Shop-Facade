@@ -36,46 +36,20 @@ namespace UKHO.ShopFacade.API.Services
             };
 
             // Include the UPN details in the response model when both the title and its corresponding UPN values are not null.
-            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN2_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_2))
-            {
-                userPermits.Add(new UserPermit
-                {
-                    Title = upnDataProviderResult.Value.ECDIS_UPN2_Title,
-                    Upn = upnDataProviderResult.Value.ECDIS_UPN_2
-                });
-            }
-
-            // Include the UPN details in the response model when both the title and its corresponding UPN values are not null.
-            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN3_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_3))
-            {
-                userPermits.Add(new UserPermit
-                {
-                    Title = upnDataProviderResult.Value.ECDIS_UPN3_Title,
-                    Upn = upnDataProviderResult.Value.ECDIS_UPN_3
-                });
-            }
-
-            // Include the UPN details in the response model when both the title and its corresponding UPN values are not null.
-            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN4_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_4))
-            {
-                userPermits.Add(new UserPermit
-                {
-                    Title = upnDataProviderResult.Value.ECDIS_UPN4_Title,
-                    Upn = upnDataProviderResult.Value.ECDIS_UPN_4
-                });
-            }
-
-            // Include the UPN details in the response model when both the title and its corresponding UPN values are not null.
-            if (!string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN5_Title) && !string.IsNullOrEmpty(upnDataProviderResult.Value.ECDIS_UPN_5))
-            {
-                userPermits.Add(new UserPermit
-                {
-                    Title = upnDataProviderResult.Value.ECDIS_UPN5_Title,
-                    Upn = upnDataProviderResult.Value.ECDIS_UPN_5
-                });
-            }
+            AddUserPermitIfNotNull(upnDataProviderResult.Value.ECDIS_UPN2_Title, upnDataProviderResult.Value.ECDIS_UPN_2, userPermits);
+            AddUserPermitIfNotNull(upnDataProviderResult.Value.ECDIS_UPN3_Title, upnDataProviderResult.Value.ECDIS_UPN_3, userPermits);
+            AddUserPermitIfNotNull(upnDataProviderResult.Value.ECDIS_UPN4_Title, upnDataProviderResult.Value.ECDIS_UPN_4, userPermits);
+            AddUserPermitIfNotNull(upnDataProviderResult.Value.ECDIS_UPN5_Title, upnDataProviderResult.Value.ECDIS_UPN_5, userPermits);
 
             return userPermits;
+        }
+
+        private static void AddUserPermitIfNotNull(string? title, string? upn, List<UserPermit> userPermits)
+        {
+            if (!string.IsNullOrEmpty(title) && !string.IsNullOrEmpty(upn))
+            {
+                userPermits.Add(new UserPermit { Title = title, Upn = upn });
+            }
         }
     }
 }

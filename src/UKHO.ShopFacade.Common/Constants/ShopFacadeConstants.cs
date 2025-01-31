@@ -1,6 +1,9 @@
-﻿namespace UKHO.ShopFacade.Common.Constants
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace UKHO.ShopFacade.Common.Constants
 {
-    public class ShopFacadeConstants
+    [ExcludeFromCodeCoverage]
+    public static class ShopFacadeConstants
     {
         public const string ShopFacadePolicy = "UpnReader";
     }

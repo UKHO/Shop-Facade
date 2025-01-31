@@ -1,5 +1,8 @@
-﻿namespace UKHO.ShopFacade.Common.Constants
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace UKHO.ShopFacade.Common.Constants
 {
+    [ExcludeFromCodeCoverage]
     public static class UpnSchema
     {
         public const string Title = "Title";

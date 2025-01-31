@@ -4,7 +4,7 @@ using System.Net;
 namespace UKHO.ShopFacade.Common.Models
 {
     [ExcludeFromCodeCoverage]
-    public class Result<T>
+    public abstract class Result<T>
     {
         public T Value { get; }
 
