@@ -68,8 +68,6 @@ resource "azurerm_linux_web_app_slot" "staging" {
     always_on  = true
     ftps_state = "Disabled"
   }
-     
-  app_settings = merge(azurerm_linux_web_app.webapp_service.app_settings, { "WEBJOBS_STOPPED" = "1" })
 
   identity {
     type = "SystemAssigned"

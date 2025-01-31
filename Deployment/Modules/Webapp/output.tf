@@ -14,10 +14,6 @@ output "slot_object_id" {
   value = azurerm_linux_web_app_slot.staging.identity.0.principal_id
 }
 
-output "slot_tenant_id" {
-  value = azurerm_linux_web_app_slot.staging.identity.0.tenant_id
-}
-
 output "slot_default_site_hostname" {
   value = azurerm_linux_web_app_slot.staging.default_hostname
 }
