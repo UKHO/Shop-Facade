@@ -35,7 +35,8 @@ module "webapp_service" {
 
 locals {
   kv_read_access_list = {
-    "webapp_service" = module.webapp_service.web_app_object_id
+    "webapp_service"  = module.webapp_service.web_app_object_id
+    "webapp_slot"     = module.webapp_service.slot_object_id
   }
   
   kv_read_access_list_with_mock = merge(local.kv_read_access_list, {

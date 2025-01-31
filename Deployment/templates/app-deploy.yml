@@ -47,6 +47,12 @@ jobs:
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
     - name  : "KeyVaultSettings.ServiceUri" 
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
+    - name  : ResourceGroup
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ResourceGroup'] ]
+    - name  : WEB_APP_SLOT_NAME
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
+    - name  : WEB_APP_SLOT_HOST_NAME
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
     - name  : MOCK_WEB_APP_NAME
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.MOCK_WEB_APP_NAME'] ]
   strategy:
@@ -60,13 +66,11 @@ jobs:
               AzureSubscription: ${{parameters.AzureSubscription}}
 
 - deployment: FunctionalTests
-  dependsOn:
-  - DevDeployTerraform
-  - DeployApp
+  dependsOn:  DeployApp
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
-  condition: ${{parameters.RunTests}}
+  condition: and(succeeded('DeployApp'), eq( ${{parameters.RunTests}} , 'true'))
   workspace:
    clean: all
   strategy:
