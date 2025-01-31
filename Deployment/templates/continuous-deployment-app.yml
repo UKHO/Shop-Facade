@@ -25,7 +25,7 @@ steps:
     inputs:
       folderPath: '$(Pipeline.Workspace)/UKHOShopFacadeServiceAPI/*.zip'
       xmlTransformationRules: ''
-      targetFiles: '**/appsettings.json'
+      jsonTargetFiles: '**/appsettings.json'
            
   - task: AzureWebApp@1
     displayName: "Azure App Deploy: Staging slot"
