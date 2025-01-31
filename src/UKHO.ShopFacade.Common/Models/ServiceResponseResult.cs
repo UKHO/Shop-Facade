@@ -10,11 +10,11 @@ namespace UKHO.ShopFacade.Common.Models
 
         public new ErrorResponse ErrorResponse { get; }
 
-        protected ServiceResponseResult(T value, HttpStatusCode statusCode, ErrorResponse errorResponse = null)
-            : base(value, statusCode, errorResponse)
+        protected ServiceResponseResult(T? value, HttpStatusCode statusCode, ErrorResponse? errorResponse = null)
+            : base(value!, statusCode, errorResponse!)
         {
-            Value = value;
-            ErrorResponse = errorResponse;
+            Value = value!;
+            ErrorResponse = errorResponse!;
         }
 
         public static ServiceResponseResult<T> Success(T value) => new(value, HttpStatusCode.OK);

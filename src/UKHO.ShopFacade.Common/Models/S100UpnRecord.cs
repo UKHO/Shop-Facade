@@ -5,7 +5,6 @@ namespace UKHO.ShopFacade.Common.Models
     [ExcludeFromCodeCoverage]
     public class S100UpnRecord
     {
-        public string? LicenceId { get; set; }
         public string? ECDIS_UPN1_Title { get; set; }
         public string? ECDIS_UPN_1 { get; set; }
         public string? ECDIS_UPN2_Title { get; set; }

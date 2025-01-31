@@ -4,7 +4,7 @@ using System.Net;
 namespace UKHO.ShopFacade.Common.Models
 {
     [ExcludeFromCodeCoverage]
-    public class Result<T>
+    public abstract class Result<T>
     {
         public T Value { get; }
 
@@ -12,11 +12,11 @@ namespace UKHO.ShopFacade.Common.Models
 
         public ErrorResponse ErrorResponse { get; }
 
-        protected Result(T value, HttpStatusCode statusCode, ErrorResponse errorResponse = null)
+        protected Result(T value, HttpStatusCode statusCode, ErrorResponse? errorResponse = null)
         {
             Value = value;
             StatusCode = statusCode;
-            ErrorResponse = errorResponse;
+            ErrorResponse = errorResponse!;
         }
 
         public bool IsSuccess => StatusCode == HttpStatusCode.OK;

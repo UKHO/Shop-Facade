@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Newtonsoft.Json;
 using UKHO.ShopFacade.API.FunctionalTests.Auth;
 using UKHO.ShopFacade.API.FunctionalTests.Configuration;
 using UKHO.ShopFacade.API.FunctionalTests.Service;
@@ -23,6 +24,8 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
         {
             var response = await _s100UpnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "1");
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            var jsonResponse = JsonConvert.DeserializeObject<dynamic>(response.Content!);
+            Assert.That(jsonResponse!.Count > 0);
         }
 
         [Test]
@@ -44,6 +47,23 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
         {
             var response = await _s100UpnEndpoint.GetUpnResponseAsync("Invalid Token", "1");
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+        }
+
+        [Test]
+        public async Task WhenUpnServiceEndpointCalledWithValidTokenAndNonExistingLicenceId_ThenUpnServiceReturns404NotFoundResponse()
+        {
+            var response = await _s100UpnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "3");
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            var jsonResponse = JsonConvert.DeserializeObject<dynamic>(response.Content!);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            Assert.That("Licence not found.", Is.EqualTo((string)jsonResponse!.errors[0].description.ToString()));
+        }
+
+        [Test]
+        public async Task WhenSharePointListIsDown_ThenUpnServiceReturns500InternalServerErrorResponse()
+        {
+            var response = await _s100UpnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "2");
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
         }
 
     }

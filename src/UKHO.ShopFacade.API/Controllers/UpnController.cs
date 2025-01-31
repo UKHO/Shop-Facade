@@ -6,6 +6,7 @@ using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.Models;
+using UKHO.ShopFacade.Common.Models.Response;
 
 namespace UKHO.ShopFacade.API.Controllers
 {
@@ -36,21 +37,22 @@ namespace UKHO.ShopFacade.API.Controllers
         [HttpGet]
         [Route("/licences/{licenceId}/s100/userPermits")]
         [Authorize(Policy = ShopFacadeConstants.ShopFacadePolicy)]
+        [Produces("application/json")]
         [SwaggerOperation(Tags = new[] { "Licensing" }, Description = "<p>Returns all S-100 User Permit Numbers (UPNs) associated with the requested licence. There can be one or more S-100 UPNs for a licence.</p>")]
-        [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, type: typeof(string), description: "<p>OK - Returns UPNs for the licence.</p>")]
+        [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, type: typeof(List<UserPermit>), description: "<p>OK - Returns UPNs for the licence.</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.NoContent, description: "<p>No Content - There are no UPNs for the licence.</p>")]
-        [SwaggerResponse(statusCode: (int)HttpStatusCode.BadRequest, type: typeof(IDictionary<string, string>), description: "<p>Bad request - could be missing or invalid licenceId, it must be an integer and greater than zero.</p>")]
+        [SwaggerResponse(statusCode: (int)HttpStatusCode.BadRequest, type: typeof(ErrorResponse), description: "<p>Bad request - could be missing or invalid licenceId, it must be an integer and greater than zero.</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.Unauthorized, description: "<p>Unauthorised - either you have not provided valid token, or your token is not recognised.</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.Forbidden, description: "<p>Forbidden - you have no permission to use this API.</p>")]
-        [SwaggerResponse(statusCode: (int)HttpStatusCode.NotFound, type: typeof(IDictionary<string, string>), description: "<p>Licence not found.</p>")]
-        [SwaggerResponse(statusCode: (int)HttpStatusCode.InternalServerError, type: typeof(IDictionary<string, string>), description: "<p>Internal Server Error.</p>")]
+        [SwaggerResponse(statusCode: (int)HttpStatusCode.NotFound, type: typeof(ErrorResponse), description: "<p>Licence not found.</p>")]
+        [SwaggerResponse(statusCode: (int)HttpStatusCode.InternalServerError, type: typeof(ExceptionDescription), description: "<p>Internal Server Error.</p>")]
         public async Task<IActionResult> GetUPNs([SwaggerParameter(Description = "Licence Id. It must be an integer value and greater than zero.", Required = true)] int licenceId)
         {
             _logger.LogInformation(EventIds.GetUPNsCallStarted.ToEventId(), ErrorDetails.GetUPNsCallStartedMessage);
 
             if (licenceId <= 0)
             {
-                _logger.LogInformation(EventIds.InvalidLicenceId.ToEventId(), ErrorDetails.InvalidLicenceIdMessage);
+                _logger.LogWarning(EventIds.InvalidLicenceId.ToEventId(), ErrorDetails.InvalidLicenceIdMessage);
                 return BadRequest(UpnServiceResult.SetErrorResponse(GetCorrelationId(), ErrorDetails.Source, ErrorDetails.InvalidLicenceIdMessage));
             }
 
@@ -62,10 +64,10 @@ namespace UKHO.ShopFacade.API.Controllers
                     _logger.LogInformation(EventIds.GetUPNsCallCompleted.ToEventId(), ErrorDetails.GetUPNsCallCompletedMessage);
                     return Ok(upnServiceResult.Value);
                 case HttpStatusCode.NotFound:
-                    _logger.LogInformation(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
+                    _logger.LogWarning(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
                     return NotFound(upnServiceResult.ErrorResponse);
                 default:
-                    _logger.LogInformation(EventIds.InternalError.ToEventId(), ErrorDetails.InternalErrorMessage);
+                    _logger.LogError(EventIds.InternalError.ToEventId(), ErrorDetails.InternalErrorMessage);
                     return StatusCode((int)upnServiceResult.StatusCode);
             }
         }
