@@ -4,6 +4,7 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using UKHO.ShopFacade.Common.ClientProvider;
+using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.DataProvider;
 using UKHO.ShopFacade.Common.Events;
 
@@ -24,13 +25,10 @@ namespace UKHO.ShopFacade.Common.HealthCheck
         {
             try
             {
-                // This is just a sample expand fields for graph api health check.
-                const string expandFields = "fields($select=Title,ECDIS_UPN1_Title,ECDIS_UPN_1,ECDIS_UPN2_Title,ECDIS_UPN_2,ECDIS_UPN3_Title,ECDIS_UPN_3,ECDIS_UPN4_Title,ECDIS_UPN_4,ECDIS_UPN5_Title,ECDIS_UPN_5)";
-
                 // This is just a sample filter condition for graph api health check.
                 const string filterCondition = $"fields/Title eq '1'";
 
-                var listItemCollectionResponse = await _graphClient.GetListItemCollectionResponse(expandFields, filterCondition);
+                var listItemCollectionResponse = await _graphClient.GetListItemCollectionResponse(UpnDataProviderConstants.ExpandFields, filterCondition);
                 _logger.LogDebug(EventIds.GraphApiIsHealthy.ToEventId(), "Graph Api is healthy");
                 return HealthCheckResult.Healthy("Graph api is healthy");
             }

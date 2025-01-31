@@ -170,7 +170,7 @@ jobs:
 - job: BuildAndPublishMockService
   workspace:
     clean: all
-  displayName: "Dotnet Build publish API"
+  displayName: "Dotnet Build publish Mock API"
   steps:
     - task: PowerShell@2
       displayName: "Set assembly version numbers based on build ID"
