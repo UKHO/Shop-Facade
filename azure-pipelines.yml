@@ -163,7 +163,7 @@ stages:
     dependsOn:
     - Devdeploy
     displayName: "vNextIat Deploy (inc terraform, webapp deploy)"
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+    #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
     variables:
       - group: "Shop-Facade-vNextIAT"
       - group: "Shop-Facade-vNextIAT-TF"
@@ -193,7 +193,7 @@ stages:
     dependsOn:
     - vNextIatdeploy
     displayName: "vNextE2E Deploy (inc terraform, webapp deploy)"
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+    #condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
     variables:
       - group: "Shop-Facade-vNextE2E"
       - group: "Shop-Facade-vNextE2E-TF"
