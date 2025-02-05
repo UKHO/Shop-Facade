@@ -1,0 +1,6 @@
+{
+  "BaseUrl": "", //Base URL of the API can be found in pipeline library variable - "ShopFacadeConfiguration.BaseUrl"
+  "Endpoint": "/licences/licenceId/s100/userpermits",
+  "RequestRate": 1000, //Number of requests per hour
+  "Token": "" //Token can be generated using the following url: https://login.microsoftonline.com/<tenandId>/oauth2/v2.0/authorize?client_id=<clientId>&response_type=token&scope=<scope>&redirect_uri=https://jwt.ms
+}
