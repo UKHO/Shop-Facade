@@ -32,7 +32,7 @@ namespace UKHO.ShopFacade.API.Controllers
         [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, type: typeof(string), description: "<p>OK - Returns a zip containing permit files</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.Unauthorized, description: "<p>Unauthorised - either you have not provided valid token, or your token is not recognised.</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.Forbidden, description: "<p>Forbidden - you have no permission to use this API.</p>")]
-        public IActionResult GetPermits([SwaggerParameter(Description = "Licence Id. It must be an integer value and greater than zero.", Required = true)] int licenceId)
+        public IActionResult GetPermits([SwaggerParameter(Required = true)] int licenceId)
         {
             _logger.LogInformation(EventIds.GetPermitsCallStarted.ToEventId(), "GetPermits API Call Started.");
 
