@@ -6,5 +6,7 @@ namespace UKHO.ShopFacade.Common.Constants
     public static class ShopFacadeConstants
     {
         public const string ShopFacadePolicy = "UpnReader";
+
+        public const string ShopFacadePermitPolicy = "PermitReader";
     }
 }

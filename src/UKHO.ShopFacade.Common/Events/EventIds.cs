@@ -61,7 +61,12 @@ namespace UKHO.ShopFacade.Common.Events
         /// <summary>
         /// 950011 - Graph Api is unhealthy.
         /// </summary>
-        GraphApiIsUnhealthy = 950011
+        GraphApiIsUnhealthy = 950011,
+
+        /// <summary>
+        /// 950012 - GetPermits API call started.
+        /// </summary>
+        GetPermitsCallStarted = 950012
     }
 
     /// <summary>
