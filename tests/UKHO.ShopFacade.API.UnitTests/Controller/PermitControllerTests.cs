@@ -31,9 +31,9 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         }
 
         [Test]
-        public async Task WhenLicenceIdIsValid_ThenReturn200OKResponse()
+        public void WhenLicenceIdIsValid_ThenReturn200OKResponse()
         {
-            var result = (OkResult)await _permitController.GetPermits(1);
+            var result = (OkResult) _permitController.GetPermits(1);
 
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
 
