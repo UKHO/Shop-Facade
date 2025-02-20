@@ -61,7 +61,22 @@ namespace UKHO.ShopFacade.Common.Events
         /// <summary>
         /// 950011 - Graph Api is unhealthy.
         /// </summary>
-        GraphApiIsUnhealthy = 950011
+        GraphApiIsUnhealthy = 950011,
+
+        /// <summary>
+        /// 950012 - Request for sales catalogue service endpoint is failed due to non ok response.
+        /// </summary>
+        SalesCatalogueServiceNonOkResponse = 950012,
+
+        /// <summary>
+        /// 950013 - Request for sales catalogue service catalogue endpoint is started.
+        /// </summary>
+        SCSGetSalesCatalogueDataRequestStarted = 950013,
+
+        /// <summary>
+        /// 950014 - Request for sales catalogue service catalogue endpoint is completed.
+        /// </summary>
+        SCSGetSalesCatalogueDataRequestCompleted = 950014,
     }
 
     /// <summary>

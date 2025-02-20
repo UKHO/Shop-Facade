@@ -1,18 +1,20 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Headers;
 using System.Reflection;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.OpenApi.Models;
-using UKHO.ShopFacade.API.Filters;
 using UKHO.Logging.EventHubLogProvider;
+using UKHO.ShopFacade.API.Facade;
+using UKHO.ShopFacade.API.Filters;
 using UKHO.ShopFacade.API.Middleware;
 using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Authentication;
@@ -126,6 +128,16 @@ namespace UKHO.ShopFacade.API
             builder.Services.AddScoped<IGraphClient, GraphClient>();
             builder.Services.AddScoped<IAuthenticationProvider, ManagedIdentityGraphAuthProvider>();
             builder.Services.AddHealthChecks().AddCheck<GraphApiHealthCheck>("GraphApiHealthCheck");
+
+            builder.Services.Configure<SalesCatalogueConfiguration>(builder.Configuration.GetSection("SalesCatalogue"));
+            builder.Services.AddScoped<ISalesCatalogueService, SalesCatalogueService>();
+            builder.Services.AddHttpClient<ISalesCatalogueClient, SalesCatalogueClient>(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["SalesCatalogue:BaseUrl"]);
+                var productHeaderValue = new ProductInfoHeaderValue("ShopFacade",
+                                        Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyFileVersionAttribute>().Single().Version);
+                client.DefaultRequestHeaders.UserAgent.Add(productHeaderValue);
+            });
         }
 
         private static void ConfigureLogging(WebApplication webApplication)
