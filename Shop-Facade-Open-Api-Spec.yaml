@@ -27,9 +27,7 @@ paths:
           description: OK - Returns a zip containing permit files.
           headers:
             X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
+              $ref: '#/components/headers/correlationId'
             Content-Disposition:
               schema:
                 type: string
@@ -44,16 +42,12 @@ paths:
           description: No Content - There are no S-100 permits for the requested licence.
           headers:
             X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
+              $ref: '#/components/headers/correlationId'
         "400":
           description: Bad request - could be missing or invalid licenceId, it must be an integer and greater than zero.
           headers:
             X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
+              $ref: '#/components/headers/correlationId'
           content:
             application/json:
               schema:
@@ -64,19 +58,9 @@ paths:
                 - source: licenceId
                   description: Invalid licenceId
         "401":
-          description: Unauthorised - either you have not provided valid token, or your token is not recognised.
-          headers:
-            X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
+          $ref: '#/components/responses/unauthorisedResponse'
         "403":
-          description: Forbidden - you have no permission to use this API.
-          headers:
-            X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
+          $ref: '#/components/responses/forbiddenResponse'
         "404":
           description: Licence not found
           headers:
@@ -97,16 +81,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/errorDescription'
         "500":
-          description: Internal Server Error.
-          headers:
-            X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/exceptionDescription'
+          $ref: '#/components/responses/internalServerErrorResponse'
   
   /v1/licences/{licenceId}/s100/userPermits:
     get:
@@ -121,9 +96,7 @@ paths:
           description: OK - Returns UPNs for the licence
           headers:
             X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
+              $ref: '#/components/headers/correlationId'
           content:
             application/json:
               schema:
@@ -137,16 +110,12 @@ paths:
           description: No Content - There are no UPNs for the licence.
           headers:
             X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
+              $ref: '#/components/headers/correlationId'
         "400":
           description: Bad request - could be missing or invalid licenceId, it must be an integer and greater than zero.
           headers:
             X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
+              $ref: '#/components/headers/correlationId'
           content:
             application/json:
               schema:
@@ -157,26 +126,14 @@ paths:
                 - source: licenceId
                   description: Invalid licenceId
         "401":
-          description: Unauthorised - either you have not provided valid token, or your token is not recognised.
-          headers:
-            X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
+          $ref: '#/components/responses/unauthorisedResponse'
         "403":
-          description: Forbidden - you have no permission to use this API.
-          headers:
-            X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
+          $ref: '#/components/responses/forbiddenResponse'
         "404":
           description: Licence not found.
           headers:
             X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
+              $ref: '#/components/headers/correlationId'
           content:
             application/json:
               schema:
@@ -187,16 +144,7 @@ paths:
                 - source: licenceId
                   description: Licence not found
         "500":
-          description: Internal Server Error.
-          headers:
-            X-Correlation-ID:
-              description: GUID for the request for logging/tracing
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/exceptionDescription'
+          $ref: '#/components/responses/internalServerErrorResponse'
                 
   /v1/licences/{licenceId}/s100/holdings:
     get:
@@ -944,6 +892,31 @@ components:
       schema:
         type: integer
         example: 12345678
+  responses:
+    unauthorisedResponse:
+      description: Unauthorised - either you have not provided valid token, or your token is not recognised.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/headers/correlationId'
+    forbiddenResponse:
+      description: Forbidden - you have no permission to use this API.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/headers/correlationId'
+    internalServerErrorResponse:
+      description: Internal Server Error.
+      headers:
+        X-Correlation-ID:
+          $ref: '#/components/headers/correlationId'
+      content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/exceptionDescription'
+  headers:
+    correlationId:
+      description: GUID for the request for logging/tracing
+      schema:
+        type: string
   securitySchemes:
     jwtBearerAuth: # arbitrary name for the security scheme
       type: http
