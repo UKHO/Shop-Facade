@@ -100,7 +100,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getUserPermitsResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/userPermit'
               example:
                 - title: "Port Radar"
                   upn: "C23DAD797C966EC9F6A55B66ED98281599B3A231859868"
@@ -712,11 +714,6 @@ components:
           type: string
         description:
           type: string
-    getUserPermitsResponse:
-      type: array
-      items:
-        type: object
-        $ref: '#/components/schemas/userPermit'
     userPermit:
       type: object
       properties:
