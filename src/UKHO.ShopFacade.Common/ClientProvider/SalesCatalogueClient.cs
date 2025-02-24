@@ -1,13 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Net.Http.Headers;
-using System.Text;
 using Microsoft.Extensions.Options;
-using UKHO.ShopFacade.Common.Authentication;
 using UKHO.ShopFacade.Common.Configuration;
 
 namespace UKHO.ShopFacade.Common.ClientProvider
 {
-    [ExcludeFromCodeCoverage] ////Excluded from code coverage as it has actual http calls 
+    [ExcludeFromCodeCoverage] //Excluded from code coverage as it has actual http calls 
     public class SalesCatalogueClient : ISalesCatalogueClient
     {
         private readonly HttpClient _httpClient;

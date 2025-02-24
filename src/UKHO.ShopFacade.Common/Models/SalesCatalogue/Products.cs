@@ -1,9 +1,9 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace UKHO.ShopFacade.Common.Models.SalesCatalogue
 {
+    [ExcludeFromCodeCoverage]
     public class Products
     {
         [JsonPropertyName("productName")]

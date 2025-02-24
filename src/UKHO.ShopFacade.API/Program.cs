@@ -13,7 +13,6 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
 using UKHO.Logging.EventHubLogProvider;
-using UKHO.ShopFacade.API.Facade;
 using UKHO.ShopFacade.API.Filters;
 using UKHO.ShopFacade.API.Middleware;
 using UKHO.ShopFacade.API.Services;
@@ -107,7 +106,7 @@ namespace UKHO.ShopFacade.API
             builder.Services.AddControllers();
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-          
+
             var azureAdConfiguration = builder.Configuration.GetSection(AzureAdConfiguration).Get<AzureAdConfiguration>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(AzureAdScheme, options =>
