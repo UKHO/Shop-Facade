@@ -119,8 +119,8 @@ namespace UKHO.ShopFacade.API
                     .RequireAuthenticatedUser()
                     .AddAuthenticationSchemes(AzureAdScheme)
                     .Build())
-                .AddPolicy(ShopFacadeConstants.ShopFacadePolicy,
-                    policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePolicy))
+                .AddPolicy(ShopFacadeConstants.ShopFacadeUpnPolicy,
+                    policy => policy.RequireRole(ShopFacadeConstants.ShopFacadeUpnPolicy))
                 .AddPolicy(ShopFacadeConstants.ShopFacadePermitPolicy,
                 policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePermitPolicy));
 

@@ -26,13 +26,13 @@ namespace UKHO.ShopFacade.API.Controllers
         /// <response code="401">Unauthorized - either you have not provided valid token, or your token is not recognized.</response>
         /// <response code="403">Forbidden - you have no permission to use this API.</response>
         [HttpGet]
-        [Route("/v1/licences/{licenceId}/s100/permits")]
+        [Route("/v1/licences/{licenceId}/{productType}/permits")]
         [Authorize(Policy = ShopFacadeConstants.ShopFacadePermitPolicy)]
         [SwaggerOperation(Tags = new[] { "Licensing" }, Description = "<p>Returns a zip file containing all the S-100 permit file(s) of the requested licence.</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, type: typeof(string), description: "<p>OK - Returns a zip containing permit files</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.Unauthorized, description: "<p>Unauthorized - either you have not provided valid token, or your token is not recognized.</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.Forbidden, description: "<p>Forbidden - you have no permission to use this API.</p>")]
-        public IActionResult GetPermits([SwaggerParameter(Required = true)] int licenceId)
+        public IActionResult GetPermits([SwaggerParameter(Required = true)] int licenceId, [FromRoute] string productType)
         {
             _logger.LogInformation(EventIds.GetPermitsCallStarted.ToEventId(), "GetPermits API Call Started.");
 
