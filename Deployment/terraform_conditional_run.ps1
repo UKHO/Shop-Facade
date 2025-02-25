@@ -28,7 +28,7 @@ terraform validate
 if ( !$? ) { echo "Something went wrong during terraform validation" ; throw "Error" }
 
 Write-output "Execute Terraform plan"
-terraform plan -out "terraform.deployment.tfplan" | tee terraform_output.txt
+terraform plan -var="env_name=$workSpace" -out "terraform.deployment.tfplan" | tee terraform_output.txt
 if ( !$? ) { echo "Something went wrong during terraform plan" ; throw "Error" }
 
 $totalDestroyLines=(Get-Content -Path terraform_output.txt | Select-String -Pattern "destroy" -CaseSensitive |  where {$_ -ne ""}).length
@@ -45,7 +45,7 @@ if($totalDestroyLines -ge 2)
 }
 
 Write-output "Executing terraform apply"
-terraform apply  "terraform.deployment.tfplan"
+#terraform apply  "terraform.deployment.tfplan"
 if ( !$? ) { echo "Something went wrong during terraform apply" ; throw "Error" }
 
 Write-output "Terraform output as json"
