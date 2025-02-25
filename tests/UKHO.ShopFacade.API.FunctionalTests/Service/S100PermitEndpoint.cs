@@ -5,13 +5,13 @@ using UKHO.ShopFacade.API.FunctionalTests.Configuration;
 
 namespace UKHO.ShopFacade.API.FunctionalTests.Service
 {
-    public class S100UpnEndpoint : TestFixtureBase
+    public class S100PermitEndpoint : TestFixtureBase
     {
         private readonly RestClient _client;
         private readonly RestClientOptions _options;
         private readonly ShopFacadeConfiguration _shoFacadeConfiguration;
 
-        public S100UpnEndpoint()
+        public S100PermitEndpoint()
         {
             var serviceProvider = GetServiceProvider();
             _shoFacadeConfiguration = serviceProvider!.GetRequiredService<IOptions<ShopFacadeConfiguration>>().Value;
@@ -22,7 +22,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Service
 
         public async Task<RestResponse> GetUpnResponseAsync(string token, string licenceId)
         {
-            var endPoint = _shoFacadeConfiguration.getS100UpnEndpoint!.Replace("licenceId", licenceId);
+            var endPoint = _shoFacadeConfiguration.getS100PermitEndpoint!.Replace("licenceId", licenceId);
             var request = new RestRequest(endPoint);
 
             request.AddHeader("Authorization", "Bearer " + token);
