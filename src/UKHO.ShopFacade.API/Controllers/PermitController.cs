@@ -22,6 +22,7 @@ namespace UKHO.ShopFacade.API.Controllers
         /// Get a zip file containing all the S-100 permit file(s) of the requested licence.
         /// </summary>
         /// <param name="licenceId" example="12345678">Requested licence id.</param>
+        /// <param name="productType" example="S100">Requested product type.</param>
         /// <response code="200">OK - Returns a zip containing permit files</response>
         /// <response code="401">Unauthorized - either you have not provided valid token, or your token is not recognized.</response>
         /// <response code="403">Forbidden - you have no permission to use this API.</response>
