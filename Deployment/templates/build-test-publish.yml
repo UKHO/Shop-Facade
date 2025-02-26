@@ -261,7 +261,7 @@ jobs:
         publishWebProjects: false
         projects: '$(Build.SourcesDirectory)\src\MockSSSSS\tests\ADDSMock.Functional.Tests\ADDSMock.Functional.Tests.csproj'
         arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API.FunctionalTests'
-        workingDirectory: '$(Build.SourcesDirectory)\tests\UKHO.ShopFacade.API.FunctionalTests'
+        workingDirectory: '$(Build.SourcesDirectory)\src\MockSSSSS\tests\ADDSMock.Functional.Tests'
         zipAfterPublish: false
         modifyOutputPath: trues
 
