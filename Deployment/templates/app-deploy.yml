@@ -19,7 +19,6 @@ jobs:
 # - deployment: DevDeployTerraform
 #   displayName: "${{parameters.Environment}} - Deploy Terraform"
 #   environment: "ShopFacade-${{parameters.Environment}}"
-`
 #   workspace:
 #     clean: all
 #   strategy:
