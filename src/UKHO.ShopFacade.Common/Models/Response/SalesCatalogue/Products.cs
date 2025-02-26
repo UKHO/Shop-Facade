@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
-namespace UKHO.ShopFacade.Common.Models.SalesCatalogue
+namespace UKHO.ShopFacade.Common.Models.Response.SalesCatalogue
 {
     [ExcludeFromCodeCoverage]
     public class Products
@@ -12,7 +12,10 @@ namespace UKHO.ShopFacade.Common.Models.SalesCatalogue
         [JsonPropertyName("editionNumber")]
         public int? LatestEditionNumber { get; set; }
 
-        [JsonPropertyName("permitExpiryDate")]
-        public DateTime? PermitExpiryDate { get; set; }
+        [JsonPropertyName("updateNumber")]
+        public int? LatestUpdateNumber { get; set; }
+
+        [JsonPropertyName("status")]
+        public ProductStatus? Status { get; set; }
     }
 }

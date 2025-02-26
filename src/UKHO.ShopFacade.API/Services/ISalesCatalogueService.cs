@@ -1,9 +1,9 @@
-﻿using UKHO.ShopFacade.Common.Models.SalesCatalogue;
+﻿using UKHO.ShopFacade.Common.Models.Response.SalesCatalogue;
 
 namespace UKHO.ShopFacade.API.Services
 {
     public interface ISalesCatalogueService
     {
-        public Task<SalesCatalogueResponse> GetProductsFromSpecificDateAsync();
+        public Task<SalesCatalogueResponse> GetProductsCatalogueAsync();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
-namespace UKHO.ShopFacade.Common.Models.SalesCatalogue
+namespace UKHO.ShopFacade.Common.Models.Response.SalesCatalogue
 {
     [ExcludeFromCodeCoverage]
     public class SalesCatalogueResponse

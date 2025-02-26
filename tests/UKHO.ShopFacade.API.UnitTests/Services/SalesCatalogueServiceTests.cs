@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.ClientProvider;
-using UKHO.ShopFacade.Common.Models.SalesCatalogue;
+using UKHO.ShopFacade.Common.Models.Response.SalesCatalogue;
 
 namespace UKHO.ShopFacade.API.Tests.Services
 {
@@ -29,7 +29,7 @@ namespace UKHO.ShopFacade.API.Tests.Services
             // Arrange
             var products = new List<Products>
             {
-                new Products { ProductName = "Product1", LatestEditionNumber = 1, PermitExpiryDate = DateTime.UtcNow }
+                new Products { ProductName = "Product1", LatestEditionNumber = 1 }
             };
             var httpResponse = new HttpResponseMessage(HttpStatusCode.OK)
             {
@@ -39,7 +39,7 @@ namespace UKHO.ShopFacade.API.Tests.Services
             A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi()).Returns(Task.FromResult(httpResponse));
 
             // Act
-            var result = await _salesCatalogueService.GetProductsFromSpecificDateAsync();
+            var result = await _salesCatalogueService.GetProductsCatalogueAsync();
 
             // Assert
             Assert.That(result.ResponseCode, Is.EqualTo(HttpStatusCode.OK));
@@ -56,7 +56,7 @@ namespace UKHO.ShopFacade.API.Tests.Services
             A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi()).Returns(Task.FromResult(httpResponse));
 
             // Act
-            var result = await _salesCatalogueService.GetProductsFromSpecificDateAsync();
+            var result = await _salesCatalogueService.GetProductsCatalogueAsync();
 
             // Assert
             Assert.That(result.ResponseCode, Is.EqualTo(HttpStatusCode.NotModified));
@@ -74,7 +74,7 @@ namespace UKHO.ShopFacade.API.Tests.Services
             A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi()).Returns(Task.FromResult(httpResponse));
 
             // Act
-            var result = await _salesCatalogueService.GetProductsFromSpecificDateAsync();
+            var result = await _salesCatalogueService.GetProductsCatalogueAsync();
 
             // Assert
             Assert.That(result.ResponseCode, Is.EqualTo(HttpStatusCode.BadRequest));

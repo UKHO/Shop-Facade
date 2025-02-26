@@ -71,12 +71,12 @@ namespace UKHO.ShopFacade.Common.Events
         /// <summary>
         /// 950013 - Request for sales catalogue service catalogue endpoint is started.
         /// </summary>
-        SCSGetSalesCatalogueDataRequestStarted = 950013,
+        GetSalesCatalogueDataRequestStarted = 950013,
 
         /// <summary>
         /// 950014 - Request for sales catalogue service catalogue endpoint is completed.
         /// </summary>
-        SCSGetSalesCatalogueDataRequestCompleted = 950014,
+        GetSalesCatalogueDataRequestCompleted = 950014,
     }
 
     /// <summary>

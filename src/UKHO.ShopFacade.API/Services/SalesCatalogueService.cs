@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using UKHO.ShopFacade.Common.ClientProvider;
 using UKHO.ShopFacade.Common.Events;
-using UKHO.ShopFacade.Common.Models.SalesCatalogue;
+using UKHO.ShopFacade.Common.Models.Response.SalesCatalogue;
 
 namespace UKHO.ShopFacade.API.Services
 {
@@ -18,9 +18,9 @@ namespace UKHO.ShopFacade.API.Services
             _salesCatalogueClient = salesCatalogueClient;
         }
 
-        public async Task<SalesCatalogueResponse> GetProductsFromSpecificDateAsync()
+        public async Task<SalesCatalogueResponse> GetProductsCatalogueAsync()
         {
-            _logger.LogInformation(EventIds.SCSGetSalesCatalogueDataRequestStarted.ToEventId(), "Retrieval process of the latest S-100 basic catalogue data from Sales catalogue service is started.");
+            _logger.LogInformation(EventIds.GetSalesCatalogueDataRequestStarted.ToEventId(), "Retrieval process of the latest S-100 basic catalogue data from Sales catalogue service is started.");
             var httpResponse = await _salesCatalogueClient.CallSalesCatalogueServiceApi();
             return await CreateSalesCatalogueServiceResponse(httpResponse);
         }
@@ -47,7 +47,7 @@ namespace UKHO.ShopFacade.API.Services
                 {
                     response.LastModified = ((DateTimeOffset)lastModified).UtcDateTime;
                 }
-                _logger.LogInformation(EventIds.SCSGetSalesCatalogueDataRequestCompleted.ToEventId(), "Retrieval process of the latest S-100 basic catalogue data from Sales catalogue service is completed.");
+                _logger.LogInformation(EventIds.GetSalesCatalogueDataRequestCompleted.ToEventId(), "Retrieval process of the latest S-100 basic catalogue data from Sales catalogue service is completed.");
             }
 
             return response;
