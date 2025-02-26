@@ -29,7 +29,7 @@ steps:
     displayName: Installing Powershell Module
     inputs:
       targetType: 'inline'
-      script: 'Import-Module -Name NetTCPIP'
+      script: 'Find-Module -Name NetTCPIP | Install-Module'
 
   - task: PowerShell@2
     displayName: Get a url for testing
