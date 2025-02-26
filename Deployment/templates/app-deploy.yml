@@ -19,8 +19,7 @@ jobs:
 # - deployment: DevDeployTerraform
 #   displayName: "${{parameters.Environment}} - Deploy Terraform"
 #   environment: "ShopFacade-${{parameters.Environment}}"
-#   pool: $(DeploymentPool)
-#   container: ${{parameters.Container}}
+`
 #   workspace:
 #     clean: all
 #   strategy:
@@ -69,7 +68,8 @@ jobs:
   # dependsOn:  DeployApp
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
-  pool: $(Container)
+  pool: $(DeploymentPool)
+  container: ${{parameters.Container}}
   # condition: and(succeeded('DeployApp'), eq( ${{parameters.RunTests}} , 'true'))
   workspace:
    clean: all
