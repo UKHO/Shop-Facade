@@ -30,7 +30,7 @@ steps:
     displayName: Get PS Version
     inputs:
       targetType: 'inline'
-      script: '$PSVersionTable.PSVersion'
+      script: 'Import-Module NetTCPIP'
 
   - task: PowerShell@2
     displayName: Get a url for testing
