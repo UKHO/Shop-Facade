@@ -16,57 +16,57 @@ parameters:
   default: false
 
 jobs:
-- deployment: DevDeployTerraform
-  displayName: "${{parameters.Environment}} - Deploy Terraform"
-  environment: "ShopFacade-${{parameters.Environment}}"
-  pool: $(DeploymentPool)
-  container: ${{parameters.Container}}
-  workspace:
-    clean: all
-  strategy:
-          runOnce:
-            deploy:
-              steps:
-                - template: continuous-deployment.yml
-                  parameters:
-                    ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-                    AzureSubscription: ${{parameters.AzureSubscription}}
+# - deployment: DevDeployTerraform
+#   displayName: "${{parameters.Environment}} - Deploy Terraform"
+#   environment: "ShopFacade-${{parameters.Environment}}"
+#   pool: $(DeploymentPool)
+#   container: ${{parameters.Container}}
+#   workspace:
+#     clean: all
+#   strategy:
+#           runOnce:
+#             deploy:
+#               steps:
+#                 - template: continuous-deployment.yml
+#                   parameters:
+#                     ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+#                     AzureSubscription: ${{parameters.AzureSubscription}}
 
 
                           
-- deployment: DeployApp
-  dependsOn: DevDeployTerraform
-  displayName: "${{parameters.Environment}} - Deploy Dotnet App"
-  environment: "ShopFacade-${{parameters.Environment}}"
-  pool: $(DeploymentPool)
-  container: ${{parameters.Container}}
-  workspace:
-   clean: all
-  variables:
-    - name  : WEB_APP_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
-    - name  : "KeyVaultSettings.ServiceUri" 
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
-    - name  : ResourceGroup
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ResourceGroup'] ]
-    - name  : WEB_APP_SLOT_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
-    - name  : WEB_APP_SLOT_HOST_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
-    - name  : MOCK_WEB_APP_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.MOCK_WEB_APP_NAME'] ]
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-          - checkout: self
-            submodules: recursive
-          - template: continuous-deployment-app.yml
-            parameters:
-              AzureSubscription: ${{parameters.AzureSubscription}}
+# - deployment: DeployApp
+#   dependsOn: DevDeployTerraform
+#   displayName: "${{parameters.Environment}} - Deploy Dotnet App"
+#   environment: "ShopFacade-${{parameters.Environment}}"
+#   pool: $(DeploymentPool)
+#   container: ${{parameters.Container}}
+#   workspace:
+#    clean: all
+#   variables:
+#     - name  : WEB_APP_NAME
+#       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
+#     - name  : "KeyVaultSettings.ServiceUri" 
+#       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
+#     - name  : ResourceGroup
+#       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ResourceGroup'] ]
+#     - name  : WEB_APP_SLOT_NAME
+#       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
+#     - name  : WEB_APP_SLOT_HOST_NAME
+#       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
+#     - name  : MOCK_WEB_APP_NAME
+#       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.MOCK_WEB_APP_NAME'] ]
+#   strategy:
+#     runOnce:
+#       deploy:
+#         steps:
+#           - checkout: self
+#             submodules: recursive
+#           - template: continuous-deployment-app.yml
+#             parameters:
+#               AzureSubscription: ${{parameters.AzureSubscription}}
 
 - deployment: FunctionalTests
-  dependsOn:  DeployApp
+  # dependsOn:  DeployApp
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
