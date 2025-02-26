@@ -259,7 +259,7 @@ jobs:
       inputs:
         command: "publish"
         publishWebProjects: false
-        projects: '$(Build.SourcesDirectory)\tests\UKHO.ShopFacade.API.FunctionalTests\UKHO.ShopFacade.API.FunctionalTests.csproj'
+        projects: '$(Build.SourcesDirectory)\src\MockSSSSS\tests\ADDSMock.Functional.Tests\ADDSMock.Functional.Tests.csproj'
         arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API.FunctionalTests'
         workingDirectory: '$(Build.SourcesDirectory)\tests\UKHO.ShopFacade.API.FunctionalTests'
         zipAfterPublish: false
