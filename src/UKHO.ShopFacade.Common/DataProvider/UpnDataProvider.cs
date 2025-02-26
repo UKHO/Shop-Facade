@@ -3,7 +3,7 @@ using Microsoft.Graph.Models;
 using UKHO.ShopFacade.Common.ClientProvider;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Events;
-using UKHO.ShopFacade.Common.Models;
+using UKHO.ShopFacade.Common.Models.Response.Upn;
 
 namespace UKHO.ShopFacade.Common.DataProvider
 {

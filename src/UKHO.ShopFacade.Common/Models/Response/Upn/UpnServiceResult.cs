@@ -1,8 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using UKHO.ShopFacade.Common.Models.Response;
 
-namespace UKHO.ShopFacade.Common.Models
+namespace UKHO.ShopFacade.Common.Models.Response.Upn
 {
     [ExcludeFromCodeCoverage]
     public class UpnServiceResult : ServiceResponseResult<List<UserPermit>>

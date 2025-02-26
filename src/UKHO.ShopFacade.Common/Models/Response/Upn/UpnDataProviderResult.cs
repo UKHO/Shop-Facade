@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
-namespace UKHO.ShopFacade.Common.Models
+namespace UKHO.ShopFacade.Common.Models.Response.Upn
 {
     [ExcludeFromCodeCoverage]
     public class UpnDataProviderResult : ServiceResponseResult<S100UpnRecord>

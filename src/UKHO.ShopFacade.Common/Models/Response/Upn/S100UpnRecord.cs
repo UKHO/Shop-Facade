@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace UKHO.ShopFacade.Common.Models
+namespace UKHO.ShopFacade.Common.Models.Response.Upn
 {
     [ExcludeFromCodeCoverage]
     public class S100UpnRecord
