@@ -25,6 +25,13 @@ steps:
       useGlobalJson: true
       workingDirectory: '$(Build.SourcesDirectory)'
 
+
+  - task: PowerShell@2
+    displayName: Get PS Version
+    inputs:
+      targetType: 'inline'
+      script: '$PSVersionTable.PSVersion'
+
   - task: PowerShell@2
     displayName: Get a url for testing
     name: getUrl
