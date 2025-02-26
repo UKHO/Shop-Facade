@@ -26,6 +26,12 @@ steps:
       workingDirectory: '$(Build.SourcesDirectory)'
 
   - task: PowerShell@2
+    displayName: Installing Powershell Module
+    inputs:
+      targetType: 'inline'
+      script: 'Import-Module -Name NetTCPIP'
+
+  - task: PowerShell@2
     displayName: Get a url for testing
     name: getUrl
     inputs:
