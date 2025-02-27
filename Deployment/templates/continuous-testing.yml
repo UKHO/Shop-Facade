@@ -74,7 +74,7 @@ steps:
   - task: filetransform@2
     displayName: file transform - mock settings
     inputs:
-      folderpath: '$(Pipeline.Workspace)/UKHOADDSMockService'
+      folderpath: '$(Pipeline.Workspace)/UKHOADDSMockService/*.zip'
       xmltransformationrules: ''
       enablexmltransform: false
       jsontargetfiles: '**\mock-configuration.json'
