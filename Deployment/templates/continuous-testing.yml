@@ -62,7 +62,7 @@ steps:
   #       }
 
   - task: filetransform@2
-    displayname: file transform - mock settings
+    displayName: file transform - mock settings
     inputs:
       folderpath: '$(Build.SourcesDirectory)\UKHOADDSMockService'
       xmltransformationrules: ''
