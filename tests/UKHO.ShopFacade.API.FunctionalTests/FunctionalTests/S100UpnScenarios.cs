@@ -72,7 +72,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
         public async Task CommonMockTest()
         {
 
-            var _options = new RestClientOptions("https://localhost:5000/");
+            var _options = new RestClientOptions("https://localhost:5678/");
             var _client = new RestClient(_options);
 
             var request = new RestRequest("demo/");
