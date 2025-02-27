@@ -245,9 +245,9 @@ jobs:
       inputs:
         targetType: 'inline'
         script: |
-          ls -lrt
-          ls -lrt $(Build.SourcesDirectory)/src 
-          ls -lrt $(Build.SourcesDirectory)\src\MockSSSSS 
+          Get-ChildItem "$(Build.SourcesDirectory)\src\MockSSSSS"
+            
+          Get-ChildItem "$(Build.SourcesDirectory)\src" -Recurse -File
               
     - task: DotNetCoreCLI@2
       displayName: ".Net Core - NuGet restore for non test projects only"
