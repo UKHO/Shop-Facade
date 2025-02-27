@@ -204,6 +204,15 @@ jobs:
         projects: '**/*UKHO.ShopFacade.MockService.csproj'
         arguments: '--configuration $(BuildConfiguration)'
 
+
+    - task: DotNetCoreCLI@2
+      displayName: Build - mock
+      inputs:
+        command: build
+        projects: |
+          **/ADDSMock.csproj
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.BinariesDirectory)\Mock --no-restore'
+
     - task: DotNetCoreCLI@2
       displayName: "Publish ShopFacade Mock Service API "
       inputs:
@@ -228,6 +237,15 @@ jobs:
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.MockService/UKHOShopFacadeMockService.zip'
         ArtifactName: UKHOShopFacadeMockServiceAPI
+
+
+    - task: DotNetCoreCLI@2
+      displayName: Build - mock
+      inputs:
+        command: build
+        projects: |
+          **/ADDSMock.csproj
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.BinariesDirectory)\Mock --no-restore'
 
 - job: PublishFunctionalTests
   workspace:

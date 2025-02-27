@@ -52,6 +52,15 @@ steps:
   #           }
   #       }
 
+
+  - task: DotNetCoreCLI@2
+    displayName: Build - mock
+    inputs:
+      command: build
+      projects: |
+        **/ADDSMock.csproj
+      arguments: '--configuration $(BuildConfiguration) --output $(Build.BinariesDirectory)\Mock --no-restore'
+
   - task: PowerShell@2
     displayName: Get a url for testing
     name: getUrl
@@ -59,13 +68,13 @@ steps:
       targetType: filePath
       filePath: '$(Build.SourcesDirectory)/src/MockSSSSS/Pipeline/GetLocalHostUrl.ps1'
 
-  # - task: FileTransform@2
-  #   displayName: File transform - mock settings
-  #   inputs:
-  #     folderPath: '$(Build.SourcesDirectory)Mock'
-  #     xmlTransformationRules: ''
-  #     enableXmlTransform: false
-  #     jsonTargetFiles: '**\mock-configuration.json'
+  - task: FileTransform@2
+    displayName: File transform - mock settings
+    inputs:
+      folderPath: '$(Build.SourcesDirectory)Mock'
+      xmlTransformationRules: ''
+      enableXmlTransform: false
+      jsonTargetFiles: '**\mock-configuration.json'
 
   - task: DotNetCoreCLI@2
     displayName: "Run Functional tests"
