@@ -272,7 +272,7 @@ jobs:
         arguments: '--configuration $(BuildConfiguration)'
 
     - task: DotNetCoreCLI@2
-      displayName: "Publish ADDS Mock Service "
+      displayName: "Publish ADDS Mock Service"
       inputs:
         command: "publish"
         publishWebProjects: false
@@ -282,7 +282,7 @@ jobs:
         modifyOutputPath: false
 
     - task: ArchiveFiles@2
-      displayName: "Zip ShopFacade Mock Service"
+      displayName: "Zip ADDS Mock Service"
       inputs:
         rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/UKHO.ADDS.MockService/'
         includeRootFolder: false
@@ -293,23 +293,8 @@ jobs:
     - task: PublishBuildArtifacts@1
       displayName: "Publish ADDS Mock Service Artifact"
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\UKHOShopFacadeMockService.zip'
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService/UKHOShopFacadeMockService.zip'
         ArtifactName: UKHOShopFacadeMockServiceAPI
-
-    - task: DotNetCoreCLI@2
-      displayName: "Publish ADDS Mock Service "
-      inputs:
-        command: "publish"
-        publishWebProjects: false
-        projects: ' **/ADDSMock.csproj'
-        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\ADDSMock'
-        zipAfterPublish: false
-
-    - task: PublishBuildArtifacts@1
-      displayName: "Publish ADDS Mock  Artifact"
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)\ADDSMock/ADDSMockService.zip'
-        ArtifactName: UKHOADDSMockService
 
 - job: PublishFunctionalTests
   workspace:
