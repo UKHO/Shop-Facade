@@ -71,13 +71,13 @@ steps:
       filePath: '$(Build.SourcesDirectory)/src/MockSSSSS/Pipeline/GetLocalHostUrl.ps1'
 
 
-  - task: filetransform@2
-    displayName: file transform - mock settings
-    inputs:
-      folderpath: '$(Pipeline.Workspace)/UKHOADDSMockService/*.zip'
-      xmltransformationrules: ''
-      enablexmltransform: false
-      jsontargetfiles: '**\mock-configuration.json'
+  # - task: filetransform@2
+  #   displayName: file transform - mock settings
+  #   inputs:
+  #     folderpath: '$(Pipeline.Workspace)/UKHOADDSMockService/*.zip'
+  #     xmltransformationrules: ''
+  #     enablexmltransform: false
+  #     jsontargetfiles: '**\mock-configuration.json'
 
   - task: DotNetCoreCLI@2
     displayName: "Run Functional tests"
