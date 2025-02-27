@@ -229,25 +229,10 @@ jobs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.MockService/UKHOShopFacadeMockService.zip'
         ArtifactName: UKHOShopFacadeMockServiceAPI
 
-    - task: DotNetCoreCLI@2
-      displayName: "Publish ShopFacade Mock Service API "
-      inputs:
-        command: "publish"
-        publishWebProjects: false
-        projects: ' **/ADDSMock.csproj'
-        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\ADDSMock'
-        zipAfterPublish: false
-
-    - task: PublishBuildArtifacts@1
-      displayName: "Publish ADDS Mock  Artifact"
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)\ADDSMock/ADDSMockService.zip'
-        ArtifactName: UKHOADDSMockService
-
 - job: BuildAndPublishADDSMockService
   workspace:
     clean: all
-  displayName: "Dotnet Build publish Mock API"
+  displayName: "Dotnet Build publish ADDS Mock Service"
   steps:
     - task: UseDotNet@2
       displayName: 'Use .NET 8.0.x sdk'
@@ -260,7 +245,7 @@ jobs:
       displayName: ".Net Core - NuGet restore for non test projects only"
       inputs:
         command: "restore"
-        projects: '**/***/*ADDSMock.csproj'
+        projects: '**/*ADDSMock.csproj'
         feedsToUse: config
         noCache: true
         nugetConfigPath: '$(Build.SourcesDirectory)\src\MockSSSSS\BuildNuget.config'
