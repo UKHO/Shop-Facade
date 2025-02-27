@@ -7,22 +7,22 @@ using UKHO.ShopFacade.API.FunctionalTests.Service;
 namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
 {
     [TestFixture]
-    public class S100UpnScenarios : TestFixtureBase
+    public class UpnScenarios : TestFixtureBase
     {
-        private readonly S100UpnEndpoint _s100UpnEndpoint;
+        private readonly UpnEndpoint _upnEndpoint;
 
         private readonly AuthTokenProvider _authTokenProvider;
 
-        public S100UpnScenarios()
+        public UpnScenarios()
         {
-            _s100UpnEndpoint = new S100UpnEndpoint();
+            _upnEndpoint = new UpnEndpoint();
             _authTokenProvider = new AuthTokenProvider();
         }
 
         [Test]
         public async Task WhenUpnServiceEndpointCalledWithValidTokenAndLicenceId_ThenUpnServiceReturns200OkResponse()
         {
-            var response = await _s100UpnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "1");
+            var response = await _upnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "1");
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             var jsonResponse = JsonConvert.DeserializeObject<dynamic>(response.Content!);
             Assert.That(jsonResponse!.Count > 0);
@@ -31,28 +31,28 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
         [Test]
         public async Task WhenUpnServiceEndpointCalledWithValidTokenWithNoRole_ThenUpnServiceReturns403ForbiddenResponse()
         {
-            var response = await _s100UpnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(true), "1");
+            var response = await _upnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(true), "1");
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
         }
 
         [Test]
         public async Task WhenUpnServiceEndpointCalledWithoutToken_ThenUpnServiceReturns401UnauthorizedResponse()
         {
-            var response = await _s100UpnEndpoint.GetUpnResponseAsync("", "1");
+            var response = await _upnEndpoint.GetUpnResponseAsync("", "1");
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
         }
 
         [Test]
         public async Task WhenUpnServiceEndpointCalledWithInvalidToken_ThenUpnServiceReturns401UnauthorizedResponse()
         {
-            var response = await _s100UpnEndpoint.GetUpnResponseAsync("Invalid Token", "1");
+            var response = await _upnEndpoint.GetUpnResponseAsync("Invalid Token", "1");
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
         }
 
         [Test]
         public async Task WhenUpnServiceEndpointCalledWithValidTokenAndNonExistingLicenceId_ThenUpnServiceReturns404NotFoundResponse()
         {
-            var response = await _s100UpnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "3");
+            var response = await _upnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "3");
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             var jsonResponse = JsonConvert.DeserializeObject<dynamic>(response.Content!);
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
@@ -62,7 +62,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
         [Test]
         public async Task WhenSharePointListIsDown_ThenUpnServiceReturns500InternalServerErrorResponse()
         {
-            var response = await _s100UpnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "2");
+            var response = await _upnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "2");
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
         }
 

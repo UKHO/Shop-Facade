@@ -64,19 +64,24 @@ namespace UKHO.ShopFacade.Common.Events
         GraphApiIsUnhealthy = 950011,
 
         /// <summary>
-        /// 950012 - Request for sales catalogue service endpoint is failed due to non ok response.
+        /// 950012 - GetPermits API call started.
         /// </summary>
-        SalesCatalogueServiceNonOkResponse = 950012,
+        GetPermitsCallStarted = 950012,
 
         /// <summary>
-        /// 950013 - Request for sales catalogue service catalogue endpoint is started.
+        /// 950013 - Request for sales catalogue service endpoint is failed due to non ok response.
         /// </summary>
-        GetSalesCatalogueDataRequestStarted = 950013,
+        SalesCatalogueServiceNonOkResponse = 950013,
 
         /// <summary>
-        /// 950014 - Request for sales catalogue service catalogue endpoint is completed.
+        /// 950014 - Request for sales catalogue service catalogue endpoint is started.
         /// </summary>
-        GetSalesCatalogueDataRequestCompleted = 950014,
+        GetSalesCatalogueDataRequestStarted = 950014,
+
+        /// <summary>
+        /// 950015 - Request for sales catalogue service catalogue endpoint is completed.
+        /// </summary>
+        GetSalesCatalogueDataRequestCompleted = 950015
     }
 
     /// <summary>
