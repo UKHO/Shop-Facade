@@ -208,7 +208,7 @@ jobs:
       displayName: "dotnet build task"
       inputs:
         command: "build"
-        projects: '**/ADDSMock.csproj'
+        projects: '**/*ADDSMock.csproj'
         arguments: '--configuration $(BuildConfiguration)'
 
     - task: DotNetCoreCLI@2
