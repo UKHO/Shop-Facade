@@ -9,10 +9,10 @@ namespace UKHO.ShopFacade.Common.Models.Response.SalesCatalogue
         [JsonPropertyName("productName")]
         public string? ProductName { get; set; }
 
-        [JsonPropertyName("editionNumber")]
+        [JsonPropertyName("latestEditionNumber")]
         public int? LatestEditionNumber { get; set; }
 
-        [JsonPropertyName("updateNumber")]
+        [JsonPropertyName("latestUpdateNumber")]
         public int? LatestUpdateNumber { get; set; }
 
         [JsonPropertyName("status")]
