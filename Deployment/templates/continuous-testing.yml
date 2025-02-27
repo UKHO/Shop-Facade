@@ -61,20 +61,20 @@ steps:
   #           }
   #       }
 
+  - task: filetransform@2
+    displayname: file transform - mock settings
+    inputs:
+      folderpath: '$(Build.SourcesDirectory)\UKHOADDSMockService'
+      xmltransformationrules: ''
+      enablexmltransform: false
+      jsontargetfiles: '**\mock-configuration.json'
+
   - task: PowerShell@2
     displayName: Get a url for testing
     name: getUrl
     inputs:
       targetType: filePath
       filePath: '$(Build.SourcesDirectory)/src/MockSSSSS/Pipeline/GetLocalHostUrl.ps1'
-
-  # - task: FileTransform@2
-  #   displayName: File transform - mock settings
-  #   inputs:
-  #     folderPath: '$(Build.SourcesDirectory)\Mock'
-  #     xmlTransformationRules: ''
-  #     enableXmlTransform: false
-  #     jsonTargetFiles: '**\mock-configuration.json'
 
   - task: DotNetCoreCLI@2
     displayName: "Run Functional tests"
