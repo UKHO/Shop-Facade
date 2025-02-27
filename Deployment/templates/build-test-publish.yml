@@ -260,7 +260,7 @@ jobs:
       displayName: ".Net Core - NuGet restore for non test projects only"
       inputs:
         command: "restore"
-        projects: '**/*UKHO.ShopFacade.MockService.csproj'
+        projects: '**/***/*ADDSMock.csproj'
         feedsToUse: config
         noCache: true
         nugetConfigPath: '$(Build.SourcesDirectory)\src\MockSSSSS\BuildNuget.config'
