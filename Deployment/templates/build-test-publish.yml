@@ -293,8 +293,8 @@ jobs:
     - task: PublishBuildArtifacts@1
       displayName: "Publish ADDS Mock Service Artifact"
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService/UKHOShopFacadeMockService.zip'
-        ArtifactName: UKHOShopFacadeMockServiceAPI
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService/UKHOADDSMockService.zip'
+        ArtifactName: UKHOADDSMockService
 
 - job: PublishFunctionalTests
   workspace:
