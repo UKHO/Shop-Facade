@@ -244,7 +244,6 @@ jobs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)\ADDSMock/ADDSMockService.zip'
         ArtifactName: UKHOADDSMockService
 
-
 - job: BuildAndPublishADDSMockService
   workspace:
     clean: all
@@ -265,7 +264,7 @@ jobs:
         feedsToUse: config
         noCache: true
         nugetConfigPath: '$(Build.SourcesDirectory)\src\MockSSSSS\BuildNuget.config'
-        workingDirectory: '$(Build.SourcesDirectory)\srcrc\MockSSSSS\src\ADDSMock'
+        workingDirectory: '$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock'
         packagesDirectory: '$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock\packages' 
 
     - task: DotNetCoreCLI@2
