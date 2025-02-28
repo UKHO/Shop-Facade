@@ -4,6 +4,7 @@ using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.DataProvider;
 using UKHO.ShopFacade.Common.Models;
+using UKHO.ShopFacade.Common.Models.Response.Upn;
 
 namespace UKHO.ShopFacade.API.UnitTests.Services
 {

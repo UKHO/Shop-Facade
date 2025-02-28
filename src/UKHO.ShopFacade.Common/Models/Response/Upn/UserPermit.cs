@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace UKHO.ShopFacade.Common.Models.Response
+namespace UKHO.ShopFacade.Common.Models.Response.Upn
 {
     [ExcludeFromCodeCoverage]
     public class UserPermit

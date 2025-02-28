@@ -66,7 +66,22 @@ namespace UKHO.ShopFacade.Common.Events
         /// <summary>
         /// 950012 - GetPermits API call started.
         /// </summary>
-        GetPermitsCallStarted = 950012
+        GetPermitsCallStarted = 950012,
+
+        /// <summary>
+        /// 950013 - Request for sales catalogue service endpoint is failed due to non ok response.
+        /// </summary>
+        SalesCatalogueServiceNonOkResponse = 950013,
+
+        /// <summary>
+        /// 950014 - Request for sales catalogue service catalogue endpoint is started.
+        /// </summary>
+        GetSalesCatalogueDataRequestStarted = 950014,
+
+        /// <summary>
+        /// 950015 - Request for sales catalogue service catalogue endpoint is completed.
+        /// </summary>
+        GetSalesCatalogueDataRequestCompleted = 950015
     }
 
     /// <summary>

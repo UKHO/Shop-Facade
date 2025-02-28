@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using UKHO.ShopFacade.Common.DataProvider;
-using UKHO.ShopFacade.Common.Models;
-using UKHO.ShopFacade.Common.Models.Response;
+using UKHO.ShopFacade.Common.Models.Response.Upn;
 
 namespace UKHO.ShopFacade.API.Services
 {
