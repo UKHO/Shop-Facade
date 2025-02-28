@@ -6,6 +6,8 @@ using UKHO.ShopFacade.Common.Models.Response.SalesCatalogue;
 
 namespace UKHO.ShopFacade.API.Services
 {
+    // Currently , this class is registered as singleton in DI (program.cs) as its does not have any state
+    // and not having any dependencies that are incompatible with a singleton lifecycle.   
     public class SalesCatalogueService : ISalesCatalogueService
     {
         private readonly ILogger<SalesCatalogueService> _logger;
