@@ -38,8 +38,17 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        # run the mock exe
-        Start-Process -FilePath "$(Pipeline.Workspace)\UKHOADDSMockService\ADDSMock.exe" -Wait        
+        # Enclose the path in quotes to handle spaces in directory names
+        $exePath = "$(Pipeline.Workspace)\UKHOADDSMockService\ADDSMock.exe"
+        Write-Host "Attempting to run: $exePath"
+      
+        if (Test-Path $exePath) {
+            Write-Host "File found, executing..."
+            Start-Process -FilePath $exePath -Wait
+        } else {
+            Write-Error "File not found: $exePath"
+        }
+  
 
   - task: PowerShell@2
     displayName: Get a url for testing
