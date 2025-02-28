@@ -18,7 +18,7 @@ steps:
       buildType: 'current'
       downloadType: 'single'
       artifactName: 'UKHOADDSMockService'
-      downloadPath: '$(Build.SourcesDirectory)'
+      downloadPath: '$(Build.ArtifactStagingDirectory)'
 
   # - task: FileTransform@2
   #   displayName: "File Transform: functionaltests"
@@ -38,18 +38,44 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        # Enclose the path in quotes to handle spaces in directory names
-        $exePath = "$(Pipeline.Workspace)\UKHOADDSMockService\ADDSMock.exe"
-        Write-Host "Attempting to run: $exePath"
-      
-        if (Test-Path $exePath) {
-            Write-Host "File found, executing..."
-            Start-Process -FilePath $exePath -Wait
+        # Define the path to the downloaded ZIP file
+        $zipFile = "$(Build.ArtifactStagingDirectory)\UKHOADDSMockService\UKHOADDSMockService.zip"  # Replace with actual ZIP file path
+        $extractPath = "$(Build.ArtifactStagingDirectory)\extracted"  # Path where ZIP will be extracted
+
+        # Check if the ZIP file exists
+        if (-Not (Test-Path $zipFile)) {
+          Write-Error "The specified ZIP file was not found: $zipFile"
+          exit 1
+        }
+
+        # Create the directory for extraction if it doesn't exist
+        if (-Not (Test-Path -Path $extractPath)) {
+            New-Item -ItemType Directory -Force -Path $extractPath
+        }
+
+        # Extract the ZIP file
+        Write-Host "Extracting ZIP file..."
+        Expand-Archive -Path $zipFile -DestinationPath $extractPath -Force
+
+        # List files in the extracted folder (optional, for debugging purposes)
+        Write-Host "Listing files in extracted folder:"
+        Get-ChildItem -Path $extractPath -Recurse | ForEach-Object { Write-Host $_.FullName }
+
+        # Find the first executable file (.exe) in the extracted folder
+        $exeFiles = Get-ChildItem -Path $extractPath -Recurse -Filter "*.exe"
+
+        if ($exeFiles) {
+            Write-Host "Found executable file: $($exeFiles[0].FullName)"
+            
+            # Execute the first found executable file
+            $exePath = $exeFiles[0].FullName
+            Write-Host "Executing $exePath"
+            Start-Process -FilePath $exePath -Wait  # Wait for the process to finish
+            
         } else {
-            Write-Error "File not found: $exePath"
+            Write-Host "No executable files found in the ZIP artifact."
         }
   
-
   - task: PowerShell@2
     displayName: Get a url for testing
     name: getUrl
