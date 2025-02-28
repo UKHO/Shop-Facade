@@ -20,6 +20,11 @@ variable "sku_name" {
             }
 }
 
+variable "env_name" {
+  description = "skip Deployment environment (dev)"
+  type        = string
+}
+
 variable "spoke_rg" {
   type = string
 }
