@@ -34,34 +34,12 @@ steps:
       useGlobalJson: true
       workingDirectory: '$(Build.SourcesDirectory)'
 
-
-  # - task: PowerShell@2
-  #   inputs:
-  #     targetType: 'inline'
-  #     script: |
-  #       # Define the module name you're checking for
-  #       $moduleName = "NetTCPIP"
-        
-  #       # Check if the module is already available
-  #       $module = Get-Module -ListAvailable -Name $moduleName
-        
-  #       if ($module) {
-  #           Write-Host "Module '$moduleName' is already installed:"
-  #           $module | Format-List Name, Path, Version
-  #       } else {
-  #           Write-Host "Module '$moduleName' is not installed. Installing now..."
-        
-  #           # If the module is not found, attempt to install it from PowerShell Gallery
-  #           try {
-  #               # Check if the module is available on PowerShell Gallery
-  #               Install-Module -Name $moduleName -Force -Scope CurrentUser
-  #               Write-Host "Module '$moduleName' has been installed successfully."
-  #           } catch {
-  #               Write-Host "An error occurred while trying to install the module '$moduleName'. Error: $_"
-  #           }
-  #       }
-
-
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+        # run the mock exe
+        Start-Process -FilePath "$(Pipeline.Workspace)\UKHOADDSMockService\ADDSMock.exe -Wait        
 
   - task: PowerShell@2
     displayName: Get a url for testing
@@ -70,7 +48,6 @@ steps:
       targetType: filePath
       filePath: '$(Build.SourcesDirectory)/src/MockSSSSS/Pipeline/GetLocalHostUrl.ps1'
 
-
   # - task: filetransform@2
   #   displayName: file transform - mock settings
   #   inputs:
@@ -78,8 +55,6 @@ steps:
   #     xmltransformationrules: ''
   #     enablexmltransform: false
   #     jsontargetfiles: '**\mock-configuration.json'
-
-
 
   - task: FileTransform@2
     displayName: "File Transform: functionaltests"
