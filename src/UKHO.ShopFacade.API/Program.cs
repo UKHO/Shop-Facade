@@ -133,7 +133,7 @@ namespace UKHO.ShopFacade.API
             builder.Services.AddHealthChecks().AddCheck<GraphApiHealthCheck>("GraphApiHealthCheck");
 
             builder.Services.Configure<SalesCatalogueConfiguration>(builder.Configuration.GetSection("SalesCatalogue"));
-            builder.Services.AddScoped<ISalesCatalogueService, SalesCatalogueService>();
+            builder.Services.AddSingleton<ISalesCatalogueService, SalesCatalogueService>();
             builder.Services.AddHttpClient<ISalesCatalogueClient, SalesCatalogueClient>(client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["SalesCatalogue:BaseUrl"]);
