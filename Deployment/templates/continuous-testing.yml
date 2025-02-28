@@ -70,12 +70,13 @@ steps:
             # Execute the first found executable file
             $exePath = $exeFiles[0].FullName
             Write-Host "Executing $exePath"
-            Start-Process -FilePath $exePath -Wait  # Wait for the process to finish
+            Start-Process -FilePath $exePath -Wait -NoNewWindow -WindowStyle Hidden  # Wait for the process to finish
             
         } else {
             Write-Host "No executable files found in the ZIP artifact."
         }
-  
+
+
   - task: PowerShell@2
     displayName: Get a url for testing
     name: getUrl
