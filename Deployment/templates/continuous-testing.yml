@@ -39,7 +39,7 @@ steps:
       targetType: 'inline'
       script: |
         # run the mock exe
-        Start-Process -FilePath "$(Pipeline.Workspace)\UKHOADDSMockService\ADDSMock.exe -Wait        
+        Start-Process -FilePath "$(Pipeline.Workspace)\UKHOADDSMockService\ADDSMock.exe"" -Wait        
 
   - task: PowerShell@2
     displayName: Get a url for testing
