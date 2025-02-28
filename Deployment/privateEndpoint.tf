@@ -22,7 +22,7 @@ data "azurerm_subnet" "pesn" {
 }
 
 module "private_endpoint_link" {
-  count               = local.env_name == "dev" ? 0 : 1
+# count               = local.env_name == "dev" ? 0 : 1
   source              = "github.com/UKHO/tfmodule-azure-private-endpoint-private-link?ref=0.6.0"
   providers = {
     azurerm.hub   = azurerm.hub
