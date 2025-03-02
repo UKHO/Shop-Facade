@@ -76,12 +76,7 @@ steps:
             Write-Host "No executable files found in the ZIP artifact."
         }
 
-  - task: PowerShell@2
-    displayName: Get a url for testing
-    name: getUrl
-    inputs:
-      targetType: filePath
-      filePath: '$(Build.SourcesDirectory)/src/MockSSSSS/Pipeline/GetLocalHostUrl.ps1'
+
 
   - task: PowerShell@2
     displayName: Get a path for Service and Override Configuration
@@ -109,6 +104,14 @@ steps:
       xmltransformationrules: ''
       enablexmltransform: false
       jsontargetfiles: '**\mock-configuration.json'
+
+
+  - task: PowerShell@2
+    displayName: Get a url for testing
+    name: getUrl
+    inputs:
+      targetType: filePath
+      filePath: '$(Build.SourcesDirectory)/src/MockSSSSS/Pipeline/GetLocalHostUrl.ps1'
 
   - task: FileTransform@2
     displayName: "File Transform: functionaltests"
