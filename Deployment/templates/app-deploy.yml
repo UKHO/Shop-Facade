@@ -71,6 +71,11 @@ jobs:
   # condition: and(succeeded('DeployApp'), eq( ${{parameters.RunTests}} , 'true'))
   workspace:
    clean: all
+  variables:
+  - name: ConfigurationPath
+    value: '$(Build.SourcesDirectory)/src/MockSSSSS/service-configuration'
+  - name: OverrideConfigurationPath
+    value: '$(Build.SourcesDirectory)/src/MockSSSSS/override-configuration'
   strategy:
     runOnce:
       deploy:
