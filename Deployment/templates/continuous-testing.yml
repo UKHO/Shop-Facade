@@ -19,6 +19,22 @@ steps:
       artifactName: 'UKHOADDSMockService'
       downloadPath: '$(Build.SourcesDirectory)'
 
+  - task: PowerShell@2
+    displayName: "Extract Artifact ZIP"
+    inputs:
+      targetType: "inline"
+      script: |
+        $artifactPath = "$(Build.SourcesDirectory)"  # Path where artifact is downloaded
+        $zipFile = Get-ChildItem -Path $artifactPath -Filter "*.zip" | Select-Object -First 1
+        if ($zipFile) {
+            Write-Host "Extracting: $($zipFile.FullName)"
+            Expand-Archive -Path $zipFile.FullName -DestinationPath $artifactPath -Force
+            Write-Host "Extraction completed!"
+        } else {
+            Write-Host "No ZIP file found in artifact!"
+            exit 1
+        }
+
   # - task: FileTransform@2
   #   displayName: "File Transform: functionaltests"
   #   inputs:
@@ -35,7 +51,7 @@ steps:
   - task: FileTransform@2
     displayName: "File Transform: Mock Service Settings"
     inputs:
-      folderPath: '$(Build.SourcesDirectory)/UKHOADDSMockService/*.zip'
+      folderPath: '$(Build.SourcesDirectory)/UKHOADDSMockService'
       xmlTransformationRules: ''
       jsonTargetFiles: '**/mock-configuration.json'
 
