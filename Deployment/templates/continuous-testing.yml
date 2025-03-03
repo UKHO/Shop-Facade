@@ -3,21 +3,21 @@ parameters:
     type: string    
 
 steps:
-  # - task: DownloadBuildArtifacts@0
-  #   displayName: "Download Functional test Artifact"
-  #   inputs:
-  #     buildType: 'current'
-  #     downloadType: 'single'
-  #     artifactName: 'functionaltests'
-  #     downloadPath: '$(Build.SourcesDirectory)'
+  - task: downloadbuildartifacts@0
+    displayname: "download functional test artifact"
+    inputs:
+      buildtype: 'current'
+      downloadtype: 'single'
+      artifactname: 'functionaltests'
+      downloadpath: '$(build.sourcesdirectory)'
 
-  # - task: DownloadBuildArtifacts@0
-  #   displayName: "Download ADDSMock Artifact"
-  #   inputs:
-  #     buildType: 'current'
-  #     downloadType: 'single'
-  #     artifactName: 'UKHOADDSMockService'
-  #     downloadPath: '$(Build.SourcesDirectory)'
+  - task: DownloadBuildArtifacts@0
+    displayName: "Download ADDSMock Artifact"
+    inputs:
+      buildType: 'current'
+      downloadType: 'single'
+      artifactName: 'UKHOADDSMockService'
+      downloadPath: '$(Build.SourcesDirectory)'
 
   # - task: FileTransform@2
   #   displayName: "File Transform: functionaltests"
@@ -35,7 +35,7 @@ steps:
   - task: FileTransform@2
     displayName: "File Transform: Mock Service Settings"
     inputs:
-      folderPath: '$(Pipeline.Workspace)/UKHOADDSMockService/*.zip'
+      folderPath: '$(Build.SourcesDirectory)/UKHOADDSMockService/*.zip'
       xmlTransformationRules: ''
       jsonTargetFiles: '**/mock-configuration.json'
 
@@ -45,14 +45,18 @@ steps:
       targetType: 'inline'
       script: |
         # Find and print the path of the "service-configuration" folder
-        $folderPath = Get-ChildItem -Path $(Pipeline.Workspace) -Recurse -Directory -Filter "service-configuration" | Select-Object -ExpandProperty FullName
+
+        $folderPath = Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse -File
+
+        Write-Host "======end of directory structure========"
+        $folderPath = Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse -Directory -Filter "service-configuration" | Select-Object -ExpandProperty FullName
         Write-Host "Service Configuration Path: $folderPath"
               
         # Print the pipeline variable "service-configuration"
         Write-Host "Pipeline Variable 'service-configuration': $env:ConfigurationPath"
               
         # Find and print the path of the "override-configuration" folder
-        $folderPath = Get-ChildItem -Path $(Pipeline.Workspace) -Recurse -Directory -Filter "override-configuration" | Select-Object -ExpandProperty FullName
+        $folderPath = Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse -Directory -Filter "override-configuration" | Select-Object -ExpandProperty FullName
         Write-Host "override-configuration Path: $folderPath"
               
         # Print the pipeline variable "override-configuration"
@@ -64,7 +68,7 @@ steps:
    
       targetType: 'inline'
       script: |
-        $file = Get-ChildItem -Path "$(Pipeline.Workspace)" -Recurse -File -Filter "mock-configuration.json" | Select-Object -First 1
+        $file = Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse -File -Filter "mock-configuration.json" | Select-Object -First 1
        
         if ($file) {
             # Read and print the content of the found file
@@ -72,7 +76,7 @@ steps:
             Write-Host "File Found: $($file.FullName)"
             Write-Host "Content: $content"
         } else {
-            Write-Host "File 'mock-configuration.json' not found in $(Pipeline.Workspace)"
+            Write-Host "File 'mock-configuration.json' not found in $(Build.SourcesDirectory)"
         }
 
   - task: PowerShell@2
@@ -91,7 +95,7 @@ steps:
         #   exit 1
         # }
 
-        $extractPath = "$(Pipeline.Workspace)\UKHOADDSMockService"
+        $extractPath = "$(Build.SourcesDirectory)/UKHOADDSMockService"
 
         # Create the directory for extraction if it doesn't exist
         if (-Not (Test-Path -Path $extractPath)) {
@@ -126,7 +130,7 @@ steps:
     name: getUrl
     inputs:
       targetType: filePath
-      filePath: '$(Pipeline.Workspace)\UKHOADDSMockService\**\GetLocalHostUrl.ps1'
+      filePath: '$(Build.SourcesDirectory)/UKHOADDSMockService/**/GetLocalHostUrl.ps1'
 
   - task: FileTransform@2
     displayName: "File Transform: functionaltests"
