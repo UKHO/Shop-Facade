@@ -30,8 +30,7 @@ steps:
     displayName: 'Use .NET 8.0.x sdk'
     inputs:
       packageType: sdk
-      useGlobalJson: true
-      workingDirectory: '$(Build.SourcesDirectory)'
+      version: 8.0.x
 
   - task: PowerShell@2
     displayName: Get a path for Service and Override Configuration
@@ -55,7 +54,7 @@ steps:
   - task: filetransform@2
     displayName: file transform - mock settings
     inputs:
-      folderpath: '$(Pipeline.Workspace)/UKHOADDSMockService/*.zip'
+      folderpath: '$(Pipeline.Workspace)\UKHOADDSMockService\*.zip'
       xmltransformationrules: ''
       enablexmltransform: false
       jsontargetfiles: '**\mock-configuration.json'
@@ -66,7 +65,7 @@ steps:
     inputs:
       targetType: inline
       script: |
-        Get-Content '$(Pipeline.Workspace)/UKHOADDSMockService/mock-configuration.json'
+        Get-Content '$(Pipeline.Workspace)\UKHOADDSMockService\mock-configuration.json'
 
   - task: PowerShell@2
     inputs:
@@ -84,7 +83,7 @@ steps:
         #   exit 1
         # }
 
-        $extractPath = "$(Pipeline.Workspace)/UKHOADDSMockService"
+        $extractPath = "$(Pipeline.Workspace)\UKHOADDSMockService"
 
         # Create the directory for extraction if it doesn't exist
         if (-Not (Test-Path -Path $extractPath)) {
