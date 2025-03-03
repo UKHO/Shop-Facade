@@ -264,7 +264,7 @@ steps:
        
             # Check the health endpoint using curl
       
-            $curlResponse = cmd.exe /c "curl -k -s -o NUL -w '%{http_code}' $url"
+            $curlResponse = curl.exe -k -s -o NUL -w "%{http_code}" $healthUrl
        
             if ($curlResponse -eq "200") {
       
