@@ -177,12 +177,12 @@ steps:
               
         }
         
-  - task: PowerShell@2
-    displayName: Get a url for testing
-    name: getUrl
-    inputs:
-      targetType: filePath
-      filePath: '$(Build.SourcesDirectory)/UKHOADDSMockService/**/GetLocalHostUrl.ps1'
+  # - task: PowerShell@2
+  #   displayName: Get a url for testing
+  #   name: getUrl
+  #   inputs:
+  #     targetType: filePath
+  #     filePath: '$(Build.SourcesDirectory)/UKHOADDSMockService/**/GetLocalHostUrl.ps1'
 
   - task: FileTransform@2
     displayName: "File Transform: functionaltests"
