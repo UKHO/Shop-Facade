@@ -72,13 +72,18 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
         public async Task CommonMockTest()
         {
 
-            var _options = new RestClientOptions("https://localhost:5678/");
+            var _options = new RestClientOptions("https://0.0.0.0:5678/");
             var _client = new RestClient(_options);
 
             var request = new RestRequest("demo/health");
 
 
             var response = await _client.ExecuteAsync(request);
+            // Log request and response details
+            Console.WriteLine($"Request URL: {_client.BuildUri(request)}");
+            Console.WriteLine($"Response Status Code: {response.StatusCode}");
+            Console.WriteLine($"Response Content: {response.Content}");
+
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 

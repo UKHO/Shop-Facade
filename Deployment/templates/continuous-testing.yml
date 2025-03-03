@@ -275,7 +275,7 @@ steps:
        
             # Define the health check URL
       
-            $url = "https://localhost:5678/demo/health"
+            $url = "https://0.0.0.0:5678/demo/health"
        
             # Check the health endpoint using curl
       
@@ -312,7 +312,7 @@ steps:
       
         $elapsedTime = 0
       
-        $healthUrl = "https://localhost:5678/demo/health"
+        $healthUrl = "https://0.0.0.0:5678/demo/health"
        
         Write-Host "Checking if $healthUrl is available using curl..."
        
