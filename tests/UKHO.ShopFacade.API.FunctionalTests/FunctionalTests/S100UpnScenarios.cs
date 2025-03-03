@@ -79,6 +79,12 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
 
 
             var response = await _client.ExecuteAsync(request);
+
+            // Log request and response details
+            Console.WriteLine($"Request URL: {_client.BuildUri(request)}");
+            Console.WriteLine($"Response Status Code: {response.StatusCode}");
+            Console.WriteLine($"Response Content: {response.Content}");
+
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 
