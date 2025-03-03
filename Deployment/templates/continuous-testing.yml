@@ -24,7 +24,7 @@ steps:
     inputs:
       targetType: "inline"
       script: |
-        $artifactPath = "$(Build.SourcesDirectory)"  # Path where artifact is downloaded
+        $artifactPath = "$(Build.SourcesDirectory)\UKHOADDSMockService"  # Path where artifact is downloaded
         $zipFile = Get-ChildItem -Path $artifactPath -Filter "*.zip" | Select-Object -First 1
         if ($zipFile) {
             Write-Host "Extracting: $($zipFile.FullName)"
