@@ -220,39 +220,65 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        $timeout = 30   # Maximum wait time in seconds
-      
-        $elapsedTime = 0
-      
-        $healthUrl = "https://localhost:5678/demo/health"
+        $extractPath = "$(Build.SourcesDirectory)/UKHOADDSMockService"
        
-        Write-Host "Checking if $healthUrl is available using curl..."
-       
-        while ($elapsedTime -lt $timeout) {
+        # Create the directory for extraction if it doesn't exist
       
-            $response = curl.exe -k -s -o NUL -w "%{http_code}" $healthUrl
+        if (-Not (Test-Path -Path $extractPath)) {
       
-            if ($response -eq "200") {
-      
-                Write-Host " Service is up and running!"
-      
-                break
-      
-            } else {
-      
-                Write-Host "Waiting for service to start... ($elapsedTime/$timeout seconds)"
-      
-            }
-      
-            Start-Sleep -Seconds 5
-      
-            $elapsedTime += 5
+            New-Item -ItemType Directory -Force -Path $extractPath
       
         }
        
-        if ($elapsedTime -ge $timeout) {
+        # List files in the extracted folder (optional, for debugging purposes)
       
-            Write-Host "Warning: Service did not start within $timeout seconds."
+        Write-Host "Listing files in extracted folder:"
+      
+        Get-ChildItem -Path $extractPath -Recurse | ForEach-Object { Write-Host $_.FullName }
+       
+        # Find the first executable file (.exe) in the extracted folder
+      
+        $exeFiles = Get-ChildItem -Path $extractPath -Recurse -Filter "*.exe"
+       
+        if ($exeFiles) {
+      
+            Write-Host "Found executable file: $($exeFiles[0].FullName)"
+      
+            # Execute the first found executable file in the background
+      
+            $exePath = $exeFiles[0].FullName
+      
+            Write-Host "Executing $exePath in the background"
+      
+            $process = Start-Process -FilePath $exePath -NoNewWindow -PassThru
+       
+            # Wait for 30 seconds before checking the health endpoint
+      
+            Write-Host "Waiting for 30 seconds to allow the application to start..."
+      
+            Start-Sleep -Seconds 30
+       
+            # Define the health check URL
+      
+            $url = "https://localhost:5678/demo/health"
+       
+            # Check the health endpoint using curl
+      
+            $curlResponse = cmd.exe /c "curl -k -s -o NUL -w '%{http_code}' $url"
+       
+            if ($curlResponse -eq "200") {
+      
+                Write-Host " Application is running and responding at $url"
+      
+            } else {
+      
+                Write-Host " Warning: Application did not respond with 200 OK. Continuing pipeline..."
+      
+            }
+       
+        } else {
+      
+            Write-Host " No executable files found in the ZIP artifact."
       
         }
 
