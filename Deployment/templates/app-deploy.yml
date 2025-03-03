@@ -80,8 +80,8 @@ jobs:
     runOnce:
       deploy:
         steps:
-          - checkout: self
-            submodules: recursive
+          # - checkout: self
+          #   submodules: recursive
           - template: continuous-testing.yml
             parameters:
               AzureSubscription: ${{parameters.AzureSubscription}}
