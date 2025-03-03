@@ -46,7 +46,7 @@ steps:
       script: |
         # Find and print the path of the "service-configuration" folder
 
-        $folderPath = Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse -File
+        Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse -File
 
         Write-Host "======end of directory structure========"
         $folderPath = Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse -Directory -Filter "service-configuration" | Select-Object -ExpandProperty FullName
