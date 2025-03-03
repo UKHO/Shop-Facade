@@ -129,7 +129,7 @@ steps:
               
             Write-Host "Executing $exePath in the background"
               
-            $process = Start-Process -FilePath $exePath -NoNewWindow -PassThru `
+            $process = Start-Process -FilePath $exePath -NoNewWindow -PassThru -ErrorAction Stop `
               
                 -RedirectStandardOutput "$extractPath\process_output.log" `
               
@@ -159,7 +159,7 @@ steps:
               
                 }
               
-            }
+            }   
               
             if ($isRunning) {
               
