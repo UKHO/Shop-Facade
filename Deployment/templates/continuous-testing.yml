@@ -31,7 +31,7 @@ steps:
     inputs:
       packageType: sdk
       useGlobalJson: true
-      workingDirectory: '$(Pipeline.Workspace)'
+      workingDirectory: '$(Build.SourcesDirectory)'
 
   - task: PowerShell@2
     displayName: Get a path for Service and Override Configuration
