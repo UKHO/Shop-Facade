@@ -75,7 +75,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             var _options = new RestClientOptions("https://localhost:5678/");
             var _client = new RestClient(_options);
 
-            var request = new RestRequest("demo/");
+            var request = new RestRequest("demo/health");
 
 
             var response = await _client.ExecuteAsync(request);
