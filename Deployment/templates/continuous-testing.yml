@@ -129,11 +129,7 @@ steps:
               
             Write-Host "Executing $exePath in the background"
               
-            $process = Start-Process -FilePath $exePath -NoNewWindow -PassThru -ErrorAction Stop `
-              
-                -RedirectStandardOutput "$extractPath\process_output.log" `
-              
-                -RedirectStandardError "$extractPath\process_error.log"
+            $process = Start-Process -FilePath $exePath -NoNewWindow -PassThru -ErrorAction Stop
               
             # Wait for the process to start (Modify this check as per your application's startup behavior)
               
