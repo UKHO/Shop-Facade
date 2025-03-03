@@ -73,9 +73,9 @@ jobs:
    clean: all
   variables:
   - name: ConfigurationPath
-    value: '$(Build.SourcesDirectory)/src/MockSSSSS/service-configuration'
+    value: '$(Build.SourcesDirectory)\src\MockSSSSS\service-configuration'
   - name: OverrideConfigurationPath
-    value: '$(Build.SourcesDirectory)/src/MockSSSSS/override-configuration'
+    value: '$(Build.SourcesDirectory)\src\MockSSSSS\override-configuration'
   strategy:
     runOnce:
       deploy:
