@@ -32,32 +32,31 @@ steps:
       packageType: sdk
       version: 8.0.x
 
+  - task: FileTransform@2
+    displayName: "File Transform: Mock Service Settings"
+    inputs:
+      folderPath: '$(Pipeline.Workspace)/UKHOADDSMockService/*.zip'
+      xmlTransformationRules: ''
+      jsonTargetFiles: '**/appsettings.json'
+
   - task: PowerShell@2
     displayName: Get a path for Service and Override Configuration
     inputs:
       targetType: 'inline'
       script: |
         # Find and print the path of the "service-configuration" folder
-        $folderPath = Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse -Directory -Filter "service-configuration" | Select-Object -ExpandProperty FullName
+        $folderPath = Get-ChildItem -Path $(Pipeline.Workspace) -Recurse -Directory -Filter "service-configuration" | Select-Object -ExpandProperty FullName
         Write-Host "Service Configuration Path: $folderPath"
               
         # Print the pipeline variable "service-configuration"
         Write-Host "Pipeline Variable 'service-configuration': $env:ConfigurationPath"
               
         # Find and print the path of the "override-configuration" folder
-        $folderPath = Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse -Directory -Filter "override-configuration" | Select-Object -ExpandProperty FullName
+        $folderPath = Get-ChildItem -Path $(Pipeline.Workspace) -Recurse -Directory -Filter "override-configuration" | Select-Object -ExpandProperty FullName
         Write-Host "override-configuration Path: $folderPath"
               
         # Print the pipeline variable "override-configuration"
         Write-Host "Pipeline Variable 'service-configuration': $env:OverrideConfigurationPath"
-
-  - task: filetransform@2
-    displayName: file transform - mock settings
-    inputs:
-      folderpath: '$(Pipeline.Workspace)\UKHOADDSMockService\*.zip'
-      xmltransformationrules: ''
-      enablexmltransform: false
-      jsontargetfiles: '**\mock-configuration.json'
 
   - task: PowerShell@2
     condition: always()
