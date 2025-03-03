@@ -60,12 +60,21 @@ steps:
       jsontargetfiles: '**\mock-configuration.json'
 
   - task: PowerShell@2
-    displayName: View mock-configuration.json
     condition: always()
     inputs:
-      targetType: inline
+   
+      targetType: 'inline'
       script: |
-        Get-Content '$(Pipeline.Workspace)\UKHOADDSMockService\**\mock-configuration.json'
+        $file = Get-ChildItem -Path "$(Pipeline.Workspace)" -Recurse -File -Filter "mock-configuration.json" | Select-Object -First 1
+       
+        if ($file) {
+            # Read and print the content of the found file
+            $content = Get-Content $file.FullName -Raw
+            Write-Host "File Found: $($file.FullName)"
+            Write-Host "Content: $content"
+        } else {
+            Write-Host "File 'mock-configuration.json' not found in $(Pipeline.Workspace)"
+        }
 
   - task: PowerShell@2
     inputs:
