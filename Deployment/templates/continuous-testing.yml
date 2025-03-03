@@ -304,6 +304,46 @@ steps:
        xmlTransformationRules:
        jsonTargetFiles: '**/appsettings.json'
 
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+        $timeout = 30   # Maximum wait time in seconds
+      
+        $elapsedTime = 0
+      
+        $healthUrl = "https://localhost:5678/demo/health"
+       
+        Write-Host "Checking if $healthUrl is available using curl..."
+       
+        while ($elapsedTime -lt $timeout) {
+      
+            $response = curl.exe -k -s -o NUL -w "%{http_code}" $healthUrl
+      
+            if ($response -eq "200") {
+      
+                Write-Host " Service is up and running!"
+      
+                break
+      
+            } else {
+      
+                Write-Host "Waiting for service to start... ($elapsedTime/$timeout seconds)"
+      
+            }
+      
+            Start-Sleep -Seconds 5
+      
+            $elapsedTime += 5
+      
+        }
+       
+        if ($elapsedTime -ge $timeout) {
+      
+            Write-Host "Warning: Service did not start within $timeout seconds."
+      
+        }
+
   - task: DotNetCoreCLI@2
     displayName: "Run Functional tests"
     inputs:
