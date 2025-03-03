@@ -37,7 +37,7 @@ steps:
     inputs:
       folderPath: '$(Pipeline.Workspace)/UKHOADDSMockService/*.zip'
       xmlTransformationRules: ''
-      jsonTargetFiles: '**/appsettings.json'
+      jsonTargetFiles: '**/mock-configuration.json'
 
   - task: PowerShell@2
     displayName: Get a path for Service and Override Configuration
