@@ -18,7 +18,7 @@ steps:
       buildType: 'current'
       downloadType: 'single'
       artifactName: 'UKHOADDSMockService'
-      downloadPath: '$(Build.ArtifactStagingDirectory)'
+      downloadPath: '$(Build.SourcesDirectory)'
 
   # - task: FileTransform@2
   #   displayName: "File Transform: functionaltests"
@@ -67,30 +67,34 @@ steps:
     inputs:
       targetType: inline
       script: |
-        Get-Content '$((Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock\mock-configuration.json'
+        Get-Content '$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock\mock-configuration.json'
 
   - task: PowerShell@2
     inputs:
       targetType: 'inline'
       script: |
         # Define the path to the downloaded ZIP file
-        $zipFile = "$(Build.ArtifactStagingDirectory)\UKHOADDSMockService\UKHOADDSMockService.zip"  # Replace with actual ZIP file path
-        $extractPath = "$(Build.ArtifactStagingDirectory)\extracted"  # Path where ZIP will be extracted
+        # $zipFile = "$(Build.ArtifactStagingDirectory)\UKHOADDSMockService\UKHOADDSMockService.zip"  # Replace with actual ZIP file path
+        # $extractPath = "$(Build.ArtifactStagingDirectory)\extracted"  # Path where ZIP will be extracted
+
+
 
         # Check if the ZIP file exists
-        if (-Not (Test-Path $zipFile)) {
-          Write-Error "The specified ZIP file was not found: $zipFile"
-          exit 1
-        }
+        # if (-Not (Test-Path $zipFile)) {
+        #   Write-Error "The specified ZIP file was not found: $zipFile"
+        #   exit 1
+        # }
+
+        $extractPath = "$(Build.SourcesDirectory)\src\MockSSSSS"
 
         # Create the directory for extraction if it doesn't exist
         if (-Not (Test-Path -Path $extractPath)) {
             New-Item -ItemType Directory -Force -Path $extractPath
         }
 
-        # Extract the ZIP file
-        Write-Host "Extracting ZIP file..."
-        Expand-Archive -Path $zipFile -DestinationPath $extractPath -Force
+        # # Extract the ZIP file
+        # Write-Host "Extracting ZIP file..."
+        # Expand-Archive -Path $zipFile -DestinationPath $extractPath -Force
 
         # List files in the extracted folder (optional, for debugging purposes)
         Write-Host "Listing files in extracted folder:"
