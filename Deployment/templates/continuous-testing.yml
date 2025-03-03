@@ -84,7 +84,7 @@ steps:
    
       targetType: 'inline'
       script: |
-        $file = Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse -File -Filter "mock-configuration.json" | Select-Object -First 1
+        $file = Get-ChildItem -Path "$(Build.SourcesDirectory)\UKHOADDSMockService" -Recurse -File -Filter "mock-configuration.json" | Select-Object -First 1
        
         if ($file) {
             # Read and print the content of the found file
@@ -99,48 +99,88 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        # Define the path to the downloaded ZIP file
-        # $zipFile = "$(Build.ArtifactStagingDirectory)\UKHOADDSMockService\UKHOADDSMockService.zip"  # Replace with actual ZIP file path
-        # $extractPath = "$(Build.ArtifactStagingDirectory)\extracted"  # Path where ZIP will be extracted
-
-
-
-        # Check if the ZIP file exists
-        # if (-Not (Test-Path $zipFile)) {
-        #   Write-Error "The specified ZIP file was not found: $zipFile"
-        #   exit 1
-        # }
-
         $extractPath = "$(Build.SourcesDirectory)/UKHOADDSMockService"
-
+              
         # Create the directory for extraction if it doesn't exist
+              
         if (-Not (Test-Path -Path $extractPath)) {
+              
             New-Item -ItemType Directory -Force -Path $extractPath
+              
         }
-
-        # # Extract the ZIP file
-        # Write-Host "Extracting ZIP file..."
-        # Expand-Archive -Path $zipFile -DestinationPath $extractPath -Force
-
+              
         # List files in the extracted folder (optional, for debugging purposes)
+              
         Write-Host "Listing files in extracted folder:"
+              
         Get-ChildItem -Path $extractPath -Recurse | ForEach-Object { Write-Host $_.FullName }
-
+              
         # Find the first executable file (.exe) in the extracted folder
+              
         $exeFiles = Get-ChildItem -Path $extractPath -Recurse -Filter "*.exe"
-
+              
         if ($exeFiles) {
+              
             Write-Host "Found executable file: $($exeFiles[0].FullName)"
-            
-            # Execute the first found executable file
+              
+            # Execute the first found executable file in the background
+              
             $exePath = $exeFiles[0].FullName
-            Write-Host "Executing $exePath"
-            Start-Process -FilePath $exePath -Wait -NoNewWindow  # Wait for the process to finish
-            
+              
+            Write-Host "Executing $exePath in the background"
+              
+            $process = Start-Process -FilePath $exePath -NoNewWindow -PassThru `
+              
+                -RedirectStandardOutput "$extractPath\process_output.log" `
+              
+                -RedirectStandardError "$extractPath\process_error.log"
+              
+            # Wait for the process to start (Modify this check as per your application's startup behavior)
+              
+            $timeout = 60  # Max wait time in seconds
+              
+            $elapsedTime = 0
+              
+            $isRunning = $false
+              
+            while ($elapsedTime -lt $timeout) {
+              
+                Start-Sleep -Seconds 5
+              
+                $elapsedTime += 5
+              
+                # Check if the process is running
+              
+                if (-Not $process.HasExited) {
+              
+                    $isRunning = $true
+              
+                    break
+              
+                }
+              
+            }
+              
+            if ($isRunning) {
+              
+                Write-Host "Application started successfully!"
+              
+            } else {
+              
+                Write-Host "Error: Application failed to start within $timeout seconds."
+              
+                exit 1  # Fails the pipeline if the application doesn't start in time
+              
+            }
+              
         } else {
+              
             Write-Host "No executable files found in the ZIP artifact."
+              
+            exit 1  # Fails the pipeline if no executable is found
+              
         }
-
+        
   - task: PowerShell@2
     displayName: Get a url for testing
     name: getUrl
