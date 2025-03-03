@@ -176,6 +176,37 @@ steps:
             exit 1  # Fails the pipeline if no executable is found
               
         }
+
+  - task: PowerShell@2
+    displayName: "Wait for Application to Start on https://localhost:5678"
+    inputs:
+      targetType: 'inline'
+      script: |
+        $port = 5678
+        $url = "https://localhost:$port"
+        $maxRetries = 5  # Wait for up to 60 seconds (5 retries * 5 seconds)
+        $retryInterval = 5
+        $attempt = 0
+ 
+        Write-Host "Waiting for $url to be available..."
+ 
+        while ($attempt -lt $maxRetries) {
+            try {
+                $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 3
+                if ($response.StatusCode -eq 200) {
+                    Write-Host "Application is running at $url!"
+                    exit 0  # Exit successfully
+                }
+            } catch {
+                Write-Host "$url is not responding, retrying in $retryInterval seconds..."
+            }
+ 
+            Start-Sleep -Seconds $retryInterval
+            $attempt++
+        }
+ 
+        Write-Host "Error: Application did not start at $url within the timeout period."
+        exit 1  # Fail pipeline if app is not running
         
   # - task: PowerShell@2
   #   displayName: Get a url for testing
