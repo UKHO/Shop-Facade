@@ -275,19 +275,20 @@ steps:
        
             # Define the health check URL
       
-            #$url = "https://localhost:5678/demo/health"
-            Write-Host "check port"
-            netstat -ano | findstr :5678
-            Write-Host "check firewall"
-            Get-NetFirewallRule | Where-Object { $_.DisplayName -like "*5678*" }
+            $url = "https://localhost:5678/demo/health"
+
+            #Write-Host "check port"
+            #netstat -ano | findstr :5678
+            #Write-Host "check firewall"
+            #Get-NetFirewallRule | Where-Object { $_.DisplayName -like "*5678*" }
 
             # Get the internal IP address of the machine
-            $internalIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -NotLike "Loopback*"}).IPAddress
-            Write-Host "Using Internal IP Address: $internalIP"
+            #$internalIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -NotLike "Loopback*"}).IPAddress
+            #Write-Host "Using Internal IP Address: $internalIP"
 
 
             # Check the health endpoint using curl
-            $url = "https://$internalIP:5678/demo/health"
+            #$url = "https://$internalIP:5678/demo/health"
        
             # Check the health endpoint using curl
       
