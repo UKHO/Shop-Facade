@@ -250,7 +250,7 @@ steps:
       
             Write-Host "Executing $exePath in the background"
       
-            $process = Start-Process -FilePath $exePath -NoNewWindow -PassThru
+            $process = Start-Process -FilePath $exePath -Verb RunAs -NoNewWindow -PassThru
        
             # Wait for 30 seconds before checking the health endpoint
       
