@@ -19,5 +19,6 @@ namespace UKHO.ShopFacade.Common.Constants
 
         //Error messages for permit service
         public const string GetPermitsCallStartedMessage = "GetPermits API call started.";
+        public const string GetPermitsCallCompletedMessage = "GetPermits API call completed successfully.";
     }
 }
