@@ -278,6 +278,9 @@ steps:
             #$url = "https://localhost:5678/demo/health"
             Write-Host "check port"
             netstat -ano | findstr :5678
+            Write-Host "check firewall"
+            Get-NetFirewallRule | Where-Object { $_.DisplayName -like "*5678*" }
+
             # Get the internal IP address of the machine
             $internalIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -NotLike "Loopback*"}).IPAddress
             Write-Host "Using Internal IP Address: $internalIP"
