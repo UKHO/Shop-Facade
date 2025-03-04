@@ -253,8 +253,6 @@ steps:
             # Check current permissions
 
             Write-Host "Checking permissions for $exePath..."
-
-            Get-Acl -Path $exePath | Format-List
  
             # Grant execution permission
 
