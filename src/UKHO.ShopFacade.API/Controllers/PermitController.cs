@@ -47,7 +47,17 @@ namespace UKHO.ShopFacade.API.Controllers
                 return BadRequest(PermitServiceResult.SetErrorResponse(GetCorrelationId(), ErrorDetails.Source, ErrorDetails.InvalidLicenceIdMessage));
             }
             var permitServiceResult = await _permitService.GetPermitDetails(licenceId, GetCorrelationId());
-            return Ok();
+
+
+            switch (permitServiceResult.StatusCode)
+            {
+                case HttpStatusCode.NotFound:
+                    _logger.LogWarning(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
+                    return NotFound(permitServiceResult.ErrorResponse);
+                default:
+                    _logger.LogError(EventIds.InternalError.ToEventId(), ErrorDetails.InternalErrorMessage);
+                    return StatusCode((int)permitServiceResult.StatusCode);
+            }
         }
     }
 }
