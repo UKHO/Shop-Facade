@@ -67,9 +67,7 @@ jobs:
   # dependsOn:  DeployApp
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
-  pool: $(DeploymentPool)
-  container:
-    image: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.10.4"
+  pool: $(WindowPool)
   # condition: and(succeeded('DeployApp'), eq( ${{parameters.RunTests}} , 'true'))
   workspace:
    clean: all

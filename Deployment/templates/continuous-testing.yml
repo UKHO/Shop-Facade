@@ -35,13 +35,6 @@ steps:
             exit 1
         }
 
-  # - task: FileTransform@2
-  #   displayName: "File Transform: functionaltests"
-  #   inputs:
-  #      folderPath: '$(Build.SourcesDirectory)/functionaltests/'
-  #      xmlTransformationRules:
-  #      jsonTargetFiles: '**/appsettings.json'
-
   - task: UseDotNet@2
     displayName: 'Use .NET 8.0.x sdk'
     inputs:
@@ -95,128 +88,8 @@ steps:
             Write-Host "File 'mock-configuration.json' not found in $(Build.SourcesDirectory)"
         }
 
-  # - task: PowerShell@2
-  #   inputs:
-  #     targetType: 'inline'
-  #     script: |
-  #       $extractPath = "$(Build.SourcesDirectory)/UKHOADDSMockService"
-              
-  #       # Create the directory for extraction if it doesn't exist
-              
-  #       if (-Not (Test-Path -Path $extractPath)) {
-              
-  #           New-Item -ItemType Directory -Force -Path $extractPath
-              
-  #       }
-              
-  #       # List files in the extracted folder (optional, for debugging purposes)
-              
-  #       Write-Host "Listing files in extracted folder:"
-              
-  #       Get-ChildItem -Path $extractPath -Recurse | ForEach-Object { Write-Host $_.FullName }
-              
-  #       # Find the first executable file (.exe) in the extracted folder
-              
-  #       $exeFiles = Get-ChildItem -Path $extractPath -Recurse -Filter "*.exe"
-              
-  #       if ($exeFiles) {
-              
-  #           Write-Host "Found executable file: $($exeFiles[0].FullName)"
-              
-  #           # Execute the first found executable file in the background
-              
-  #           $exePath = $exeFiles[0].FullName
-              
-  #           Write-Host "Executing $exePath in the background"
-              
-  #           $process = Start-Process -FilePath $exePath -NoNewWindow -PassThru
-              
-  #           # Wait for the process to start (Modify this check as per your application's startup behavior)
-              
-  #           $timeout = 60  # Max wait time in seconds
-              
-  #           $elapsedTime = 0
-              
-  #           $isRunning = $false
-              
-  #           while ($elapsedTime -lt $timeout) {
-              
-  #               Start-Sleep -Seconds 5
-              
-  #               $elapsedTime += 5
-              
-  #               # Check if the process is running
-              
-  #               if (-Not $process.HasExited) {
-              
-  #                   $isRunning = $true
-              
-  #                   break
-              
-  #               }
-              
-  #           }   
-              
-  #           if ($isRunning) {
-              
-  #               Write-Host "Application started successfully!"
-              
-  #           } else {
-              
-  #               Write-Host "Error: Application failed to start within $timeout seconds."
-              
-  #               exit 1  # Fails the pipeline if the application doesn't start in time
-              
-  #           }
-              
-  #       } else {
-              
-  #           Write-Host "No executable files found in the ZIP artifact."
-              
-  #           exit 1  # Fails the pipeline if no executable is found
-              
-  #       }
-
-  # - task: PowerShell@2
-  #   displayName: "Wait for Application to Start on https://localhost:5678"
-  #   inputs:
-  #     targetType: 'inline'
-  #     script: |
-  #       $port = 5678
-  #       $url = "https://localhost:$port"
-  #       $maxRetries = 5  # Wait for up to 60 seconds (5 retries * 5 seconds)
-  #       $retryInterval = 5
-  #       $attempt = 0
- 
-  #       Write-Host "Waiting for $url to be available..."
- 
-  #       while ($attempt -lt $maxRetries) {
-  #           try {
-  #               $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 3
-  #               if ($response.StatusCode -eq 200) {
-  #                   Write-Host "Application is running at $url!"
-  #                   exit 0  # Exit successfully
-  #               }
-  #           } catch {
-  #               Write-Host "$url is not responding, retrying in $retryInterval seconds..."
-  #           }
- 
-  #           Start-Sleep -Seconds $retryInterval
-  #           $attempt++
-  #       }
- 
-  #       Write-Host "Error: Application did not start at $url within the timeout period."
-  #       exit 1  # Fail pipeline if app is not running
-        
-  # - task: PowerShell@2
-  #   displayName: Get a url for testing
-  #   name: getUrl
-  #   inputs:
-  #     targetType: filePath
-  #     filePath: '$(Build.SourcesDirectory)\src\MockSSSSS\Pipeline'
-
-
   - task: PowerShell@2
+    displayName: Run the ADDSMock exe and health check for localhost
     inputs:
       targetType: 'inline'
       script: |
@@ -250,16 +123,6 @@ steps:
       
             Write-Host "Executing $exePath in the background"
  
-            # Check current permissions
-
-            Write-Host "Checking permissions for $exePath..."
- 
-            # Grant execution permission
-
-            icacls $exePath /grant Everyone:RX
- 
-            # Retry execution
-      
             $process = Start-Process -FilePath $exePath -NoNewWindow -PassThru
        
             # Wait for 30 seconds before checking the health endpoint
@@ -329,6 +192,7 @@ steps:
        jsonTargetFiles: '**/appsettings.json'
 
   - task: PowerShell@2
+    displayName: ADDS Mock health check 2
     inputs:
       targetType: 'inline'
       script: |
