@@ -45,7 +45,7 @@ variables:
   - name: UKHOAssemblyCopyright
     value: "Copyright © UK Hydrographic Office"
   - name: Container
-    value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.11.0"
+    value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.10.4"
   - name: DeploymentPool
     value: "Mare Nectaris"
   - name: WindowPool
