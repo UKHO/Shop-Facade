@@ -16,5 +16,8 @@ namespace UKHO.ShopFacade.Common.Constants
         //Error messages for graph client service
         public const string GraphClientCallStartedMessage = "Graph service client call started.";
         public const string GraphClientCallCompletedMessage = "Graph service client call completed.";
+
+        //Error messages for permit service
+        public const string GetPermitsCallStartedMessage = "GetPermits API call started.";
     }
 }

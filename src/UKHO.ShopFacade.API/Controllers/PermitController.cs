@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Events;
+using UKHO.ShopFacade.Common.Models.Response.Upn;
 
 namespace UKHO.ShopFacade.API.Controllers
 {
@@ -12,10 +14,12 @@ namespace UKHO.ShopFacade.API.Controllers
     public class PermitController : BaseController<PermitController>
     {
         private readonly ILogger<PermitController> _logger;
+        private readonly IPermitService _permitService;
 
-        public PermitController(IHttpContextAccessor httpContextAccessor, ILogger<PermitController> logger) : base(httpContextAccessor)
+        public PermitController(IHttpContextAccessor httpContextAccessor, ILogger<PermitController> logger, IPermitService permitService) : base(httpContextAccessor)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _permitService = permitService ?? throw new ArgumentNullException(nameof(permitService));
         }
 
         /// <summary>
@@ -33,10 +37,16 @@ namespace UKHO.ShopFacade.API.Controllers
         [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, type: typeof(string), description: "<p>OK - Returns a zip containing permit files</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.Unauthorized, description: "<p>Unauthorized - either you have not provided valid token, or your token is not recognized.</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.Forbidden, description: "<p>Forbidden - you have no permission to use this API.</p>")]
-        public IActionResult GetPermits([FromRoute] string productType, [SwaggerParameter(Required = true)] int licenceId)
+        public async Task<IActionResult> GetPermits([FromRoute] string productType, [SwaggerParameter(Required = true)] int licenceId)
         {
-            _logger.LogInformation(EventIds.GetPermitsCallStarted.ToEventId(), "GetPermits API Call Started.");
+            _logger.LogInformation(EventIds.GetPermitsCallStarted.ToEventId(), ErrorDetails.GetPermitsCallStartedMessage);
 
+            if (licenceId <= 0)
+            {
+                _logger.LogWarning(EventIds.InvalidLicenceId.ToEventId(), ErrorDetails.InvalidLicenceIdMessage);
+                return BadRequest(PermitServiceResult.SetErrorResponse(GetCorrelationId(), ErrorDetails.Source, ErrorDetails.InvalidLicenceIdMessage));
+            }
+            var permitServiceResult = await _permitService.GetPermitDetails(licenceId, GetCorrelationId());
             return Ok();
         }
     }
