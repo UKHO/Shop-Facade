@@ -21,7 +21,7 @@ steps:
       package: "$(Pipeline.Workspace)/UKHOShopFacadeMockServiceAPI/UKHOShopFacadeMockService.zip"
 
   - task: AzureWebApp@1
-    displayName: "Deploy to ShopFacade Mock API Service"
+    displayName: "Deploy to ShopFacade ADDS Mock"
     condition: and(succeeded(), eq(variables['Environment.Name'], 'ShopFacade-Dev'))
     inputs:
       azureSubscription: "${{ parameters.AzureSubscription }}" 
