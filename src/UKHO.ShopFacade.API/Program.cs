@@ -104,9 +104,10 @@ namespace UKHO.ShopFacade.API
             builder.Services.Configure<GraphApiConfiguration>(configuration.GetSection(GraphApiConfiguration));
 
             builder.Services.AddControllers();
+            builder.Services.AddDistributedMemoryCache();
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
+            builder.Services.Configure<AzureAdConfiguration>(configuration.GetSection(AzureAdConfiguration));
             var azureAdConfiguration = builder.Configuration.GetSection(AzureAdConfiguration).Get<AzureAdConfiguration>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(AzureAdScheme, options =>
@@ -135,6 +136,8 @@ namespace UKHO.ShopFacade.API
 
             builder.Services.Configure<SalesCatalogueConfiguration>(builder.Configuration.GetSection("SalesCatalogue"));
             builder.Services.AddSingleton<ISalesCatalogueService, SalesCatalogueService>();
+            builder.Services.AddSingleton<IAuthTokenProvider, AuthTokenProvider>();
+            builder.Services.AddSingleton<ICacheProvider, CacheProvider>();
             builder.Services.AddHttpClient<ISalesCatalogueClient, SalesCatalogueClient>(client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["SalesCatalogue:BaseUrl"]);

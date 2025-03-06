@@ -19,5 +19,12 @@ namespace UKHO.ShopFacade.Common.Constants
 
         //Error messages for permit service
         public const string GetPermitsCallStartedMessage = "GetPermits API call started.";
+
+        //Error messages for sales catalogue service
+        public const string ScsSource = "Sales catalogue service";
+        public const string ScsInternalErrorMessage = "Error occurred while processing request from sales catalogue service.";
+        public const string GetSalesCatalogueDataRequestStartedMessage = "Retrieval process of the latest S-100 basic catalogue data from Sales catalogue service is started.";
+        public const string GetSalesCatalogueDataRequestCompletedMessage = "Retrieval process of the latest S-100 basic catalogue data from Sales catalogue service is completed.";
+        public const string SalesCatalogueDataRequestInternalServerErrorMessage = "Error in sales catalogue service with uri:{RequestUri} and responded with {StatusCode}.";
     }
 }

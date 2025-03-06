@@ -8,5 +8,6 @@ namespace UKHO.ShopFacade.Common.Configuration
         public string? MicrosoftOnlineLoginUrl { get; set; }
         public string? TenantId { get; set; }
         public string? ClientId { get; set; }
+        public int DeductTokenExpiryMinutes { get; set; }
     }
 }

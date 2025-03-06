@@ -42,10 +42,10 @@ namespace UKHO.ShopFacade.API.Tests.Services
             var result = await _salesCatalogueService.GetProductsCatalogueAsync();
 
             // Assert
-            Assert.That(result.ResponseCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(result.ResponseBody, Is.Not.Null);
-            Assert.That(result.ResponseBody.Count, Is.EqualTo(1));
-            Assert.That(result.ResponseBody[0].ProductName, Is.EqualTo("Product1"));
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(result.Value, Is.Not.Null);
+            Assert.That(result.Value.Count, Is.EqualTo(1));
+            Assert.That(result.Value[0].ProductName, Is.EqualTo("Product1"));
         }
 
         [Test]
@@ -59,8 +59,8 @@ namespace UKHO.ShopFacade.API.Tests.Services
             var result = await _salesCatalogueService.GetProductsCatalogueAsync();
 
             // Assert
-            Assert.That(result.ResponseCode, Is.EqualTo(HttpStatusCode.NotModified));
-            Assert.That(result.ResponseBody, Is.Null);
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
+            Assert.That(result.Value, Is.Null);
         }
 
         [Test]
@@ -77,8 +77,8 @@ namespace UKHO.ShopFacade.API.Tests.Services
             var result = await _salesCatalogueService.GetProductsCatalogueAsync();
 
             // Assert
-            Assert.That(result.ResponseCode, Is.EqualTo(HttpStatusCode.BadRequest));
-            Assert.That(result.ResponseBody, Is.Null);
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(result.Value, Is.Null);
         }
     }
 }

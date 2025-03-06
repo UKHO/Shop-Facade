@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Headers;
 using Microsoft.Extensions.Options;
+using UKHO.ShopFacade.Common.Authentication;
 using UKHO.ShopFacade.Common.Configuration;
 
 namespace UKHO.ShopFacade.Common.ClientProvider
@@ -9,20 +11,24 @@ namespace UKHO.ShopFacade.Common.ClientProvider
     {
         private readonly HttpClient _httpClient;
         private readonly IOptions<SalesCatalogueConfiguration> _salesCatalogueConfig;
+        private readonly IAuthTokenProvider _tokenProvider;
 
-        public SalesCatalogueClient(HttpClient httpClient, IOptions<SalesCatalogueConfiguration> salesCatalogueConfig)
+        public SalesCatalogueClient(HttpClient httpClient, IOptions<SalesCatalogueConfiguration> salesCatalogueConfig, IAuthTokenProvider tokenProvider)
         {
             _httpClient = httpClient;
             _salesCatalogueConfig = salesCatalogueConfig;
+            _tokenProvider = tokenProvider;
         }
 
         public async Task<HttpResponseMessage> CallSalesCatalogueServiceApi()
         {
             var uri = $"/{_salesCatalogueConfig.Value.Version}/catalogues/{_salesCatalogueConfig.Value.ProductType}/basic";
-
             using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
-            var res = await _httpClient.SendAsync(httpRequestMessage, CancellationToken.None);
-            return res;
+
+            var authToken = _tokenProvider.GetManagedIdentityAuthAsync(_salesCatalogueConfig.Value.ResourceId!, _salesCatalogueConfig.Value.PublisherScope!).Result;
+            httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+
+            return await _httpClient.SendAsync(httpRequestMessage, CancellationToken.None);
         }
     }
 }

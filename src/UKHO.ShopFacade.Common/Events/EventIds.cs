@@ -81,7 +81,12 @@ namespace UKHO.ShopFacade.Common.Events
         /// <summary>
         /// 950015 - Request for sales catalogue service catalogue endpoint is completed.
         /// </summary>
-        GetSalesCatalogueDataRequestCompleted = 950015
+        GetSalesCatalogueDataRequestCompleted = 950015,
+
+        /// <summary>
+        /// 950016 - New access token is added to cache for external end point resource.
+        /// </summary>
+        CachingExternalEndPointToken = 950016,
     }
 
     /// <summary>
