@@ -46,14 +46,11 @@ namespace UKHO.ShopFacade.API.Controllers
                 _logger.LogWarning(EventIds.InvalidLicenceId.ToEventId(), ErrorDetails.InvalidLicenceIdMessage);
                 return BadRequest(PermitServiceResult.SetErrorResponse(GetCorrelationId(), ErrorDetails.Source, ErrorDetails.InvalidLicenceIdMessage));
             }
-            var permitServiceResult = await _permitService.GetPermitDetails(licenceId, GetCorrelationId());
 
+            var permitServiceResult = await _permitService.GetPermitDetails(licenceId, GetCorrelationId());
 
             switch (permitServiceResult.StatusCode)
             {
-                case HttpStatusCode.OK:
-                    _logger.LogInformation(EventIds.GetPermitsCallCompleted.ToEventId(), ErrorDetails.GetPermitsCallCompletedMessage);
-                    return Ok(permitServiceResult.Value);
                 case HttpStatusCode.NotFound:
                     _logger.LogWarning(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
                     return NotFound(permitServiceResult.ErrorResponse);
