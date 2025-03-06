@@ -84,9 +84,14 @@ namespace UKHO.ShopFacade.Common.Events
         GetSalesCatalogueDataRequestCompleted = 950015,
 
         /// <summary>
-        /// 950016 - New access token is added to cache for external end point resource.
+        /// 950016 - GetPermits API call completed.
         /// </summary>
-        CachingExternalEndPointToken = 950016,
+        GetPermitsCallCompleted = 950016,
+
+        /// <summary>
+        /// 950017 - New access token is added to cache for external end point resource.
+        /// </summary>
+        CachingExternalEndPointToken = 950017,
     }
 
     /// <summary>

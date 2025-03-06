@@ -46,8 +46,8 @@ namespace UKHO.ShopFacade.API.Controllers
                 _logger.LogWarning(EventIds.InvalidLicenceId.ToEventId(), ErrorDetails.InvalidLicenceIdMessage);
                 return BadRequest(PermitServiceResult.SetErrorResponse(GetCorrelationId(), ErrorDetails.Source, ErrorDetails.InvalidLicenceIdMessage));
             }
-            var permitServiceResult = await _permitService.GetPermitDetails(licenceId, GetCorrelationId());
 
+            var permitServiceResult = await _permitService.GetPermitDetails(licenceId, GetCorrelationId());
 
             switch (permitServiceResult.StatusCode)
             {
