@@ -28,6 +28,13 @@ steps:
       xmlTransformationRules: ''
       jsonTargetFiles: '**/mock-configuration.json'
 
+  - task: PowerShell@2
+    displayName: View mock-configuration.json
+    inputs:
+      targetType: inline
+      script: |
+        Get-Content '$(Pipeline.Workspace)/UKHOADDSMockService/mock-configuration.json'
+
   - task: AzureWebApp@1
     displayName: "Deploy to ShopFacade ADDS Mock"
     condition: and(succeeded(), eq(variables['Environment.Name'], 'ShopFacade-Dev'))
