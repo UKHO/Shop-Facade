@@ -281,15 +281,6 @@ jobs:
         zipAfterPublish: false
         modifyOutputPath: false
 
-    - task: ArchiveFiles@2
-      displayName: "Zip ADDS Mock Service"
-      inputs:
-        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/UKHO.ADDS.MockService/'
-        includeRootFolder: false
-        archiveType: "zip"
-        archiveFile: '$(Build.ArtifactStagingDirectory)/UKHO.ADDS.MockService/UKHOADDSMockService.zip'
-        replaceExistingArchive: true
-
     - task: CopyFiles@2
       displayName: "Copy additional configuration directories"
       inputs:
@@ -303,6 +294,15 @@ jobs:
         SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\service-configuration'
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
+
+    - task: ArchiveFiles@2
+      displayName: "Zip ADDS Mock Service"
+      inputs:
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/UKHO.ADDS.MockService/'
+        includeRootFolder: false
+        archiveType: "zip"
+        archiveFile: '$(Build.ArtifactStagingDirectory)/UKHO.ADDS.MockService/UKHOADDSMockService.zip'
+        replaceExistingArchive: true
 
     - task: PublishBuildArtifacts@1
       displayName: "Publish ADDS Mock Service Artifact"
