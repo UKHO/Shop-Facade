@@ -91,9 +91,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         {
             A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnServiceResult(HttpStatusCode.NoContent));
 
-            var result = (OkObjectResult)await _upnController.GetUPNs(1);
-
-            var userPermits = result.Value as List<UserPermit>;
+            var result = (NoContentResult)await _upnController.GetUPNs(7);
 
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NoContent));
 
@@ -103,9 +101,9 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                   && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallStartedMessage).MustHaveHappenedOnceExactly();
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
-                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
-                                                 && call.GetArgument<EventId>(1) == EventIds.GetUPNsCallCompleted.ToEventId()
-                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallCompletedMessage).MustHaveHappenedOnceExactly();
+                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Warning
+                                                 && call.GetArgument<EventId>(1) == EventIds.NoContentFound.ToEventId()
+                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.NoContentMessage).MustHaveHappenedOnceExactly();
         }
 
         [Test]
