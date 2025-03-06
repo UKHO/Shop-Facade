@@ -34,9 +34,19 @@ namespace UKHO.ShopFacade.Common.DataProvider
         {
             UpnDataProviderResult upnDataProviderResult;
 
+            var upnFieldFilter = "UPN";
+
             if (s100UpnCollection.Value!.Count > 0)
             {
-                upnDataProviderResult = UpnDataProviderResult.Success(GetS100UpnRecord(s100UpnCollection)!);
+                if (s100UpnCollection.Value.Any(x => x.Fields!.AdditionalData.Any(y => y.Key.Contains(upnFieldFilter, StringComparison.OrdinalIgnoreCase))))
+                {
+                    upnDataProviderResult = UpnDataProviderResult.Success(GetS100UpnRecord(s100UpnCollection)!);
+                }
+                // If the Sharepoint list does not contain any UPN field and its respective title then it will return the No Content response.
+                else
+                {
+                    upnDataProviderResult = UpnDataProviderResult.NoContent();
+                }
             }
             else
             {

@@ -87,6 +87,28 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         }
 
         [Test]
+        public async Task WhenUPNsNotAvailableForLicence_ThenReturn204NoContentResponse()
+        {
+            A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnServiceResult(HttpStatusCode.NoContent));
+
+            var result = (OkObjectResult)await _upnController.GetUPNs(1);
+
+            var userPermits = result.Value as List<UserPermit>;
+
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NoContent));
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                  && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                  && call.GetArgument<EventId>(1) == EventIds.GetUPNsCallStarted.ToEventId()
+                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallStartedMessage).MustHaveHappenedOnceExactly();
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                 && call.GetArgument<EventId>(1) == EventIds.GetUPNsCallCompleted.ToEventId()
+                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallCompletedMessage).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
         public async Task WhenLicenceIdIsNotFound_ThenReturn404NotFoundResponse()
         {
             A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnServiceResult(HttpStatusCode.NotFound));
@@ -133,6 +155,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
             return httpStatusCode switch
             {
                 HttpStatusCode.OK => UpnServiceResult.Success(new List<UserPermit>() { new() { Title = "upn1", Upn = "1A1DAD797C" } }),
+                HttpStatusCode.NoContent => UpnServiceResult.NoContent(),
                 HttpStatusCode.NotFound => UpnServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
                 _ => UpnServiceResult.InternalServerError()
             };
