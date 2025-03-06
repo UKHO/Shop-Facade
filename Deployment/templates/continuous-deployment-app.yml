@@ -28,12 +28,16 @@ steps:
       xmlTransformationRules: ''
       jsonTargetFiles: '**/mock-configuration.json'
 
-  - task: PowerShell@2
-    displayName: View mock-configuration.json
+  - task: AzureCLI@2
+    displayName: "View mock-configuration.json"
     inputs:
-      targetType: inline
-      script: |
-        Get-Content '$(Pipeline.Workspace)/UKHOADDSMockService/mock-configuration.json'
+      azureSubscription: "${{ parameters.AzureSubscription }}"
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        instance=$(az webapp list-instances --resource-group $(ResourceGroup) --name $(ADDS_MOCK_WEB_APP_NAME) --query "[0].id" -o tsv)
+        az webapp ssh --ids $instance --command "find /home -type d -name 'service-configuration'"  
+        cat '$(Pipeline.Workspace)/UKHOADDSMockService/mock-configuration.json'
 
   - task: AzureWebApp@1
     displayName: "Deploy to ShopFacade ADDS Mock"
