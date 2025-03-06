@@ -1,4 +1,7 @@
-﻿    using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
@@ -11,15 +14,39 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
     [TestFixture]
     public class S100UpnScenarios : TestFixtureBase
     {
+        private Process _process;
+        private readonly ShopFacadeConfiguration _shoFacadeConfiguration;
         //private readonly S100UpnEndpoint _s100UpnEndpoint;
 
         //private readonly AuthTokenProvider _authTokenProvider;
 
-        //public S100UpnScenarios()
-        //{
-        //    _s100UpnEndpoint = new S100UpnEndpoint();
-        //    _authTokenProvider = new AuthTokenProvider();
-        //}
+        public S100UpnScenarios()
+        {
+            //_s100UpnEndpoint = new S100UpnEndpoint();
+            //_authTokenProvider = new AuthTokenProvider();
+            var serviceProvider = GetServiceProvider();
+            _shoFacadeConfiguration = serviceProvider!.GetRequiredService<IOptions<ShopFacadeConfiguration>>().Value;
+        }
+
+        [OneTimeSetUp]
+        public void Setup()
+        {
+            
+            var processStartInfo = new ProcessStartInfo
+            {
+                FileName = _shoFacadeConfiguration.AddsMockExePath,
+                //Arguments = "",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+
+            _process = new Process { StartInfo = processStartInfo };
+            _process.Start();
+
+            Console.WriteLine("Process started successfully.");
+        }
 
         //[Test]
         //public async Task WhenUpnServiceEndpointCalledWithValidTokenAndLicenceId_ThenUpnServiceReturns200OkResponse()
@@ -86,6 +113,18 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             Console.WriteLine($"Response Content: {response.Content}");
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        [OneTimeTearDown]
+        public void Teardown()
+        {
+            if (_process != null && !_process.HasExited)
+            {
+                Console.WriteLine("Stopping process...");
+                _process.Kill();
+                _process.WaitForExit(); // Ensure it fully terminates
+                Console.WriteLine("Process stopped.");
+            }
         }
 
     }

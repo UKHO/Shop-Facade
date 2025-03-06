@@ -5,6 +5,8 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
     {
         public string? BaseUrl { get; set; }
         public string? Endpoint { get; set; }
-       
+        public string? AddsMockExePath { get; set; }
+
     }
 }
+
