@@ -19,6 +19,8 @@ jobs:
 - deployment: DevDeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Terraform"
   environment: "ShopFacade-${{parameters.Environment}}"
+  pool: $(DeploymentPool)
+  container: ${{parameters.Container}}
   workspace:
     clean: all
   strategy:
