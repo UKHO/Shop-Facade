@@ -293,14 +293,14 @@ jobs:
     - task: CopyFiles@2
       displayName: "Copy additional configuration directories"
       inputs:
-        SourceFolder: 'D:\UKHO\shop-facade\src\MockSSSSS\override-configuration'
+        SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\override-configuration'
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\override-configuration'
 
     - task: CopyFiles@2
       displayName: "Copy additional configuration directories"
       inputs:
-        SourceFolder: 'D:\UKHO\shop-facade\src\MockSSSSS\service-configuration'
+        SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\service-configuration'
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
 
