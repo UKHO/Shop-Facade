@@ -45,6 +45,20 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             _process = new Process { StartInfo = processStartInfo };
             _process.Start();
 
+            string processName = "ADDSMock"; // Example process name
+
+            // Get all processes with the given name
+            Process[] processes = Process.GetProcessesByName(processName);
+
+            if (processes.Length > 0)
+            {
+                Console.WriteLine($"Process {processName} is running.");
+            }
+            else
+            {
+                Console.WriteLine($"Process {processName} is not running.");
+            }
+
             Console.WriteLine("Process started successfully.");
         }
 
