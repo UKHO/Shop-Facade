@@ -264,6 +264,36 @@ jobs:
         workingDirectory: '$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock'
         packagesDirectory: '$(Build.SourcesDirectory)\ADDSMock\packages'
 
+
+    - task: CopyFiles@2
+      displayName: "Copy additional configuration directories"
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\override-configuration'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\override-configuration'
+
+    - task: CopyFiles@2
+      displayName: "Copy additional configuration directories"
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\service-configuration'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
+
+    - task: PowerShell@2
+      displayName: "Set overrideconfigurationpath and configurationpath pipeline variable"
+      inputs:
+        targetType: 'inline'
+        script: |
+          $service-configuration = Get-ChildItem -Path "$(Build.SourcesDirectory)/src/MockSSSSS/" -Recurse -Filter "service-configuration"
+          Write-Host "service-configuration : $service-configuration"
+          Write-Host "##vso[task.setvariable variable=configurationpath]$service-configuration"
+          Write-Host "service-configuration is set to: $service-configuration"
+          $override-configuration = Get-ChildItem -Path "$(Build.SourcesDirectory)/src/MockSSSSS/" -Recurse -Filter "override-configuration"
+          Write-Host "override-configuration : $override-configuration"
+          Write-Host "##vso[task.setvariable variable=overrideconfigurationpath]$override-configuration"
+          Write-Host "override-configuration is set to: $override-configuration"
+
+
     - task: FileTransform@2
       displayName: "File Transform: Mock Service Settings"
       inputs:
