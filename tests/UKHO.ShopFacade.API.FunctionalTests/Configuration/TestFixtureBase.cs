@@ -57,7 +57,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
             _process.Dispose();
         }
 
-        public static string RunConsoleCommand(string command)
+        public static async Task<string> RunConsoleCommand(string command)
         {
             try
             {
@@ -75,12 +75,12 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
                 // Start the process and capture the output
                 using (Process process = Process.Start(startInfo))
                 {
+                    Thread.Sleep(20000);
                     if (process != null)
                     {
                         // Read the output and errors if any
-                        string output = process.StandardOutput.ReadToEnd();
-                        string error = process.StandardError.ReadToEnd();
-
+                        string output = await process.StandardOutput.ReadToEndAsync();
+                        string error = await process.StandardError.ReadToEndAsync();
                         // Wait for the command to complete
                         process.WaitForExit();
 
@@ -96,6 +96,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
                         }
                         return output;
                     }
+                    Console.WriteLine("Process is null");
                     return "";
                 }
             }
