@@ -26,6 +26,10 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
         [OneTimeSetUp]
         public void Setup()
         {
+            string command = "dotnet dev-certs https --trust";
+
+            // Call the method to execute the command
+            RunConsoleCommand(command);
 
             var processStartInfo = new ProcessStartInfo
             {
@@ -39,7 +43,6 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
 
             _process = new Process { StartInfo = processStartInfo };
             _process.Start();
-
             Console.WriteLine("Process started successfully.");
         }
 
@@ -48,6 +51,53 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
         {
             _serviceProvider?.Dispose();
             _process.Dispose();
+        }
+
+        static void RunConsoleCommand(string command)
+        {
+            try
+            {
+                // Create a new ProcessStartInfo to execute the command
+                ProcessStartInfo startInfo = new ProcessStartInfo()
+                {
+                    FileName = "cmd.exe",         // Run the command using cmd.exe
+                    Arguments = $"/C {command}",  // /C means to run the command and then terminate
+                    RedirectStandardOutput = true, // Redirect the output so we can read it
+                    RedirectStandardError = true,  // Redirect error output
+                    UseShellExecute = false,      // Don't use the shell to execute the command
+                    CreateNoWindow = true         // Don't show a new window for the command
+                };
+
+                // Start the process and capture the output
+                using (Process process = Process.Start(startInfo))
+                {
+                    if (process != null)
+                    {
+                        // Read the output and errors if any
+                        string output = process.StandardOutput.ReadToEnd();
+                        string error = process.StandardError.ReadToEnd();
+
+                        // Wait for the command to complete
+                        process.WaitForExit();
+
+                        // Print the output and errors
+                        if (!string.IsNullOrEmpty(output))
+                        {
+                            Console.WriteLine("Output: " + output);
+                        }
+
+                        if (!string.IsNullOrEmpty(error))
+                        {
+                            Console.WriteLine("Error: " + error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Catch any exceptions and print them
+                Console.WriteLine("An error occurred: " + ex.Message);
+            }
         }
     }
 }
