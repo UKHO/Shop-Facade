@@ -314,20 +314,20 @@ jobs:
 
 
 
-    # - task: FileTransform@2
-    #   displayName: "File Transform: Mock Service Settings"
-    #   inputs:
-    #     folderPath: '$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock'
-    #     xmlTransformationRules: ''
-    #     jsonTargetFiles: '**/mock-configuration.json'
+    - task: FileTransform@2
+      displayName: "File Transform: Mock Service Settings"
+      inputs:
+        folderPath: '$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock'
+        xmlTransformationRules: ''
+        jsonTargetFiles: '**/mock-configuration.json'
 
     - task: FileTransform@1
-      displayName: "Apply JSON variable substitution"
+      displayName: "Apply JSON Variable Substitution"
       inputs:
-        folderPath: "$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock"
-        jsonTargetFiles: "**/mock-configuration.json"  # Adjust the target JSON file
-        enableTransformation: false  # Prevents transformation if already applied
-        enableJsonProcessing: true
+        folderPath: '$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock'
+        fileType: json
+        targetFiles: '**/*.json'
+        enableTransform: true
 
     - task: PowerShell@2
       condition: always()
