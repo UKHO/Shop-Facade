@@ -104,7 +104,6 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
 
             var request = new RestRequest("demo/health");
 
-
             var response = await _client.ExecuteAsync(request);
 
             // Log request and response details
@@ -121,9 +120,8 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             if (_process != null && !_process.HasExited)
             {
                 Console.WriteLine("Stopping process...");
-                _process.Kill();
-                _process.WaitForExit(); // Ensure it fully terminates
                 _process.Dispose();
+                _process.WaitForExit(); // Ensure it fully terminates
                 Console.WriteLine("Process stopped.");
             }
         }
