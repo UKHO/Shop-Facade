@@ -69,7 +69,7 @@ jobs:
   # dependson:  deployapp
   displayName: "${{parameters.environment}} - functional automated tests"
   environment: "shopfacade-${{parameters.environment}}"
-  pool: $(windowpool)
+  pool: $(Azure Pipelines)
   #pool: $(DeploymentPool)
   #container: ${{parameters.Container}}
   # condition: and(succeeded('deployapp'), eq( ${{parameters.runtests}} , 'true'))
