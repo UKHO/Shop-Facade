@@ -290,8 +290,7 @@ jobs:
           if ($serviceConfigurationFolder) {
               $serviceConfigPath = $serviceConfigurationFolder.FullName
               Write-Host "Found service-configuration folder: $serviceConfigPath"
-              $service = "..\service-configuration"
-              Write-Host "##vso[task.setvariable variable=configurationpath]$service"
+              Write-Host "##vso[task.setvariable variable=configurationpath]$serviceConfigPath"
           } else {
               Write-Host "Error: service-configuration folder not found!"
               exit 1  # Fail pipeline if folder is missing
@@ -303,8 +302,7 @@ jobs:
           if ($overrideConfigurationFolder) {
               $overrideConfigPath = $overrideConfigurationFolder.FullName
               Write-Host "Found override-configuration folder: $overrideConfigPath"
-              $override = "..\override-configuration"
-              Write-Host "##vso[task.setvariable variable=overrideconfigurationpath]$override"
+              Write-Host "##vso[task.setvariable variable=overrideconfigurationpath]$overrideConfigPath"
           } else {
               Write-Host "Error: override-configuration folder not found!"
               exit 1  # Fail pipeline if folder is missing
