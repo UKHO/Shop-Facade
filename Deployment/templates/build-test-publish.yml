@@ -284,11 +284,11 @@ jobs:
       inputs:
         targetType: 'inline'
         script: |
-          $service-configuration = Get-ChildItem -Path "$(Build.SourcesDirectory)/src/MockSSSSS/" -Recurse -Filter "service-configuration"
+          $service-configuration = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService" -Recurse -Filter "service-configuration"
           Write-Host "service-configuration : $service-configuration"
           Write-Host "##vso[task.setvariable variable=configurationpath]$service-configuration"
           Write-Host "service-configuration is set to: $service-configuration"
-          $override-configuration = Get-ChildItem -Path "$(Build.SourcesDirectory)/src/MockSSSSS/" -Recurse -Filter "override-configuration"
+          $override-configuration = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService" -Recurse -Filter "override-configuration"
           Write-Host "override-configuration : $override-configuration"
           Write-Host "##vso[task.setvariable variable=overrideconfigurationpath]$override-configuration"
           Write-Host "override-configuration is set to: $override-configuration"
