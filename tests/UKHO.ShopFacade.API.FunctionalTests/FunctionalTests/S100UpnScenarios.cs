@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Net;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
@@ -99,16 +101,12 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             string pid = RunConsoleCommand(command);
             Console.WriteLine(pid);
 
-            var pidList = pid.Split(" ");
-            Console.WriteLine(pidList[1]);
+            Match match = Regex.Match(pid, @"\s+(\d+)\s+\w+");
 
-            //command = "netstat -ano | findstr :5678";
-            //Console.WriteLine(RunConsoleCommand(command));
+            var processId = match.Groups[1].Value;
+            var ports = RunConsoleCommand($"netstat -ano | findstr {processId}");
 
-            //command = "echo check firewall";
-            //Console.WriteLine(RunConsoleCommand(command));
-            //command = "netsh advfirewall firewall show rule name=all";
-            //Console.WriteLine(RunConsoleCommand(command));
+            Console.WriteLine(ports);
 
             var _options = new RestClientOptions("https://localhost:5678/");
             var _client = new RestClient(_options);
@@ -116,6 +114,9 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             var request = new RestRequest("demo/health");
 
             var response = await _client.ExecuteAsync(request);
+
+
+
 
             // Log request and response details
             Console.WriteLine($"Request URL: {_client.BuildUri(request)}");
