@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Events;
