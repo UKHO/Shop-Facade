@@ -105,7 +105,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
 
             var ports = await RunConsoleCommand($"netstat -ano | findstr {pid}");
 
-            var _options = new RestClientOptions("https://localhost:5678/");
+            var _options = new RestClientOptions("https://0.0.0.0:5678/");
             var _client = new RestClient(_options);
 
             var request = new RestRequest("demo/health");
