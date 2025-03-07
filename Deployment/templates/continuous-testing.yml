@@ -271,3 +271,17 @@ steps:
           !**/obj/**
       testRunTitle: "$(Environment)-AutomationTests"
       workingDirectory: '$(Build.SourcesDirectory)/functionaltests'
+
+  # - task: PowerShell@2
+  #   displayName: "Run Functional Tests"
+  #   inputs:
+  #     targetType: 'inline'
+  #     script: |
+  #       $testDlls = Get-ChildItem -Path "$(Build.SourcesDirectory)/functionaltests" -Recurse -Filter "*FunctionalTest*.dll" -Exclude "*TestAdapter.dll", "obj"
+  #       foreach ($testDll in $testDlls) {
+  #         Write-Host "Running tests in: $($testDll.FullName)"
+  #         $logFileName = "$(Build.SourcesDirectory)/TestResults/$(Build.BuildId)_$($testDll.BaseName).trx"
+  #         dotnet test $testDll.FullName --logger "trx;LogFileName=$logFileName"
+  #       }
+
+
