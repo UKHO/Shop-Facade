@@ -60,14 +60,17 @@ namespace UKHO.ShopFacade.API.Tests.Services
 
             // Assert
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
-            Assert.That(result.Value, Is.Null);
+            Assert.That(result.Value, Is.Empty);
         }
 
         [Test]
-        public async Task GetProductsFromSpecificDateAsync_ReturnsSalesCatalogueResponse_WhenResponseIsError()
+        [TestCase(HttpStatusCode.BadRequest)]
+        [TestCase(HttpStatusCode.Unauthorized)]
+        [TestCase(HttpStatusCode.Forbidden)]
+        public async Task GetProductsFromSpecificDateAsync_ReturnsSalesCatalogueResponse_WhenResponseIsError(HttpStatusCode statusCode)
         {
             // Arrange
-            var httpResponse = new HttpResponseMessage(HttpStatusCode.BadRequest)
+            var httpResponse = new HttpResponseMessage(statusCode)
             {
                 RequestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri("http://example.com"))
             };
@@ -77,7 +80,7 @@ namespace UKHO.ShopFacade.API.Tests.Services
             var result = await _salesCatalogueService.GetProductsCatalogueAsync();
 
             // Assert
-            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
             Assert.That(result.Value, Is.Null);
         }
     }
