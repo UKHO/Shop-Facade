@@ -301,6 +301,23 @@ jobs:
         xmlTransformationRules: ''
         jsonTargetFiles: '**/mock-configuration.json'
 
+    - task: PowerShell@2
+      condition: always()
+      inputs:
+   
+        targetType: 'inline'
+        script: |
+          $file = Get-ChildItem -Path "$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock" -Recurse -File -Filter "mock-configuration.json" | Select-Object -First 1
+       
+          if ($file) {
+              # Read and print the content of the found file
+              $content = Get-Content $file.FullName -Raw
+              Write-Host "File Found: $($file.FullName)"
+              Write-Host "Content: $content"
+          } else {
+              Write-Host "File 'mock-configuration.json' not found in $(Build.SourcesDirectory)"
+          }
+
     - task: DotNetCoreCLI@2
       displayName: "dotnet build task"
       inputs:
