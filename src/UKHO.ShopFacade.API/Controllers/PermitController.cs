@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
 using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Events;
@@ -51,6 +50,8 @@ namespace UKHO.ShopFacade.API.Controllers
 
             switch (permitServiceResult.StatusCode)
             {
+                case HttpStatusCode.OK:
+                    return File(permitServiceResult.Value, PermitServiceConstants.ZipContentType, PermitServiceConstants.PermitZipFileName);
                 case HttpStatusCode.NotFound:
                     _logger.LogWarning(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
                     return NotFound(permitServiceResult.ErrorResponse);

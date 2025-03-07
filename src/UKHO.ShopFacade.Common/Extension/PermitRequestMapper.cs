@@ -8,11 +8,11 @@ namespace UKHO.ShopFacade.Common.Extension
     [ExcludeFromCodeCoverage]
     public static class PermitRequestMapper
     {
-        public static PermitRequest MapToPermitRequest(List<Products> productModel, List<UserPermit> UserPermits,int PermitExpiryDays)
+        public static PermitRequest MapToPermitRequest(List<Products> products, List<UserPermit> UserPermits, int PermitExpiryDays)
         {
             return new PermitRequest
             {
-                Products = productModel.SelectMany(p => p.MapToProductModel(PermitExpiryDays)).ToList(),
+                Products = products.SelectMany(p => p.MapToProductModel(PermitExpiryDays)).ToList(),
                 UserPermits = UserPermits
             };
         }

@@ -27,10 +27,9 @@ namespace UKHO.ShopFacade.API.Services
         private async Task<S100PermitServiceResult> CreatePermitServiceResponse(HttpResponseMessage httpResponse)
         {
             S100PermitServiceResult response;
-            var body = await httpResponse.Content.ReadAsStreamAsync();
-
             if (httpResponse.StatusCode == HttpStatusCode.OK)
             {
+                var body = await httpResponse.Content.ReadAsStreamAsync();
                 response = S100PermitServiceResult.Success(body);
                 _logger.LogInformation(EventIds.GetPermitServiceRequestCompletedMessage.ToEventId(), ErrorDetails.GetPermitServiceRequestCompletedMessage);
             }
