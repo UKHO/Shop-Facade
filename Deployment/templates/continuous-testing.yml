@@ -41,12 +41,12 @@ steps:
       packageType: sdk
       version: 8.0.x
 
-  - task: FileTransform@2
-    displayName: "File Transform: Mock Service Settings"
-    inputs:
-      folderPath: '$(Build.SourcesDirectory)/UKHOADDSMockService'
-      xmlTransformationRules: ''
-      jsonTargetFiles: '**/mock-configuration.json'
+  # - task: FileTransform@2
+  #   displayName: "File Transform: Mock Service Settings"
+  #   inputs:
+  #     folderPath: '$(Build.SourcesDirectory)/UKHOADDSMockService'
+  #     xmlTransformationRules: ''
+  #     jsonTargetFiles: '**/mock-configuration.json'
 
   - task: PowerShell@2
     displayName: Get a path for Service and Override Configuration
