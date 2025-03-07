@@ -321,13 +321,25 @@ jobs:
     #     xmlTransformationRules: ''
     #     jsonTargetFiles: '**/mock-configuration.json'
 
-    - task: FileTransform@1
-      displayName: "Apply JSON Variable Substitution"
+    - task: PowerShell@2
+      displayName: "Update mock-configuration.json with paths"
       inputs:
-        folderPath: '$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock'
-        fileType: json
-        targetFiles: '**/*.json'
-        enableTransform: true
+        targetType: 'inline'
+        script: |
+          $mockConfigPath = "$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock\mock-configuration.json"
+          $configPath = "$(configurationpath)"
+          $overrideConfigPath = "$(overrideconfigurationpath)"
+
+          if (Test-Path $mockConfigPath) {
+              $json = Get-Content $mockConfigPath -Raw | ConvertFrom-Json
+              $json.configurationPath = $configPath
+              $json.overrideConfigurationPath = $overrideConfigPath
+              $json | ConvertTo-Json -Depth 32 | Set-Content $mockConfigPath
+              Write-Host "Updated mock-configuration.json with paths."
+          } else {
+              Write-Host "Error: mock-configuration.json not found!"
+              exit 1  # Fail pipeline if file is missing
+          }
 
     - task: PowerShell@2
       condition: always()
