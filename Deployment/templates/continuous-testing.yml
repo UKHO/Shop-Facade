@@ -192,7 +192,7 @@ steps:
       script: |
         $exeFiles = Get-ChildItem -Path "$(Build.SourcesDirectory)/UKHOADDSMockService/" -Recurse -Filter "*.exe"
         Write-Host "exeFiles : $exeFiles"
-        $exePath = "$(Build.SourcesDirectory)/UKHOADDSMockService/ADDSMock.exe"
+        $exePath = "$(Build.SourcesDirectory)\\UKHOADDSMockService\\ADDSMock.exe"
         Write-Host "##vso[task.setvariable variable=ShopFacadeConfiguration.AddsMockExePath]$exePath"
         Write-Host "exePath is set to: $exePath"
 
