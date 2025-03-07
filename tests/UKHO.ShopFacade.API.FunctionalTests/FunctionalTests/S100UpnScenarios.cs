@@ -14,8 +14,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
     [TestFixture]
     public class S100UpnScenarios : TestFixtureBase
     {
-        
-        
+
         //private readonly S100UpnEndpoint _s100UpnEndpoint;
 
         //private readonly AuthTokenProvider _authTokenProvider;
@@ -94,6 +93,18 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             {
                 Console.WriteLine($"Process {processName} is not running.");
             }
+
+
+            string command = "echo check port";
+            
+            Console.WriteLine(RunConsoleCommand(command));
+            command = "netstat -ano | findstr :5678";
+            Console.WriteLine(RunConsoleCommand(command));
+
+            command = "echo check firewall";
+            Console.WriteLine(RunConsoleCommand(command));
+            command = "netsh advfirewall firewall show rule name=all";
+            Console.WriteLine(RunConsoleCommand(command));
 
             var _options = new RestClientOptions("https://localhost:5678/");
             var _client = new RestClient(_options);
