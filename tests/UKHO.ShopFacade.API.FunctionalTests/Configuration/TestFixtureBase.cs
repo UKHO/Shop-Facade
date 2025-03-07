@@ -52,6 +52,8 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
         public void Cleanup()
         {
             _serviceProvider?.Dispose();
+            _process.Kill();
+            _process.WaitForExit();
             _process.Dispose();
         }
 
