@@ -95,16 +95,20 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             }
 
 
-            string command = "echo check port";
-            
-            Console.WriteLine(RunConsoleCommand(command));
-            command = "netstat -ano | findstr :5678";
-            Console.WriteLine(RunConsoleCommand(command));
+            string command = "tasklist | findstr ADDSMock.exe";
+            string pid = RunConsoleCommand(command);
+            Console.WriteLine(pid);
 
-            command = "echo check firewall";
-            Console.WriteLine(RunConsoleCommand(command));
-            command = "netsh advfirewall firewall show rule name=all";
-            Console.WriteLine(RunConsoleCommand(command));
+            var pidList = pid.Split(" ");
+            Console.WriteLine(pidList[1]);
+
+            //command = "netstat -ano | findstr :5678";
+            //Console.WriteLine(RunConsoleCommand(command));
+
+            //command = "echo check firewall";
+            //Console.WriteLine(RunConsoleCommand(command));
+            //command = "netsh advfirewall firewall show rule name=all";
+            //Console.WriteLine(RunConsoleCommand(command));
 
             var _options = new RestClientOptions("https://localhost:5678/");
             var _client = new RestClient(_options);
