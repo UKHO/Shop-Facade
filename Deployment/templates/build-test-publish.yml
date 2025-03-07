@@ -281,19 +281,19 @@ jobs:
         zipAfterPublish: false
         modifyOutputPath: false
 
-    - task: CopyFiles@2
-      displayName: "Copy additional configuration directories"
-      inputs:
-        SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\override-configuration'
-        Contents: '**'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\override-configuration'
+    # - task: CopyFiles@2
+    #   displayName: "Copy additional configuration directories"
+    #   inputs:
+    #     SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\override-configuration'
+    #     Contents: '**'
+    #     TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\override-configuration'
 
-    - task: CopyFiles@2
-      displayName: "Copy additional configuration directories"
-      inputs:
-        SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\service-configuration'
-        Contents: '**'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
+    # - task: CopyFiles@2
+    #   displayName: "Copy additional configuration directories"
+    #   inputs:
+    #     SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\service-configuration'
+    #     Contents: '**'
+    #     TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
 
     - task: ArchiveFiles@2
       displayName: "Zip ADDS Mock Service"

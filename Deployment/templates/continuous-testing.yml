@@ -88,101 +88,111 @@ steps:
             Write-Host "File 'mock-configuration.json' not found in $(Build.SourcesDirectory)"
         }
 
+  # - task: PowerShell@2
+  #   displayName: Run the ADDSMock exe and health check for localhost
+  #   inputs:
+  #     targetType: 'inline'
+  #     script: |
+  #       $extractPath = "$(Build.SourcesDirectory)/UKHOADDSMockService"
+       
+  #       # Create the directory for extraction if it doesn't exist
+      
+  #       if (-Not (Test-Path -Path $extractPath)) {
+      
+  #           New-Item -ItemType Directory -Force -Path $extractPath
+      
+  #       }
+       
+  #       # List files in the extracted folder (optional, for debugging purposes)
+      
+  #       Write-Host "Listing files in extracted folder:"
+      
+  #       Get-ChildItem -Path $extractPath -Recurse | ForEach-Object { Write-Host $_.FullName }
+       
+  #       # Find the first executable file (.exe) in the extracted folder
+      
+  #       $exeFiles = Get-ChildItem -Path $extractPath -Recurse -Filter "*.exe"
+       
+  #       if ($exeFiles) {
+      
+  #           Write-Host "Found executable file: $($exeFiles[0].FullName)"
+      
+  #           # Execute the first found executable file in the background
+      
+  #           $exePath = $exeFiles[0].FullName
+      
+  #           Write-Host "Executing $exePath in the background"
+ 
+  #           $process = Start-Process -FilePath $exePath -NoNewWindow -PassThru
+       
+  #           # Wait for 30 seconds before checking the health endpoint
+      
+  #           # Write-Host "Waiting for 30 seconds to allow the application to start..."
+      
+  #           # Start-Sleep -Seconds 30
+
+  #           # Wait for 30 seconds while checking logs
+  #           $elapsedTime = 0
+  #           $timeout = 30
+
+  #           while ($elapsedTime -lt $timeout) {
+  #               Start-Sleep -Seconds 5
+  #               $elapsedTime += 5
+
+  #               # Fetch logs dynamically using Get-Process and checking output
+  #               if (Get-Process | Where-Object { $_.Id -eq $process.Id }) {
+  #                   Write-Host "`n[Application Logs] -----------------"
+  #                   Get-Process | Where-Object { $_.Id -eq $process.Id } | ForEach-Object { Write-Host $_.MainWindowTitle }
+  #               }
+  #           }
+       
+  #           # Define the health check URL
+      
+  #           $url = "https://localhost:5678/demo/health"
+
+  #           #Write-Host "check port"
+  #           #netstat -ano | findstr :5678
+  #           #Write-Host "check firewall"
+  #           #Get-NetFirewallRule | Where-Object { $_.DisplayName -like "*5678*" }
+
+  #           # Get the internal IP address of the machine
+  #           #$internalIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -NotLike "Loopback*"}).IPAddress
+  #           #Write-Host "Using Internal IP Address: $internalIP"
+
+
+  #           # Check the health endpoint using curl
+  #           #$url = "https://$internalIP:5678/demo/health"
+       
+  #           # Check the health endpoint using curl
+      
+  #           $curlResponse = curl.exe -k -s -o NUL -w "%{http_code}" $url
+
+       
+  #           if ($curlResponse -eq "200") {
+      
+  #               Write-Host " Application is running and responding at $url"
+      
+  #           } else {
+      
+  #               Write-Host " Warning: Application did not respond with 200 OK. Continuing pipeline..."
+      
+  #           }
+       
+  #       } else {
+      
+  #           Write-Host " No executable files found in the ZIP artifact."
+      
+  #       }
+
+
   - task: PowerShell@2
-    displayName: Run the ADDSMock exe and health check for localhost
+    displayName: "Set exePath pipeline variable"
     inputs:
       targetType: 'inline'
       script: |
-        $extractPath = "$(Build.SourcesDirectory)/UKHOADDSMockService"
-       
-        # Create the directory for extraction if it doesn't exist
-      
-        if (-Not (Test-Path -Path $extractPath)) {
-      
-            New-Item -ItemType Directory -Force -Path $extractPath
-      
-        }
-       
-        # List files in the extracted folder (optional, for debugging purposes)
-      
-        Write-Host "Listing files in extracted folder:"
-      
-        Get-ChildItem -Path $extractPath -Recurse | ForEach-Object { Write-Host $_.FullName }
-       
-        # Find the first executable file (.exe) in the extracted folder
-      
-        $exeFiles = Get-ChildItem -Path $extractPath -Recurse -Filter "*.exe"
-       
-        if ($exeFiles) {
-      
-            Write-Host "Found executable file: $($exeFiles[0].FullName)"
-      
-            # Execute the first found executable file in the background
-      
-            $exePath = $exeFiles[0].FullName
-      
-            Write-Host "Executing $exePath in the background"
- 
-            $process = Start-Process -FilePath $exePath -NoNewWindow -PassThru
-       
-            # Wait for 30 seconds before checking the health endpoint
-      
-            # Write-Host "Waiting for 30 seconds to allow the application to start..."
-      
-            # Start-Sleep -Seconds 30
-
-            # Wait for 30 seconds while checking logs
-            $elapsedTime = 0
-            $timeout = 30
-
-            while ($elapsedTime -lt $timeout) {
-                Start-Sleep -Seconds 5
-                $elapsedTime += 5
-
-                # Fetch logs dynamically using Get-Process and checking output
-                if (Get-Process | Where-Object { $_.Id -eq $process.Id }) {
-                    Write-Host "`n[Application Logs] -----------------"
-                    Get-Process | Where-Object { $_.Id -eq $process.Id } | ForEach-Object { Write-Host $_.MainWindowTitle }
-                }
-            }
-       
-            # Define the health check URL
-      
-            $url = "https://localhost:5678/demo/health"
-
-            #Write-Host "check port"
-            #netstat -ano | findstr :5678
-            #Write-Host "check firewall"
-            #Get-NetFirewallRule | Where-Object { $_.DisplayName -like "*5678*" }
-
-            # Get the internal IP address of the machine
-            #$internalIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -NotLike "Loopback*"}).IPAddress
-            #Write-Host "Using Internal IP Address: $internalIP"
-
-
-            # Check the health endpoint using curl
-            #$url = "https://$internalIP:5678/demo/health"
-       
-            # Check the health endpoint using curl
-      
-            $curlResponse = curl.exe -k -s -o NUL -w "%{http_code}" $url
-
-       
-            if ($curlResponse -eq "200") {
-      
-                Write-Host " Application is running and responding at $url"
-      
-            } else {
-      
-                Write-Host " Warning: Application did not respond with 200 OK. Continuing pipeline..."
-      
-            }
-       
-        } else {
-      
-            Write-Host " No executable files found in the ZIP artifact."
-      
-        }
+        $exePath = "(Build.SourcesDirectory)/UKHOADDSMockService/ADDSMock.exe"
+        Write-Host "##vso[task.setvariable variable=ShopFacadeConfiguration.AddsMockExePath]$exePath"
+        Write-Host "exePath is set to: $exePath"
 
   - task: FileTransform@2
     displayName: "File Transform: functionaltests"
@@ -191,46 +201,46 @@ steps:
        xmlTransformationRules:
        jsonTargetFiles: '**/appsettings.json'
 
-  - task: PowerShell@2
-    displayName: ADDS Mock health check 2
-    inputs:
-      targetType: 'inline'
-      script: |
-        $timeout = 30   # Maximum wait time in seconds
+  # - task: PowerShell@2
+  #   displayName: ADDS Mock health check 2
+  #   inputs:
+  #     targetType: 'inline'
+  #     script: |
+  #       $timeout = 30   # Maximum wait time in seconds
       
-        $elapsedTime = 0
+  #       $elapsedTime = 0
       
-        $healthUrl = "https://localhost:5678/demo/health"
+  #       $healthUrl = "https://localhost:5678/demo/health"
        
-        Write-Host "Checking if $healthUrl is available using curl..."
+  #       Write-Host "Checking if $healthUrl is available using curl..."
        
-        while ($elapsedTime -lt $timeout) {
+  #       while ($elapsedTime -lt $timeout) {
       
-            $response = curl.exe -k -s -o NUL -w "%{http_code}" $healthUrl
+  #           $response = curl.exe -k -s -o NUL -w "%{http_code}" $healthUrl
       
-            if ($response -eq "200") {
+  #           if ($response -eq "200") {
       
-                Write-Host " Service is up and running!"
+  #               Write-Host " Service is up and running!"
       
-                break
+  #               break
       
-            } else {
+  #           } else {
       
-                Write-Host "Waiting for service to start... ($elapsedTime/$timeout seconds)"
+  #               Write-Host "Waiting for service to start... ($elapsedTime/$timeout seconds)"
       
-            }
+  #           }
       
-            Start-Sleep -Seconds 5
+  #           Start-Sleep -Seconds 5
       
-            $elapsedTime += 5
+  #           $elapsedTime += 5
       
-        }
+  #       }
        
-        if ($elapsedTime -ge $timeout) {
+  #       if ($elapsedTime -ge $timeout) {
       
-            Write-Host "Warning: Service did not start within $timeout seconds."
+  #           Write-Host "Warning: Service did not start within $timeout seconds."
       
-        }
+  #       }
 
   - task: DotNetCoreCLI@2
     displayName: "Run Functional tests"
