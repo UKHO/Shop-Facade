@@ -14,8 +14,8 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
     [TestFixture]
     public class S100UpnScenarios : TestFixtureBase
     {
-        private Process _process;
-        private readonly ShopFacadeConfiguration _shoFacadeConfiguration;
+        
+        
         //private readonly S100UpnEndpoint _s100UpnEndpoint;
 
         //private readonly AuthTokenProvider _authTokenProvider;
@@ -25,42 +25,10 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             //_s100UpnEndpoint = new S100UpnEndpoint();
             //_authTokenProvider = new AuthTokenProvider();
             var serviceProvider = GetServiceProvider();
-            _shoFacadeConfiguration = serviceProvider!.GetRequiredService<IOptions<ShopFacadeConfiguration>>().Value;
-        }
-
-        [OneTimeSetUp]
-        public void Setup()
-        {
             
-            var processStartInfo = new ProcessStartInfo
-            {
-                FileName = _shoFacadeConfiguration.AddsMockExePath,
-                //Arguments = "",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
-
-            _process = new Process { StartInfo = processStartInfo };
-            _process.Start();
-
-            string processName = "ADDSMock"; // Example process name
-
-            // Get all processes with the given name
-            Process[] processes = Process.GetProcessesByName(processName);
-
-            if (processes.Length > 0)
-            {
-                Console.WriteLine($"Process {processName} is running.");
-            }
-            else
-            {
-                Console.WriteLine($"Process {processName} is not running.");
-            }
-
-            Console.WriteLine("Process started successfully.");
         }
+
+       
 
         //[Test]
         //public async Task WhenUpnServiceEndpointCalledWithValidTokenAndLicenceId_ThenUpnServiceReturns200OkResponse()
@@ -113,6 +81,20 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
         public async Task CommonMockTest()
         {
 
+            string processName = "ADDSMock"; // Example process name
+
+            // Get all processes with the given name
+            Process[] processes = Process.GetProcessesByName(processName);
+
+            if (processes.Length > 0)
+            {
+                Console.WriteLine($"Process {processName} is running.");
+            }
+            else
+            {
+                Console.WriteLine($"Process {processName} is not running.");
+            }
+
             var _options = new RestClientOptions("https://localhost:5678/");
             var _client = new RestClient(_options);
 
@@ -126,18 +108,6 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             Console.WriteLine($"Response Content: {response.Content}");
 
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        }
-
-        [OneTimeTearDown]
-        public void Teardown()
-        {
-            if (_process != null && !_process.HasExited)
-            {
-                Console.WriteLine("Stopping process...");
-                _process.Dispose();
-                _process.WaitForExit(); // Ensure it fully terminates
-                Console.WriteLine("Process stopped.");
-            }
         }
 
     }
