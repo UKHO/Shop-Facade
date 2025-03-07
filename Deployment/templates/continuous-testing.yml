@@ -190,7 +190,7 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        $exePath = "(Build.SourcesDirectory)/UKHOADDSMockService/ADDSMock.exe"
+        $exePath = "$(Build.SourcesDirectory)/UKHOADDSMockService/ADDSMock.exe"
         Write-Host "##vso[task.setvariable variable=ShopFacadeConfiguration.AddsMockExePath]$exePath"
         Write-Host "exePath is set to: $exePath"
 
@@ -200,6 +200,23 @@ steps:
        folderPath: '$(Build.SourcesDirectory)/functionaltests/'
        xmlTransformationRules:
        jsonTargetFiles: '**/appsettings.json'
+
+  - task: PowerShell@2
+    condition: always()
+    inputs:
+   
+      targetType: 'inline'
+      script: |
+        $file = Get-ChildItem -Path "$(Build.SourcesDirectory)\functionaltests" -Recurse -File -Filter "appsettings.json" | Select-Object -First 1
+       
+        if ($file) {
+            # Read and print the content of the found file
+            $content = Get-Content $file.FullName -Raw
+            Write-Host "File Found: $($file.FullName)"
+            Write-Host "Content: $content"
+        } else {
+            Write-Host "File 'appsetting.json' not found in $(Build.SourcesDirectory)"
+        }
 
   # - task: PowerShell@2
   #   displayName: ADDS Mock health check 2
