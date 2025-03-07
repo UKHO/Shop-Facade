@@ -98,13 +98,12 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
 
 
             string command = "tasklist | findstr ADDSMock.exe";
-            string processDetails = RunConsoleCommand(command);
-            Console.WriteLine(processDetails);
+            string processDetails = await RunConsoleCommand(command);
 
             var pid = processes[0].Id;
-            var ports = RunConsoleCommand($"netstat -ano | findstr {pid}");
+            Console.WriteLine($"Process ID: {pid}");
 
-            Console.WriteLine(ports);
+            var ports = await RunConsoleCommand($"netstat -ano | findstr {pid}");
 
             var _options = new RestClientOptions("https://localhost:5678/");
             var _client = new RestClient(_options);
