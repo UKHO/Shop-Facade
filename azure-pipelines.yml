@@ -124,6 +124,11 @@ stages:
   - stage: BuildTestPublish
     displayName: "Build, test and publish"
     dependsOn: []
+    variables:
+      - name: configurationpath
+        value: '$(build.sourcesdirectory)\src\mocksssss\service-configuration'
+      - name: overrideconfigurationpath
+        value: '$(build.sourcesdirectory)\src\mocksssss\override-configuration'
     jobs:
     - template: Deployment/templates/build-test-publish.yml  
       parameters:
