@@ -70,6 +70,8 @@ jobs:
   displayName: "${{parameters.environment}} - functional automated tests"
   environment: "shopfacade-${{parameters.environment}}"
   pool: $(windowpool)
+  #pool: $(DeploymentPool)
+  #container: ${{parameters.Container}}
   # condition: and(succeeded('deployapp'), eq( ${{parameters.runtests}} , 'true'))
   workspace:
    clean: all
