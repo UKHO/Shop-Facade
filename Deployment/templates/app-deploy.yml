@@ -69,9 +69,9 @@ jobs:
   # dependson:  deployapp
   displayName: "${{parameters.environment}} - functional automated tests"
   environment: "shopfacade-${{parameters.environment}}"
-  pool: $(WindowPool)
-  #pool: $(DeploymentPool)
-  #container: ${{parameters.Container}}
+  #pool: $(WindowPool)
+  pool: $(DeploymentPool)
+  container: ${{parameters.Container}}
   # condition: and(succeeded('deployapp'), eq( ${{parameters.runtests}} , 'true'))
   workspace:
    clean: all
