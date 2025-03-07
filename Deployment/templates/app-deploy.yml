@@ -77,9 +77,9 @@ jobs:
    clean: all
   variables:
   - name: configurationpath
-    value: '$(Build.SourcesDirectory)/UKHOADDSMockService/service-configuration'
+    value: '$(Build.SourcesDirectory)\UKHOADDSMockService\service-configuration'
   - name: overrideconfigurationpath
-    value: '$(Build.SourcesDirectory)/UKHOADDSMockService/override-configuration'
+    value: '$(Build.SourcesDirectory)\UKHOADDSMockService\override-configuration'
     #value: '$(build.sourcesdirectory)\src\mocksssss\override-configuration'
   strategy:
     runOnce:
