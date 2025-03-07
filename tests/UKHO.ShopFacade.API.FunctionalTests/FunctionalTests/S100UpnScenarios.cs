@@ -123,6 +123,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
                 Console.WriteLine("Stopping process...");
                 _process.Kill();
                 _process.WaitForExit(); // Ensure it fully terminates
+                _process.Dispose();
                 Console.WriteLine("Process stopped.");
             }
         }
