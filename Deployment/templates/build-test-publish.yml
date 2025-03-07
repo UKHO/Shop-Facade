@@ -314,12 +314,12 @@ jobs:
 
 
 
-    - task: FileTransform@2
-      displayName: "File Transform: Mock Service Settings"
-      inputs:
-        folderPath: '$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock'
-        xmlTransformationRules: ''
-        jsonTargetFiles: '**/mock-configuration.json'
+    # - task: FileTransform@2
+    #   displayName: "File Transform: Mock Service Settings"
+    #   inputs:
+    #     folderPath: '$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock'
+    #     xmlTransformationRules: ''
+    #     jsonTargetFiles: '**/mock-configuration.json'
 
     - task: FileTransform@1
       displayName: "Apply JSON Variable Substitution"
