@@ -145,6 +145,17 @@ namespace UKHO.ShopFacade.API
                                         Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyFileVersionAttribute>().Single().Version);
                 client.DefaultRequestHeaders.UserAgent.Add(productHeaderValue);
             });
+
+            builder.Services.Configure<PermitServiceConfiguration>(builder.Configuration.GetSection("PermitServiceConfiguration"));
+            builder.Services.Configure<PermitExpiryDaysConfiguration>(builder.Configuration.GetSection("PermitExpiryDaysConfiguration"));
+            builder.Services.AddHttpClient<IPermitServiceClient, PermitServiceClient>(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["PermitServiceConfiguration:BaseUrl"]);
+                var productHeaderValue = new ProductInfoHeaderValue("ShopFacade",
+                                        Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyFileVersionAttribute>().Single().Version);
+                client.DefaultRequestHeaders.UserAgent.Add(productHeaderValue);
+            });
+            builder.Services.AddScoped<IS100PermitService, S100PermitService>();
         }
 
         private static void ConfigureLogging(WebApplication webApplication)

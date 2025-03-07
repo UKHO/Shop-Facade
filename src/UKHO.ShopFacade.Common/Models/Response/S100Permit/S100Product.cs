@@ -1,8 +1,10 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace UKHO.ShopFacade.Common.Models.Response.S100Permit
 {
-    public class ProductModel
+    [ExcludeFromCodeCoverage]
+    public class S100Product
     {
         [JsonPropertyName("productName")]
         public string? ProductName { get; set; }

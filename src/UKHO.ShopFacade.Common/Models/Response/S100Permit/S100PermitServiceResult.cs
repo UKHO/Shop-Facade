@@ -1,8 +1,9 @@
-﻿using System.Net;
-using UKHO.ShopFacade.Common.Models.Response.Upn;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 
 namespace UKHO.ShopFacade.Common.Models.Response.S100Permit
 {
+    [ExcludeFromCodeCoverage]
     public class S100PermitServiceResult : ServiceResponseResult<Stream>
     {
         public new ErrorResponse ErrorResponse { get; }

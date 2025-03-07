@@ -1,23 +1,25 @@
 ﻿using System.Net;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using UKHO.ShopFacade.Common.ClientProvider;
+using UKHO.ShopFacade.Common.Constants;
+using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.Models.Response.S100Permit;
-using UKHO.ShopFacade.Common.Models.Response.SalesCatalogue;
 
 namespace UKHO.ShopFacade.API.Services
 {
     public class S100PermitService : IS100PermitService
     {
-        private readonly IS100PermitServiceClient _s100PermitServiceClient;
-        public S100PermitService(IS100PermitServiceClient _s100PermitServiceClient)
+        private readonly ILogger<S100PermitService> _logger;
+        private readonly IPermitServiceClient _permitServiceClient;
+        public S100PermitService(ILogger<S100PermitService> logger, IPermitServiceClient permitServiceClient)
         {
-            _s100PermitServiceClient = _s100PermitServiceClient;
+            _logger = logger;
+            _permitServiceClient = permitServiceClient;
         }
 
         public async Task<S100PermitServiceResult> GetS100PermitZipFileAsync(PermitRequest permitRequest)
         {
-            var response = await _s100PermitServiceClient.CallPermitServiceApiAsync(permitRequest);
+            _logger.LogInformation(EventIds.GetPermitServiceRequestStartedMessage.ToEventId(), ErrorDetails.GetPermitServiceRequestStartedMessage);
+            var response = await _permitServiceClient.CallPermitServiceApiAsync(permitRequest);
             var result = await CreatePermitServiceResponse(response);
             return result;
         }
@@ -30,10 +32,12 @@ namespace UKHO.ShopFacade.API.Services
             if (httpResponse.StatusCode == HttpStatusCode.OK)
             {
                 response = S100PermitServiceResult.Success(body);
+                _logger.LogInformation(EventIds.GetPermitServiceRequestCompletedMessage.ToEventId(), ErrorDetails.GetPermitServiceRequestCompletedMessage);
             }
             else
             {
                 response = S100PermitServiceResult.InternalServerError();
+                _logger.LogInformation(EventIds.PermitServiceInternalErrorMessage.ToEventId(), ErrorDetails.PermitServiceInternalErrorMessage, httpResponse.StatusCode);
             }
             return response;
         }

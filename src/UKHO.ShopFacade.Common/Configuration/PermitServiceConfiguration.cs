@@ -1,5 +1,8 @@
-﻿namespace UKHO.ShopFacade.Common.Configuration
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace UKHO.ShopFacade.Common.Configuration
 {
+    [ExcludeFromCodeCoverage]
     public class PermitServiceConfiguration
     {
         public string? BaseUrl { get; set; }

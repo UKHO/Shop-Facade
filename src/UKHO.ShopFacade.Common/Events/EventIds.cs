@@ -92,6 +92,23 @@ namespace UKHO.ShopFacade.Common.Events
         /// 950017 - New access token is added to cache for external end point resource.
         /// </summary>
         CachingExternalEndPointToken = 950017,
+
+        /// <summary>
+        /// 950018 - Request for Permit Service endpoint is started.
+        /// </summary>
+        GetPermitServiceRequestStartedMessage = 950018,
+
+        /// <summary>
+        /// 950019 - Request for Permit Service endpoint is completed.
+        /// </summary>
+        GetPermitServiceRequestCompletedMessage = 950019,
+
+        /// <summary>
+        /// 950020 - Request for Permit Service Internal Server Error.
+        /// </summary>
+        PermitServiceInternalErrorMessage = 950020
+
+
     }
 
     /// <summary>

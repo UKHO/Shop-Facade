@@ -1,7 +1,7 @@
 ﻿using System.Net;
+using Microsoft.Extensions.Options;
+using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Extension;
-using UKHO.ShopFacade.Common.Models.Response.S100Permit;
-using UKHO.ShopFacade.Common.Models.Response.SalesCatalogue;
 using UKHO.ShopFacade.Common.Models.Response.Upn;
 
 namespace UKHO.ShopFacade.API.Services
@@ -11,26 +11,27 @@ namespace UKHO.ShopFacade.API.Services
         private readonly IUpnService _upnService;
         private readonly ISalesCatalogueService _salesCatalogueService;
         private readonly IS100PermitService _s100PermitService;
+        private readonly IOptions<PermitExpiryDaysConfiguration> _permitExpiryDaysConfiguration;
 
-        public PermitService(IUpnService upnService, ISalesCatalogueService salesCatalogueService, IS100PermitService s100PermitService)
+        public PermitService(IUpnService upnService, ISalesCatalogueService salesCatalogueService, IS100PermitService s100PermitService, IOptions<PermitExpiryDaysConfiguration> permitExpiryDaysConfiguration)
         {
             _upnService = upnService ?? throw new ArgumentNullException(nameof(upnService));
             _salesCatalogueService = salesCatalogueService ?? throw new ArgumentNullException(nameof(salesCatalogueService));
             _s100PermitService = s100PermitService ?? throw new ArgumentNullException(nameof(s100PermitService));
+            _permitExpiryDaysConfiguration = permitExpiryDaysConfiguration ?? throw new ArgumentNullException(nameof(permitExpiryDaysConfiguration));
         }
 
         public async Task<PermitServiceResult> GetPermitDetails(int licenceId, string correlationId)
         {
             var upnServiceResult = await _upnService.GetUpnDetails(licenceId, correlationId);
-            var products = await _salesCatalogueService.GetProductsCatalogueAsync();
-            var productModel = products.Value.SelectMany(p => p.MapToProductModel(30)).ToList();
-            var permitRequest = PermitRequestMapper.MapToPermitRequest(productModel, upnServiceResult.Value);
-            var response = _s100PermitService.GetS100PermitZipFileAsync(permitRequest);
+            var salesCatalogueResult = await _salesCatalogueService.GetProductsCatalogueAsync();
+            var permitRequest = PermitRequestMapper.MapToPermitRequest(salesCatalogueResult.Value, upnServiceResult.Value, _permitExpiryDaysConfiguration.Value.PermitExpiryDays);
+            var s100PermitServiceResult = await _s100PermitService.GetS100PermitZipFileAsync(permitRequest);
 
-            return upnServiceResult.StatusCode switch
+            return s100PermitServiceResult.StatusCode switch
             {
-                HttpStatusCode.OK => PermitServiceResult.Success(response),
-                HttpStatusCode.NotFound => PermitServiceResult.NotFound(upnServiceResult.ErrorResponse),
+                HttpStatusCode.OK => PermitServiceResult.Success(s100PermitServiceResult.Value),
+                HttpStatusCode.NotFound => PermitServiceResult.NotFound(s100PermitServiceResult.ErrorResponse),
                 _ => PermitServiceResult.InternalServerError()
             };
         }
