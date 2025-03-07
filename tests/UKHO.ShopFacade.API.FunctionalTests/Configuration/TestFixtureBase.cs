@@ -75,7 +75,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
                 // Start the process and capture the output
                 using (Process process = Process.Start(startInfo))
                 {
-                    Thread.Sleep(5000);
+                    Thread.Sleep(20000);
                     if (process != null)
                     {
                         // Read the output and errors if any
