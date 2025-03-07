@@ -44,16 +44,20 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
             _process = new Process { StartInfo = processStartInfo };
             _process.Start();
             Console.WriteLine("Process started successfully.");
+
+            
         }
 
         [OneTimeTearDown]
         public void Cleanup()
         {
             _serviceProvider?.Dispose();
+            _process.Kill();
+            _process.WaitForExit();
             _process.Dispose();
         }
 
-        static void RunConsoleCommand(string command)
+        public static string RunConsoleCommand(string command)
         {
             try
             {
@@ -90,13 +94,16 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
                         {
                             Console.WriteLine("Error: " + error);
                         }
+                        return output;
                     }
+                    return "";
                 }
             }
             catch (Exception ex)
             {
                 // Catch any exceptions and print them
                 Console.WriteLine("An error occurred: " + ex.Message);
+                return ex.ToString();
             }
         }
     }
