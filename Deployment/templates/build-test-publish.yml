@@ -280,18 +280,38 @@ jobs:
         TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
 
     - task: PowerShell@2
-      displayName: "Set overrideconfigurationpath and configurationpath pipeline variable"
+      displayName: "Set overrideconfigurationpath and configurationpath pipeline variables"
       inputs:
         targetType: 'inline'
         script: |
-          $serviceconfiguration = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService" -Recurse -Filter "service-configuration"
-          Write-Host "service-configuration : $serviceconfiguration"
-          Write-Host "##vso[task.setvariable variable=configurationpath]$serviceconfiguration"
-          Write-Host "service-configuration is set to: $serviceconfiguration"
-          $overrideconfiguration = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService" -Recurse -Filter "override-configuration"
-          Write-Host "override-configuration : $overrideconfiguration"
-          Write-Host "##vso[task.setvariable variable=overrideconfigurationpath]$overrideconfiguration"
-          Write-Host "override-configuration is set to: $overrideconfiguration"
+          # Find the service-configuration folder
+          $serviceConfigurationFolder = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService" -Recurse -Directory | Where-Object { $_.Name -eq "service-configuration" }
+
+          if ($serviceConfigurationFolder) {
+              $serviceConfigPath = $serviceConfigurationFolder.FullName
+              Write-Host "Found service-configuration folder: $serviceConfigPath"
+              Write-Host "##vso[task.setvariable variable=configurationpath]$serviceConfigPath"
+          } else {
+              Write-Host "Error: service-configuration folder not found!"
+              exit 1  # Fail pipeline if folder is missing
+          }
+
+          # Find the override-configuration folder
+          $overrideConfigurationFolder = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService" -Recurse -Directory | Where-Object { $_.Name -eq "override-configuration" }
+
+          if ($overrideConfigurationFolder) {
+              $overrideConfigPath = $overrideConfigurationFolder.FullName
+              Write-Host "Found override-configuration folder: $overrideConfigPath"
+              Write-Host "##vso[task.setvariable variable=overrideconfigurationpath]$overrideConfigPath"
+          } else {
+              Write-Host "Error: override-configuration folder not found!"
+              exit 1  # Fail pipeline if folder is missing
+          }
+
+          # Output confirmation
+          Write-Host "service-configuration is set to: $serviceConfigPath"
+          Write-Host "override-configuration is set to: $overrideConfigPath"
+
 
 
     - task: FileTransform@2
