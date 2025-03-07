@@ -98,13 +98,11 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
 
 
             string command = "tasklist | findstr ADDSMock.exe";
-            string pid = RunConsoleCommand(command);
-            Console.WriteLine(pid);
+            string processDetails = RunConsoleCommand(command);
+            Console.WriteLine(processDetails);
 
-            Match match = Regex.Match(pid, @"\s+(\d+)\s+\w+");
-
-            var processId = match.Groups[1].Value;
-            var ports = RunConsoleCommand($"netstat -ano | findstr {processId}");
+            var pid = processes[0].Id;
+            var ports = RunConsoleCommand($"netstat -ano | findstr {pid}");
 
             Console.WriteLine(ports);
 
