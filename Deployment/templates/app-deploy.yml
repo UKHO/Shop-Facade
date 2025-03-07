@@ -67,7 +67,7 @@ jobs:
 
 - deployment: functionaltests
   # dependson:  deployapp
-  displayname: "${{parameters.environment}} - functional automated tests"
+  displayName: "${{parameters.environment}} - functional automated tests"
   environment: "shopfacade-${{parameters.environment}}"
   pool: $(windowpool)
   # condition: and(succeeded('deployapp'), eq( ${{parameters.runtests}} , 'true'))
@@ -79,7 +79,7 @@ jobs:
   - name: overrideconfigurationpath
     value: '$(build.sourcesdirectory)\src\mocksssss\override-configuration'
   strategy:
-    runonce:
+    runOnce:
       deploy:
         steps:
           - checkout: self
