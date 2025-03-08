@@ -81,6 +81,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
         [Test]
         public async Task CommonMockTest()
         {
+            Console.WriteLine("CommonMockTest Started");
             string processName = "ADDSMock"; // Example process name
 
             // Get all processes with the given name
@@ -105,7 +106,14 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
 
             var options = new RestClientOptions("https://localhost:5678/")
             {
-                RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true // Bypass SSL certificate validation
+                RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) =>
+                {
+                    Console.WriteLine("RemoteCertificateValidationCallback invoked");
+                    Console.WriteLine($"Certificate Subject: {certificate?.Subject}");
+                    Console.WriteLine($"Certificate Issuer: {certificate?.Issuer}");
+                    Console.WriteLine($"SSL Policy Errors: {sslPolicyErrors}");
+                    return true; // Bypass SSL certificate validation
+                }
             };
             var client = new RestClient(options);
             Console.WriteLine($"Client initialization Started");
