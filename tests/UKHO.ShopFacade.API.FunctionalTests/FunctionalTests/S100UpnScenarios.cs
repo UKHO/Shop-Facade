@@ -81,7 +81,6 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
         [Test]
         public async Task CommonMockTest()
         {
-
             string processName = "ADDSMock"; // Example process name
 
             // Get all processes with the given name
@@ -96,7 +95,6 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
                 Console.WriteLine($"Process {processName} is not running.");
             }
 
-
             string command = "tasklist | findstr ADDSMock.exe";
             string processDetails = await RunConsoleCommand(command);
 
@@ -105,21 +103,23 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
 
             var ports = await RunConsoleCommand($"netstat -ano | findstr {pid}");
 
-            var _options = new RestClientOptions("https://localhost:5678/");
-            //{
-            //    RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true // Bypass SSL certificate validation
-            //};
-            var _client = new RestClient(_options);
+            var options = new RestClientOptions("https://localhost:5678/")
+            {
+                RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true // Bypass SSL certificate validation
+            };
+            var client = new RestClient(options);
+            Console.WriteLine($"Client initialization Started");
 
             var request = new RestRequest("demo/health");
+            Console.WriteLine($"Request Started");
 
-            var response = await _client.ExecuteAsync(request);
-
-
+            var response = await client.ExecuteAsync(request);
+            Console.Write(response.ToString());
+            Console.WriteLine($"Request executed");
 
 
             // Log request and response details
-            Console.WriteLine($"Request URL: {_client.BuildUri(request)}");
+            Console.WriteLine($"Request URL: {client.BuildUri(request)}");
             Console.WriteLine($"Response Status Code: {response.StatusCode}");
             Console.WriteLine($"Response Content: {response.Content}");
 
