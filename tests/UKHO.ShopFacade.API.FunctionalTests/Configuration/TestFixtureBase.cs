@@ -40,7 +40,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
                 RedirectStandardError = true,
                 CreateNoWindow = true
             };
-
+            Console.WriteLine("Starting process...");
             _process = new Process { StartInfo = processStartInfo };
             _process.Start();
             Console.WriteLine("Process started successfully.");
@@ -75,7 +75,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
                 // Start the process and capture the output
                 using (Process process = Process.Start(startInfo))
                 {
-                    Thread.Sleep(20000);
+                    Thread.Sleep(50000);
                     if (process != null)
                     {
                         // Read the output and errors if any
