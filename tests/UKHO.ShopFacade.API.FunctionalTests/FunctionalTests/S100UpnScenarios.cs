@@ -105,7 +105,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
 
             var ports = await RunConsoleCommand($"netstat -ano | findstr {pid}");
 
-            var _options = new RestClientOptions("https://localhost:5678/")
+            var _options = new RestClientOptions("https://localhost:5678/");
             //{
             //    RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true // Bypass SSL certificate validation
             //};
