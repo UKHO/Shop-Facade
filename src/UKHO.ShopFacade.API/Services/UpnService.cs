@@ -19,6 +19,7 @@ namespace UKHO.ShopFacade.API.Services
             return upnDataProviderResult.StatusCode switch
             {
                 HttpStatusCode.OK => UpnServiceResult.Success(SetUpnDetailResponse(upnDataProviderResult)!),
+                HttpStatusCode.NoContent => UpnServiceResult.NoContent(),
                 HttpStatusCode.NotFound => UpnServiceResult.NotFound(upnDataProviderResult.ErrorResponse),
                 _ => UpnServiceResult.InternalServerError()
             };
@@ -27,12 +28,12 @@ namespace UKHO.ShopFacade.API.Services
         private static List<UserPermit> SetUpnDetailResponse(UpnDataProviderResult upnDataProviderResult)
         {
             var userPermits = new List<UserPermit>{
-                new()
-                {
-                    Title = upnDataProviderResult.Value.ECDIS_UPN1_Title,
-                    Upn = upnDataProviderResult.Value.ECDIS_UPN_1
-                }
-            };
+                    new()
+                    {
+                        Title = upnDataProviderResult.Value.ECDIS_UPN1_Title,
+                        Upn = upnDataProviderResult.Value.ECDIS_UPN_1
+                    }
+                };
 
             // Include the UPN details in the response model when both the title and its corresponding UPN values are not null.
             AddUserPermitIfNotNull(upnDataProviderResult.Value.ECDIS_UPN2_Title, upnDataProviderResult.Value.ECDIS_UPN_2, userPermits);

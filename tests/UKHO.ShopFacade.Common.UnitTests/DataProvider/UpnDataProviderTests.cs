@@ -104,7 +104,7 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
         }
 
         [Test]
-        public async Task WhenLicenceExistsWithNullFieldsValues_ThenReturnUpnDetailsByLicenseId()
+        public async Task WhenLicenceExistsWithNullFieldsValues_ThenReturnNoContentResponse()
         {
             var fakeListItemCollectionResponse = new ListItemCollectionResponse
             {
@@ -124,7 +124,7 @@ namespace UKHO.ShopFacade.Common.UnitTests.DataProvider
 
             var result = await _upnDataProvider.GetUpnDetailsByLicenseId(123, "correlationId");
 
-            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
