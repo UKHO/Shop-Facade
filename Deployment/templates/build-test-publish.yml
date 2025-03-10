@@ -329,7 +329,7 @@ jobs:
           $mockConfigPath = "$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock\mock-configuration.json"
           $configPath = "$(configurationpath)"
           $overrideConfigPath = "$(overrideconfigurationpath)"
-          $useSsl = "false"
+          $useSsl = false
 
           if (Test-Path $mockConfigPath) {
               $json = Get-Content $mockConfigPath -Raw | ConvertFrom-Json
