@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -7,6 +8,7 @@ using UKHO.ShopFacade.Common.Models.Authentication;
 
 namespace UKHO.ShopFacade.Common.Authentication
 {
+    [ExcludeFromCodeCoverage] 
     public class CacheProvider : ICacheProvider
     {
         private readonly ILogger<AuthTokenProvider> _logger;
