@@ -20,6 +20,7 @@ namespace UKHO.ShopFacade.MockService.Stubs
             var licenceIdFor200OkResponse = "1";
             var licenceIdFor500InternalServerErrorResponse = "2";
             var licenceIdForEmptyResponse = "3";
+            var licenceIdFor204Response = "4";
 
             // Mock endpoint for Graph API
             var endpoint = $"/sites/{_graphApiConfiguration.SiteId}/lists/{_graphApiConfiguration.ListId}/items";
@@ -76,12 +77,33 @@ namespace UKHO.ShopFacade.MockService.Stubs
                     .UsingGet()
                 )
             .RespondWith(
-                Response.Create()
+        Response.Create()
                     .WithStatusCode(200)
                     .WithHeader("Content-Type", "application/json")
                     .WithBody($@"
                    {{
                     ""value"": []
+                    }}")
+            );
+
+            server.Given(
+                Request.Create()
+                    .WithPath(new WildcardMatcher(endpoint))
+                    .WithParam("$filter", $"fields/Title eq '{licenceIdFor204Response}'")
+                    .UsingGet())
+            .RespondWith(
+        Response.Create()
+                    .WithStatusCode(200)
+                    .WithHeader("Content-Type", "application/json")
+                    .WithBody($@"
+                    {{
+                        ""value"": [
+                            {{
+                                ""fields"": {{
+                                    ""@odata.etag"": ""975454d2-ead9-482e-8472-7c620847fae8""                                    
+                                }}
+                            }}
+                            ]                        
                     }}")
             );
         }
