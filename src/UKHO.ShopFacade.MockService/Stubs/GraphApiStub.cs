@@ -89,21 +89,21 @@ namespace UKHO.ShopFacade.MockService.Stubs
             server.Given(
                 Request.Create()
                     .WithPath(new WildcardMatcher(endpoint))
-                    .WithParam("$filter", $"fields/Title eq '{licenceIdFor204Response}'")    //204 OK response with 0 UPNs
+                    .WithParam("$filter", $"fields/Title eq '{licenceIdFor204Response}'")
                     .UsingGet())
             .RespondWith(
         Response.Create()
-                    .WithStatusCode(204)
+                    .WithStatusCode(200)
                     .WithHeader("Content-Type", "application/json")
                     .WithBody($@"
                     {{
                         ""value"": [
-                            ""Fields"":{{
-                                ""AdditionalData"":{{
-                                    ""@odata.etag"":""975454d2-ead9-482e-8472-7c620847fae8""
+                            {{
+                                ""fields"": {{
+                                    ""@odata.etag"": ""975454d2-ead9-482e-8472-7c620847fae8""                                    
                                 }}
                             }}
-                        ]
+                            ]                        
                     }}")
             );
         }
