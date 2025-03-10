@@ -115,7 +115,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             //        Console.WriteLine($"SSL Policy Errors: {sslPolicyErrors}");
             //        return true; // Bypass SSL certificate validation
             //    }
-            };
+            //};
             var client = new RestClient(options);
             Console.WriteLine($"Client initialization Started");
 
