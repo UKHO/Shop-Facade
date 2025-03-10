@@ -88,101 +88,101 @@ steps:
             Write-Host "File 'mock-configuration.json' not found in $(Build.SourcesDirectory)"
         }
 
-  - task: PowerShell@2
-    displayName: Run the ADDSMock exe and health check for localhost
-    inputs:
-      targetType: 'inline'
-      script: |
-        $extractPath = "$(Build.SourcesDirectory)/UKHOADDSMockService"
+  # - task: PowerShell@2
+  #   displayName: Run the ADDSMock exe and health check for localhost
+  #   inputs:
+  #     targetType: 'inline'
+  #     script: |
+  #       $extractPath = "$(Build.SourcesDirectory)/UKHOADDSMockService"
        
-        # Create the directory for extraction if it doesn't exist
+  #       # Create the directory for extraction if it doesn't exist
       
-        if (-Not (Test-Path -Path $extractPath)) {
+  #       if (-Not (Test-Path -Path $extractPath)) {
       
-            New-Item -ItemType Directory -Force -Path $extractPath
+  #           New-Item -ItemType Directory -Force -Path $extractPath
       
-        }
+  #       }
        
-        # List files in the extracted folder (optional, for debugging purposes)
+  #       # List files in the extracted folder (optional, for debugging purposes)
       
-        Write-Host "Listing files in extracted folder:"
+  #       Write-Host "Listing files in extracted folder:"
       
-        Get-ChildItem -Path $extractPath -Recurse | ForEach-Object { Write-Host $_.FullName }
+  #       Get-ChildItem -Path $extractPath -Recurse | ForEach-Object { Write-Host $_.FullName }
        
-        # Find the first executable file (.exe) in the extracted folder
+  #       # Find the first executable file (.exe) in the extracted folder
       
-        $exeFiles = Get-ChildItem -Path $extractPath -Recurse -Filter "*.exe"
+  #       $exeFiles = Get-ChildItem -Path $extractPath -Recurse -Filter "*.exe"
        
-        if ($exeFiles) {
+  #       if ($exeFiles) {
       
-            Write-Host "Found executable file: $($exeFiles[0].FullName)"
+  #           Write-Host "Found executable file: $($exeFiles[0].FullName)"
       
-            # Execute the first found executable file in the background
+  #           # Execute the first found executable file in the background
       
-            $exePath = $exeFiles[0].FullName
+  #           $exePath = $exeFiles[0].FullName
       
-            Write-Host "Executing $exePath in the background"
+  #           Write-Host "Executing $exePath in the background"
  
-            $process = Start-Process -FilePath $exePath -NoNewWindow -PassThru
+  #           $process = Start-Process -FilePath $exePath -NoNewWindow -PassThru
        
-            # Wait for 30 seconds before checking the health endpoint
+  #           # Wait for 30 seconds before checking the health endpoint
       
-            # Write-Host "Waiting for 30 seconds to allow the application to start..."
+  #           # Write-Host "Waiting for 30 seconds to allow the application to start..."
       
-            # Start-Sleep -Seconds 30
+  #           # Start-Sleep -Seconds 30
 
-            # Wait for 30 seconds while checking logs
-            $elapsedTime = 0
-            $timeout = 30
+  #           # Wait for 30 seconds while checking logs
+  #           $elapsedTime = 0
+  #           $timeout = 30
 
-            while ($elapsedTime -lt $timeout) {
-                Start-Sleep -Seconds 5
-                $elapsedTime += 5
+  #           while ($elapsedTime -lt $timeout) {
+  #               Start-Sleep -Seconds 5
+  #               $elapsedTime += 5
 
-                # Fetch logs dynamically using Get-Process and checking output
-                if (Get-Process | Where-Object { $_.Id -eq $process.Id }) {
-                    Write-Host "`n[Application Logs] -----------------"
-                    Get-Process | Where-Object { $_.Id -eq $process.Id } | ForEach-Object { Write-Host $_.MainWindowTitle }
-                }
-            }
+  #               # Fetch logs dynamically using Get-Process and checking output
+  #               if (Get-Process | Where-Object { $_.Id -eq $process.Id }) {
+  #                   Write-Host "`n[Application Logs] -----------------"
+  #                   Get-Process | Where-Object { $_.Id -eq $process.Id } | ForEach-Object { Write-Host $_.MainWindowTitle }
+  #               }
+  #           }
        
-            # Define the health check URL
+  #           # Define the health check URL
       
-            $url = "http://localhost:5678/demo/health"
+  #           $url = "http://localhost:5678/demo/health"
 
-            #Write-Host "check port"
-            #netstat -ano | findstr :5678
-            #Write-Host "check firewall"
-            #Get-NetFirewallRule | Where-Object { $_.DisplayName -like "*5678*" }
+  #           #Write-Host "check port"
+  #           #netstat -ano | findstr :5678
+  #           #Write-Host "check firewall"
+  #           #Get-NetFirewallRule | Where-Object { $_.DisplayName -like "*5678*" }
 
-            # Get the internal IP address of the machine
-            #$internalIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -NotLike "Loopback*"}).IPAddress
-            #Write-Host "Using Internal IP Address: $internalIP"
+  #           # Get the internal IP address of the machine
+  #           #$internalIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -NotLike "Loopback*"}).IPAddress
+  #           #Write-Host "Using Internal IP Address: $internalIP"
 
 
-            # Check the health endpoint using curl
-            #$url = "https://$internalIP:5678/demo/health"
+  #           # Check the health endpoint using curl
+  #           #$url = "https://$internalIP:5678/demo/health"
        
-            # Check the health endpoint using curl
+  #           # Check the health endpoint using curl
       
-            $curlResponse = curl.exe -k -s -o NUL -w "%{http_code}" $url
+  #           $curlResponse = curl.exe -k -s -o NUL -w "%{http_code}" $url
 
        
-            if ($curlResponse -eq "200") {
+  #           if ($curlResponse -eq "200") {
       
-                Write-Host " Application is running and responding at $url"
+  #               Write-Host " Application is running and responding at $url"
       
-            } else {
+  #           } else {
       
-                Write-Host " Warning: Application did not respond with 200 OK. Continuing pipeline..."
+  #               Write-Host " Warning: Application did not respond with 200 OK. Continuing pipeline..."
       
-            }
+  #           }
        
-        } else {
+  #       } else {
       
-            Write-Host " No executable files found in the ZIP artifact."
+  #           Write-Host " No executable files found in the ZIP artifact."
       
-        }
+  #       }
 
 
   - task: PowerShell@2

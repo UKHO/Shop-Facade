@@ -105,16 +105,16 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
 
             var ports = await RunConsoleCommand($"netstat -ano | findstr {pid}");
 
-            var options = new RestClientOptions("http://localhost:5678/")
-            {
-                RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) =>
-                {
-                    Console.WriteLine("RemoteCertificateValidationCallback invoked");
-                    Console.WriteLine($"Certificate Subject: {certificate?.Subject}");
-                    Console.WriteLine($"Certificate Issuer: {certificate?.Issuer}");
-                    Console.WriteLine($"SSL Policy Errors: {sslPolicyErrors}");
-                    return true; // Bypass SSL certificate validation
-                }
+            var options = new RestClientOptions("http://localhost:5678/");
+            //{
+            //    RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) =>
+            //    {
+            //        Console.WriteLine("RemoteCertificateValidationCallback invoked");
+            //        Console.WriteLine($"Certificate Subject: {certificate?.Subject}");
+            //        Console.WriteLine($"Certificate Issuer: {certificate?.Issuer}");
+            //        Console.WriteLine($"SSL Policy Errors: {sslPolicyErrors}");
+            //        return true; // Bypass SSL certificate validation
+            //    }
             };
             var client = new RestClient(options);
             Console.WriteLine($"Client initialization Started");
