@@ -34,11 +34,12 @@ namespace UKHO.ShopFacade.Common.DataProvider
         {
             UpnDataProviderResult upnDataProviderResult;
 
-            var upnFieldFilter = "UPN";
-
             if (s100UpnCollection.Value!.Count > 0)
             {
-                if (s100UpnCollection.Value.Any(x => x.Fields!.AdditionalData.Any(y => y.Key.Contains(upnFieldFilter, StringComparison.OrdinalIgnoreCase))))
+                var s100UpnData = s100UpnCollection.Value.Select(x => x.Fields!.AdditionalData);
+                var hasUpnField = s100UpnData.Any(x => x.Any(y => y.Key.Contains(UpnDataProviderConstants.UpnFieldFilter, StringComparison.OrdinalIgnoreCase)));
+
+                if (hasUpnField)
                 {
                     upnDataProviderResult = UpnDataProviderResult.Success(GetS100UpnRecord(s100UpnCollection)!);
                 }
