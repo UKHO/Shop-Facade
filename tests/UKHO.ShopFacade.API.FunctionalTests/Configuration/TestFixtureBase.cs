@@ -22,32 +22,6 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
             _shoFacadeConfiguration = _serviceProvider!.GetRequiredService<IOptions<ShopFacadeConfiguration>>().Value;
         }
 
-
-        [OneTimeSetUp]
-        public void Setup()
-        {
-            string command = "dotnet dev-certs https --trust";
-
-            // Call the method to execute the command
-            RunConsoleCommand(command);
-
-            var processStartInfo = new ProcessStartInfo
-            {
-                FileName = _shoFacadeConfiguration.AddsMockExePath,
-                //Arguments = "",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
-            Console.WriteLine("Starting process...");
-            _process = new Process { StartInfo = processStartInfo };
-            _process.Start();
-            Console.WriteLine("Process started successfully.");
-
-            
-        }
-
         [OneTimeTearDown]
         public void Cleanup()
         {
