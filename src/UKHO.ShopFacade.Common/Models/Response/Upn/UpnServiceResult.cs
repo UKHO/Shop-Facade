@@ -18,6 +18,8 @@ namespace UKHO.ShopFacade.Common.Models.Response.Upn
 
         public static new UpnServiceResult Success(List<UserPermit> value) => new(value, HttpStatusCode.OK);
 
+        public static new UpnServiceResult NoContent() => new(null, HttpStatusCode.NoContent);
+
         public static new UpnServiceResult NotFound(ErrorResponse errorResponse) => new(null, HttpStatusCode.NotFound, errorResponse);
 
         public static UpnServiceResult InternalServerError() => new(null, HttpStatusCode.InternalServerError);

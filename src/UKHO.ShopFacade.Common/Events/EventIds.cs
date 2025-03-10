@@ -83,10 +83,10 @@ namespace UKHO.ShopFacade.Common.Events
         /// </summary>
         GetSalesCatalogueDataRequestCompleted = 950015,
 
-        /// <summary>
-        /// 950016 - GetPermits API call completed.
-        /// </summary>
-        GetPermitsCallCompleted = 950016,
+       /// <summary>
+       /// 950016 - No Content Found Message.
+       /// </summary>
+        NoContentFound = 950016
     }
 
     /// <summary>
