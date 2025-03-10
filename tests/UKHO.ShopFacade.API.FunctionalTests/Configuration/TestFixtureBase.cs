@@ -16,6 +16,24 @@ namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
             return _serviceProvider;
         }
 
+        [OneTimeSetUp]
+        public void Setup()
+        {
+            var processStartInfo = new ProcessStartInfo
+            {
+                FileName = _shoFacadeConfiguration.AddsMockExePath,
+                //Arguments = "",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+            Console.WriteLine("Starting process...");
+            _process = new Process { StartInfo = processStartInfo };
+            _process.Start();
+            Console.WriteLine("Process started successfully.");
+        }
+
         public TestFixtureBase()
         {
             _serviceProvider = TestServiceConfiguration.ConfigureServices();
