@@ -11,6 +11,7 @@ namespace UKHO.ShopFacade.Common.Constants
         public const string GetUPNsCallCompletedMessage = "GetUPNs API call completed successfully.";
         public const string InvalidLicenceIdMessage = "Bad request - could be missing or invalid licenceId, it must be an integer and greater than zero.";
         public const string LicenceNotFoundMessage = "Licence not found.";
+        public const string NoContentMessage = "No Content - There are no UPNs for the licence.";
         public const string InternalErrorMessage = "Error occurred while processing request.";
 
         //Error messages for graph client service
