@@ -67,7 +67,7 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
         }
 
         [Test]
-        public async Task WhenUpnServiceEndpointCalledWithValidTokenAndNoUpnLicenceId_ThenUpnServiceReturns204NoContentResponse()
+        public async Task WhenUpnServiceEndpointCalledWithValidTokenAndLicenceWithoutUpn_ThenUpnServiceReturns204NoContentResponse()
         {
             var response = await _upnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "4");
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
