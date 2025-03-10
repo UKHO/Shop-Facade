@@ -50,10 +50,21 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
         }
 
+        [Test]
+        public async Task WhenUPNsNotAvailableForLicence_ThenReturn204NoContentResponse()
+        {
+            A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnServiceResult(HttpStatusCode.NoContent));
+
+            var result = await _permitService.GetPermitDetails(123, "correlationId");
+
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        }
+
         private static UpnServiceResult GetUpnServiceResult(HttpStatusCode httpStatusCode)
         {
             return httpStatusCode switch
             {
+                HttpStatusCode.NoContent => UpnServiceResult.NoContent(),
                 HttpStatusCode.NotFound => UpnServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
             _ => UpnServiceResult.InternalServerError()
             };
