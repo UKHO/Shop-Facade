@@ -75,10 +75,12 @@ jobs:
   workspace:
    clean: all
   variables:
-  - name: configurationpath
-    value: '$(Build.SourcesDirectory)\UKHOADDSMockService\service-configuration'
-  - name: overrideconfigurationpath
-    value: '$(Build.SourcesDirectory)\UKHOADDSMockService\override-configuration'
+  - name  : Port
+    value : $[ dependencies.DeployApp.outputs['DeployApp.getUrl.Port'] ]
+  - name  : configurationpath
+    value : '$(Build.SourcesDirectory)\UKHOADDSMockService\service-configuration'
+  - name  : overrideconfigurationpath
+    value : '$(Build.SourcesDirectory)\UKHOADDSMockService\override-configuration'
     #value: '$(build.sourcesdirectory)\src\mocksssss\override-configuration'
   strategy:
     runOnce:
