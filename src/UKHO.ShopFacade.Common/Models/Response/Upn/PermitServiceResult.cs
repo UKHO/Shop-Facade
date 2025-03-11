@@ -16,7 +16,7 @@ namespace UKHO.ShopFacade.Common.Models.Response.Upn
             ErrorResponse = errorResponse!;
         }
 
-        public static new PermitServiceResult Success(Stream value) => new(value, HttpStatusCode.OK);
+        public static new PermitServiceResult Success() => new(null, HttpStatusCode.OK);
 
         public static new PermitServiceResult NoContent() => new(null, HttpStatusCode.NoContent);
 
