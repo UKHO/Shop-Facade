@@ -67,7 +67,7 @@ jobs:
               AzureSubscription: ${{parameters.AzureSubscription}}
 
 - deployment: functionaltests
-  dependson:  deployapp
+  dependsOn:  DeployApp
   displayName: "${{parameters.environment}} - functional automated tests"
   environment: "shopfacade-${{parameters.environment}}"
   pool: $(WindowPool)
