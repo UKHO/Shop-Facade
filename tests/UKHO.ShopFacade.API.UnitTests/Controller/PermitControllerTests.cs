@@ -52,11 +52,10 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "GetPermits API call started.").MustHaveHappenedOnceExactly();
         }
 
-        [Test]
-        public async Task WhenLicenceIdIsInValid_ThenReturn400BadRequestResponse()
+        [TestCase(0)]
+        [TestCase(-1)]
+        public async Task WhenLicenceIdIsInValid_ThenReturn400BadRequestResponse(int invalidLicenceId)
         {
-            int invalidLicenceId = 0;
-
             var result = (BadRequestObjectResult)await _permitController.GetPermits(_fakeProductType, invalidLicenceId);
 
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
