@@ -10,7 +10,8 @@ if ($nextPort -is [int]) {
     Write-Host "Using port $nextPort"
     $url = "https://localhost:$nextPort/"
     Write-Host "Url: $url"
-    Write-Host "##vso[task.setvariable variable=Urls.0]$url"
+    Write-Host "##vso[task.setvariable variable=ADDSMockUrl]$url"
+    Write-Host "##vso[task.setvariable variable=port]$nextPort"
 } else {
     throw "Can't find an available port"
 }
