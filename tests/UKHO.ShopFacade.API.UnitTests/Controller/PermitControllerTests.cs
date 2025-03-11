@@ -38,6 +38,21 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         }
 
         [Test]
+        public async Task WhenLicenceIdIsValid_ThenReturn200OKResponse()
+        {
+            A.CallTo(() => _fakePermitService.GetPermitDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetPermitServiceResult(HttpStatusCode.OK));
+
+            var result = (StatusCodeResult)await _permitController.GetPermits(_fakeProductType, 1);
+
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                && call.GetArgument<EventId>(1) == EventIds.GetPermitsCallStarted.ToEventId()
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "GetPermits API call started.").MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
         public async Task WhenLicenceIdIsInValid_ThenReturn400BadRequestResponse()
         {
             int invalidLicenceId = 0;
@@ -124,8 +139,11 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
         private static PermitServiceResult GetPermitServiceResult(HttpStatusCode httpStatusCode)
         {
+            var streamWriter = new StreamWriter(new MemoryStream());
+
             return httpStatusCode switch
             {
+                HttpStatusCode.OK => PermitServiceResult.Success(streamWriter.BaseStream),
                 HttpStatusCode.NoContent => PermitServiceResult.NoContent(),
                 HttpStatusCode.NotFound => PermitServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
                 _ => PermitServiceResult.InternalServerError()
