@@ -143,7 +143,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
             return httpStatusCode switch
             {
-                HttpStatusCode.OK => PermitServiceResult.Success(streamWriter.BaseStream),
+                HttpStatusCode.OK => PermitServiceResult.Success(),
                 HttpStatusCode.NoContent => PermitServiceResult.NoContent(),
                 HttpStatusCode.NotFound => PermitServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
                 _ => PermitServiceResult.InternalServerError()
