@@ -8,7 +8,7 @@ $nextPort = $StartPort..$EndPort | where { $usedPorts -notcontains $_ } | select
 
 if ($nextPort -is [int]) {
     Write-Host "Using port $nextPort"
-    $url = "http://localhost:$nextPort/graphapi/"
+    $url = "http://localhost:$nextPort/graphapi"
     Write-Host "Url: $url"
     Write-Host "##vso[task.setvariable variable=ADDSMockUrl]$url"
     $env:ADDSMockUrl = $url
