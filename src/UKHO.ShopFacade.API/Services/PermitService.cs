@@ -21,6 +21,8 @@ namespace UKHO.ShopFacade.API.Services
 
             return upnServiceResult.StatusCode switch
             {
+                HttpStatusCode.OK => PermitServiceResult.Success(),
+                HttpStatusCode.NoContent => PermitServiceResult.NoContent(),
                 HttpStatusCode.NotFound => PermitServiceResult.NotFound(upnServiceResult.ErrorResponse),
                 _ => PermitServiceResult.InternalServerError()
             };

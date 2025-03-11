@@ -38,10 +38,24 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         }
 
         [Test]
-        public async Task WhenLicenceIdIsInValid_ThenReturn400BadRequestResponse()
+        public async Task WhenLicenceIdIsValid_ThenReturn200OKResponse()
         {
-            int invalidLicenceId = 0;
+            A.CallTo(() => _fakePermitService.GetPermitDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetPermitServiceResult(HttpStatusCode.OK));
 
+            var result = (StatusCodeResult)await _permitController.GetPermits(_fakeProductType, 1);
+
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                && call.GetArgument<EventId>(1) == EventIds.GetPermitsCallStarted.ToEventId()
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "GetPermits API call started.").MustHaveHappenedOnceExactly();
+        }
+
+        [TestCase(0)]
+        [TestCase(-1)]
+        public async Task WhenLicenceIdIsInValid_ThenReturn400BadRequestResponse(int invalidLicenceId)
+        {
             var result = (BadRequestObjectResult)await _permitController.GetPermits(_fakeProductType, invalidLicenceId);
 
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
@@ -102,10 +116,34 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.InternalErrorMessage).MustHaveHappenedOnceExactly();
         }
 
+        [Test]
+        public async Task WhenS100PermitsNotAvailableForLicence_ThenReturn204NoContentResponse()
+        {
+            A.CallTo(() => _fakePermitService.GetPermitDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetPermitServiceResult(HttpStatusCode.NoContent));
+
+            var result = (NoContentResult)await _permitController.GetPermits(_fakeProductType, 7);
+
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NoContent));
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                && call.GetArgument<EventId>(1) == EventIds.GetPermitsCallStarted.ToEventId()
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetPermitsCallStartedMessage).MustHaveHappenedOnceExactly();
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                && call.GetArgument<LogLevel>(0) == LogLevel.Warning
+                                                && call.GetArgument<EventId>(1) == EventIds.NoContentFound.ToEventId()
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.PermitNoContentMessage).MustHaveHappenedOnceExactly();
+        }
+
         private static PermitServiceResult GetPermitServiceResult(HttpStatusCode httpStatusCode)
         {
+            var streamWriter = new StreamWriter(new MemoryStream());
+
             return httpStatusCode switch
             {
+                HttpStatusCode.OK => PermitServiceResult.Success(),
+                HttpStatusCode.NoContent => PermitServiceResult.NoContent(),
                 HttpStatusCode.NotFound => PermitServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
                 _ => PermitServiceResult.InternalServerError()
             };
