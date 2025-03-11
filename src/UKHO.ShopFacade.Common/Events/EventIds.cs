@@ -101,17 +101,17 @@ namespace UKHO.ShopFacade.Common.Events
         /// <summary>
         /// 950019 - Request for Permit Service endpoint is started.
         /// </summary>
-        GetPermitServiceRequestStartedMessage = 950019,
+        GetPermitServiceRequestStarted = 950019,
 
         /// <summary>
         /// 950020 - Request for Permit Service endpoint is completed.
         /// </summary>
-        GetPermitServiceRequestCompletedMessage = 950020,
+        GetPermitServiceRequestCompleted = 950020,
 
         /// <summary>
         /// 950021 - Request for Permit Service Internal Server Error.
         /// </summary>
-        PermitServiceInternalErrorMessage = 950021
+        PermitServiceInternalError = 950021
 
 
     }

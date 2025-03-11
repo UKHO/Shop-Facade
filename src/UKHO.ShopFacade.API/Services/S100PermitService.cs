@@ -12,13 +12,13 @@ namespace UKHO.ShopFacade.API.Services
         private readonly IPermitServiceClient _permitServiceClient;
         public S100PermitService(ILogger<S100PermitService> logger, IPermitServiceClient permitServiceClient)
         {
-            _logger = logger;
-            _permitServiceClient = permitServiceClient;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _permitServiceClient = permitServiceClient ?? throw new ArgumentNullException(nameof(permitServiceClient));
         }
 
         public async Task<S100PermitServiceResult> GetS100PermitZipFileAsync(PermitRequest permitRequest)
         {
-            _logger.LogInformation(EventIds.GetPermitServiceRequestStartedMessage.ToEventId(), ErrorDetails.GetPermitServiceRequestStartedMessage);
+            _logger.LogInformation(EventIds.GetPermitServiceRequestStarted.ToEventId(), ErrorDetails.GetPermitServiceRequestStartedMessage);
             var response = await _permitServiceClient.CallPermitServiceApiAsync(permitRequest);
             var result = await CreatePermitServiceResponse(response);
             return result;
@@ -31,12 +31,12 @@ namespace UKHO.ShopFacade.API.Services
             {
                 var body = await httpResponse.Content.ReadAsStreamAsync();
                 response = S100PermitServiceResult.Success(body);
-                _logger.LogInformation(EventIds.GetPermitServiceRequestCompletedMessage.ToEventId(), ErrorDetails.GetPermitServiceRequestCompletedMessage);
+                _logger.LogInformation(EventIds.GetPermitServiceRequestCompleted.ToEventId(), ErrorDetails.GetPermitServiceRequestCompletedMessage);
             }
             else
             {
                 response = S100PermitServiceResult.InternalServerError();
-                _logger.LogInformation(EventIds.PermitServiceInternalErrorMessage.ToEventId(), ErrorDetails.PermitServiceInternalErrorMessage, httpResponse.StatusCode);
+                _logger.LogError(EventIds.PermitServiceInternalError.ToEventId(), ErrorDetails.PermitServiceInternalErrorMessage);
             }
             return response;
         }
