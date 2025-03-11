@@ -11,8 +11,11 @@ if ($nextPort -is [int]) {
     $url = "https://localhost:$nextPort/"
     Write-Host "Url: $url"
     Write-Host "##vso[task.setvariable variable=ADDSMockUrl]$url"
+    Write-Host "ADDSMockUrl: $ADDSMockUrl"
     Write-Host "##vso[task.setvariable variable=GraphApiConfiguration.GraphApiBaseUrl]$url"
+    Write-Host "GraphApiConfiguration.GraphApiBaseUrl: $GraphApiConfiguration.GraphApiBaseUrl"
     Write-Host "##vso[task.setvariable variable=Port]$nextPort"
+    Write-Host "Port: $Port"
 } else {
     throw "Can't find an available port"
 }
