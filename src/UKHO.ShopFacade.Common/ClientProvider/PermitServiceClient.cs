@@ -5,6 +5,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Options;
 using UKHO.ShopFacade.Common.Authentication;
 using UKHO.ShopFacade.Common.Configuration;
+using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Models.Response.S100Permit;
 
 namespace UKHO.ShopFacade.Common.ClientProvider
@@ -21,13 +22,14 @@ namespace UKHO.ShopFacade.Common.ClientProvider
             _permitServiceConfig = permitServiceConfig;
             _tokenProvider = tokenProvider;
         }
-        public async Task<HttpResponseMessage> CallPermitServiceApiAsync(PermitRequest requestBody)
+        public async Task<HttpResponseMessage> CallPermitServiceApiAsync(PermitRequest requestBody, string correlationId)
         {
             var uri = $"/{_permitServiceConfig.Value.Version}/permits/s100";
             using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri);
 
             var authToken = await _tokenProvider.GetManagedIdentityAuthAsync(_permitServiceConfig.Value.ResourceId!, _permitServiceConfig.Value.PublisherScope!);
             httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+            httpRequestMessage.Headers.Add(ApiHeaderKeys.XCorrelationIdHeaderKey, correlationId);
             httpRequestMessage.Content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
 
             return await _httpClient.SendAsync(httpRequestMessage, CancellationToken.None);

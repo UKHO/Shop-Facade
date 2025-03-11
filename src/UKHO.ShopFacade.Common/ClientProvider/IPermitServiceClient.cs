@@ -4,6 +4,6 @@ namespace UKHO.ShopFacade.Common.ClientProvider
 {
     public interface IPermitServiceClient
     {
-        public Task<HttpResponseMessage> CallPermitServiceApiAsync(PermitRequest requestBody);
+        public Task<HttpResponseMessage> CallPermitServiceApiAsync(PermitRequest requestBody, string correlationId);
     }
 }

@@ -16,10 +16,10 @@ namespace UKHO.ShopFacade.API.Services
             _permitServiceClient = permitServiceClient ?? throw new ArgumentNullException(nameof(permitServiceClient));
         }
 
-        public async Task<S100PermitServiceResult> GetS100PermitZipFileAsync(PermitRequest permitRequest)
+        public async Task<S100PermitServiceResult> GetS100PermitZipFileAsync(PermitRequest permitRequest, string correlationId)
         {
             _logger.LogInformation(EventIds.GetPermitServiceRequestStarted.ToEventId(), ErrorDetails.GetPermitServiceRequestStartedMessage);
-            var response = await _permitServiceClient.CallPermitServiceApiAsync(permitRequest);
+            var response = await _permitServiceClient.CallPermitServiceApiAsync(permitRequest, correlationId);
             var result = await CreatePermitServiceResponse(response);
             return result;
         }

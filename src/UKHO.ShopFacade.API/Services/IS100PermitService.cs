@@ -4,6 +4,6 @@ namespace UKHO.ShopFacade.API.Services
 {
     public interface IS100PermitService
     {
-        public Task<S100PermitServiceResult> GetS100PermitZipFileAsync(PermitRequest permitRequest);
+        public Task<S100PermitServiceResult> GetS100PermitZipFileAsync(PermitRequest permitRequest, string correlationId);
     }
 }

@@ -16,6 +16,7 @@ public class S100PermitServiceTests
     private ILogger<S100PermitService> _fakeLogger;
     private IPermitServiceClient _fakePermitServiceClient;
     private S100PermitService _s100PermitService;
+    private const string correlationId = "fakeCorrelationId";
 
     [SetUp]
     public void Setup()
@@ -69,10 +70,10 @@ public class S100PermitServiceTests
             Content = new StreamContent(expectedStream)
         };
 
-        A.CallTo(() => _fakePermitServiceClient.CallPermitServiceApiAsync(A<PermitRequest>.Ignored))
+        A.CallTo(() => _fakePermitServiceClient.CallPermitServiceApiAsync(A<PermitRequest>.Ignored, A<string>.Ignored))
             .Returns(httpResponse);
 
-        var result = await _s100PermitService.GetS100PermitZipFileAsync(permitRequest);
+        var result = await _s100PermitService.GetS100PermitZipFileAsync(permitRequest, correlationId);
         var memoryStreamResult = result.Value as MemoryStream;
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         Assert.That(result.Value, Is.Not.Null);
@@ -94,10 +95,10 @@ public class S100PermitServiceTests
         var permitRequest = new PermitRequest();
         var httpResponse = new HttpResponseMessage(HttpStatusCode.InternalServerError);
 
-        A.CallTo(() => _fakePermitServiceClient.CallPermitServiceApiAsync(A<PermitRequest>.Ignored))
+        A.CallTo(() => _fakePermitServiceClient.CallPermitServiceApiAsync(A<PermitRequest>.Ignored, A<string>.Ignored))
             .Returns(httpResponse);
 
-        var result = await _s100PermitService.GetS100PermitZipFileAsync(permitRequest);
+        var result = await _s100PermitService.GetS100PermitZipFileAsync(permitRequest, correlationId);
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));

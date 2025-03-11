@@ -33,7 +33,7 @@ namespace UKHO.ShopFacade.API.Services
             if (result != null) return result;
 
             var permitRequest = PermitRequestMapper.MapToPermitRequest(salesCatalogueResult.Value, upnServiceResult.Value, _permitExpiryDaysConfiguration.Value.PermitExpiryDays);
-            var s100PermitServiceResult = await _s100PermitService.GetS100PermitZipFileAsync(permitRequest);
+            var s100PermitServiceResult = await _s100PermitService.GetS100PermitZipFileAsync(permitRequest, correlationId);
 
             return HandleServiceResult(s100PermitServiceResult.StatusCode, s100PermitServiceResult.ErrorResponse) ?? PermitServiceResult.Success(s100PermitServiceResult.Value);
         }
@@ -43,6 +43,7 @@ namespace UKHO.ShopFacade.API.Services
             return statusCode switch
             {
                 HttpStatusCode.OK => null,
+                HttpStatusCode.NoContent => PermitServiceResult.NoContent(),
                 HttpStatusCode.NotFound => PermitServiceResult.NotFound(errorResponse),
                 _ => PermitServiceResult.InternalServerError()
             };
