@@ -51,6 +51,9 @@ namespace UKHO.ShopFacade.API.Controllers
 
             switch (permitServiceResult.StatusCode)
             {
+                case HttpStatusCode.OK:
+                    _logger.LogInformation(EventIds.GetPermitsCallCompleted.ToEventId(), ErrorDetails.GetPermitsCallCompletedMessage);
+                    return Ok();
                 case HttpStatusCode.NoContent:
                     _logger.LogWarning(EventIds.NoContentFound.ToEventId(), ErrorDetails.PermitNoContentMessage);
                     return NoContent();

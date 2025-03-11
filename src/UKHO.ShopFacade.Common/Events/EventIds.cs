@@ -86,7 +86,12 @@ namespace UKHO.ShopFacade.Common.Events
        /// <summary>
        /// 950016 - No Content Found Message.
        /// </summary>
-        NoContentFound = 950016
+        NoContentFound = 950016,
+
+       /// <summary>
+       /// 950017 - GetPermits API call completed.
+       /// </summary>
+       GetPermitsCallCompleted = 950017,
     }
 
     /// <summary>
