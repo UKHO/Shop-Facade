@@ -18,28 +18,26 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
     public class S100UpnScenarios : TestFixtureBase
     {
 
-        //private readonly S100UpnEndpoint _s100UpnEndpoint;
+        private readonly S100UpnEndpoint _s100UpnEndpoint;
 
-        //private readonly AuthTokenProvider _authTokenProvider;
+        private readonly AuthTokenProvider _authTokenProvider;
 
         public S100UpnScenarios()
         {
-            //_s100UpnEndpoint = new S100UpnEndpoint();
-            //_authTokenProvider = new AuthTokenProvider();
+            _s100UpnEndpoint = new S100UpnEndpoint();
+            _authTokenProvider = new AuthTokenProvider();
             var serviceProvider = GetServiceProvider();
             
         }
 
-       
-
-        //[Test]
-        //public async Task WhenUpnServiceEndpointCalledWithValidTokenAndLicenceId_ThenUpnServiceReturns200OkResponse()
-        //{
-        //    var response = await _s100UpnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "1");
-        //    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        //    var jsonResponse = JsonConvert.DeserializeObject<dynamic>(response.Content!);
-        //    Assert.That(jsonResponse!.Count > 0);
-        //}
+        [Test]
+        public async Task WhenUpnServiceEndpointCalledWithValidTokenAndLicenceId_ThenUpnServiceReturns200OkResponse()
+        {
+            var response = await _s100UpnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "1");
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            var jsonResponse = JsonConvert.DeserializeObject<dynamic>(response.Content!);
+            Assert.That(jsonResponse!.Count > 0);
+        }
 
         //[Test]
         //public async Task WhenUpnServiceEndpointCalledWithValidTokenWithNoRole_ThenUpnServiceReturns403ForbiddenResponse()
@@ -106,16 +104,6 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             var ports = await RunConsoleCommand($"netstat -ano | findstr {pid}");
 
             var options = new RestClientOptions("http://localhost:5678/");
-            //{
-            //    RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) =>
-            //    {
-            //        Console.WriteLine("RemoteCertificateValidationCallback invoked");
-            //        Console.WriteLine($"Certificate Subject: {certificate?.Subject}");
-            //        Console.WriteLine($"Certificate Issuer: {certificate?.Issuer}");
-            //        Console.WriteLine($"SSL Policy Errors: {sslPolicyErrors}");
-            //        return true; // Bypass SSL certificate validation
-            //    }
-            //};
             var client = new RestClient(options);
             Console.WriteLine($"Client initialization Started");
 
@@ -125,7 +113,6 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             var response = await client.ExecuteAsync(request);
             Console.Write(response.ToString());
             Console.WriteLine($"Request executed");
-
 
             // Log request and response details
             Console.WriteLine($"Request URL: {client.BuildUri(request)}");
