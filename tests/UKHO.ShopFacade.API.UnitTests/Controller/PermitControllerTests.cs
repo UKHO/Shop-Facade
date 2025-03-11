@@ -1,7 +1,9 @@
 ﻿using System.Net;
+using System.Text;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Amqp.Transaction;
 using Microsoft.Extensions.Logging;
 using UKHO.ShopFacade.API.Controllers;
 using UKHO.ShopFacade.API.Services;
@@ -35,6 +37,25 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         {
             var nullLogger = Assert.Throws<ArgumentNullException>(() => new PermitController(_fakeHttpContextAccessor, null!, null!));
             Assert.That(nullLogger!.ParamName, Is.EqualTo("logger"));
+        }
+
+        [Test]
+        public async Task WhenPermitServiceReturnsOk_ThenGetPermitsReturnsFileResult()
+        {
+            int validLicenceId = 12345678;
+            string productType = "S100";
+            var expectedStream = new MemoryStream(Encoding.UTF8.GetBytes(GetExpectedXmlString()));
+
+            var permitServiceResult = PermitServiceResult.Success(expectedStream);
+            A.CallTo(() => _fakePermitService.GetPermitDetails(validLicenceId, A<string>.Ignored)).Returns(permitServiceResult);
+
+            var result = await _permitController.GetPermits(productType, validLicenceId);
+
+            var fileResult = result as FileStreamResult;
+            Assert.That(fileResult, Is.Not.Null);
+            Assert.That(fileResult!.FileDownloadName, Is.EqualTo("Permits.zip"));
+            Assert.That(fileResult.FileStream.Length, Is.EqualTo(expectedStream.Length));
+            Assert.That(fileResult.ContentType, Is.EqualTo("application/zip"));
         }
 
         [Test]
@@ -109,6 +130,16 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                 HttpStatusCode.NotFound => PermitServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
                 _ => PermitServiceResult.InternalServerError()
             };
+        }
+        private static string GetExpectedXmlString()
+        {
+            var sb = new StringBuilder();
+            sb.Append("<?xmlversion=\"1.0\"encoding=\"UTF-8\"standalone=\"yes\"?><Permitxmlns:S100SE=\"http://www.iho.int/s100/se/5.2\"xmlns:ns2=\"http://standards.iso.org/iso/19115/-3/gco/1.0\"xmlns=\"http://www.iho.int/s100/se/5.2\"><S100SE:header>");
+            sb.Append("<S100SE:issueDate>2024-09-02+01:00</S100SE:issueDate><S100SE:dataServerName>fakeDataServerName</S100SE:dataServerName><S100SE:dataServerIdentifier>fakeDataServerIdentifier</S100SE:dataServerIdentifier><S100SE:version>1</S100SE:version>");
+            sb.Append("<S100SE:userpermit>fakeUserPermit</S100SE:userpermit></S100SE:header><S100SE:products><S100SE:productid=\"fakeID\"><S100SE:datasetPermit><S100SE:filename>fakefilename</S100SE:filename><S100SE:editionNumber>1</S100SE:editionNumber>");
+            sb.Append("<S100SE:issueDate>2024-09-02+01:00</S100SE:issueDate><S100SE:expiry>2024-09-02</S100SE:expiry><S100SE:encryptedKey>fakeencryptedkey</S100SE:encryptedKey></S100SE:datasetPermit></S100SE:product></S100SE:products></Permit>");
+
+            return sb.ToString();
         }
     }
 }
