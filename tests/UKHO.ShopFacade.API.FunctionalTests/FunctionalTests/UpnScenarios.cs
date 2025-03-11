@@ -55,7 +55,6 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             var response = await _upnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "3");
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             var jsonResponse = JsonConvert.DeserializeObject<dynamic>(response.Content!);
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             Assert.That("Licence not found.", Is.EqualTo((string)jsonResponse!.errors[0].description.ToString()));
         }
 
