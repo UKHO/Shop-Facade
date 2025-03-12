@@ -88,15 +88,40 @@ namespace UKHO.ShopFacade.Common.Events
         /// </summary>
         NoContentFound = 950016,
 
-        /// <summary>
-        /// 950017 - GetPermits API call completed.
-        /// </summary>
-        GetPermitsCallCompleted = 950017,
+       /// <summary>
+       /// 950017 - GetPermits API call completed.
+       /// </summary>
+       GetPermitsCallCompleted = 950017,
 
         /// <summary>
-        /// 950018 - New access token is added to cache for external end point resource.
+        /// 950018 - UpnService call started.
         /// </summary>
-        CachingExternalEndPointToken = 950018,
+        UPNServiceCallStarted = 950018,
+
+        /// <summary>
+        /// 950018 - UpnService call completed.
+        /// </summary>
+        UPNServiceCallCompleted = 950018,
+
+        /// <summary>
+        /// 950019 - UpnService No Content Found Message.
+        /// </summary>
+        UPNServiceNoContentFound = 950019,
+
+        /// <summary>
+        /// 950020 - UpnService No data found against license.
+        /// </summary>
+        UpnServiceLicenceNotFound = 950020,
+
+        /// <summary>
+        /// 950021 - UpnService Internal error occurred.
+        /// </summary>
+        UpnServiceInternalError = 950022,
+
+        /// <summary>
+        /// 950023 - New access token is added to cache for external end point resource.
+        /// </summary>
+        CachingExternalEndPointToken = 950023
     }
 
     /// <summary>
