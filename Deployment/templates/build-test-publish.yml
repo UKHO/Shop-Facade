@@ -329,13 +329,13 @@ jobs:
           $mockConfigPath = "$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock\mock-configuration.json"
           $configPath = "$(configurationpath)"
           $overrideConfigPath = "$(overrideconfigurationpath)"
-          $useSsl = $false
+          #$useSsl = $false
 
           if (Test-Path $mockConfigPath) {
               $json = Get-Content $mockConfigPath -Raw | ConvertFrom-Json
               $json.configurationPath = $configPath
               $json.overrideConfigurationPath = $overrideConfigPath
-              $json.useSsl = $useSsl
+              #$json.useSsl = $useSsl
               $json | ConvertTo-Json -Depth 32 | Set-Content $mockConfigPath
               Write-Host "Updated mock-configuration.json with paths."
           } else {
@@ -377,19 +377,19 @@ jobs:
         zipAfterPublish: false
         modifyOutputPath: false
 
-    # - task: CopyFiles@2
-    #   displayName: "Copy additional configuration directories"
-    #   inputs:
-    #     SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\override-configuration'
-    #     Contents: '**'
-    #     TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\override-configuration'
+    - task: CopyFiles@2
+      displayName: "Copy additional configuration directories"
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\override-configuration'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\override-configuration'
 
-    # - task: CopyFiles@2
-    #   displayName: "Copy additional configuration directories"
-    #   inputs:
-    #     SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\service-configuration'
-    #     Contents: '**'
-    #     TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
+    - task: CopyFiles@2
+      displayName: "Copy additional configuration directories"
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\service-configuration'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
 
     - task: ArchiveFiles@2
       displayName: "Zip ADDS Mock Service"

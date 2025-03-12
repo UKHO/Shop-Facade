@@ -66,28 +66,28 @@ jobs:
             parameters:
               AzureSubscription: ${{parameters.AzureSubscription}}
 
-- deployment: functionaltests
-  dependsOn:  DeployApp
-  displayName: "${{parameters.environment}} - functional automated tests"
-  environment: "shopfacade-${{parameters.environment}}"
-  pool: $(WindowPool)
-  #pool: $(DeploymentPool)
-  #container: ${{parameters.Container}}
-  # condition: and(succeeded('deployapp'), eq( ${{parameters.runtests}} , 'true'))
-  workspace:
-   clean: all
-  variables:
-  - name: configurationpath
-    value: '$(Build.SourcesDirectory)\UKHOADDSMockService\service-configuration'
-  - name: overrideconfigurationpath
-    value: '$(Build.SourcesDirectory)\UKHOADDSMockService\override-configuration'
-    #value: '$(build.sourcesdirectory)\src\mocksssss\override-configuration'
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-          # - checkout: self
-          #   submodules: recursive
-          - template: continuous-testing.yml
-            parameters:
-              azuresubscription: ${{parameters.azuresubscription}}
+# - deployment: functionaltests
+#   dependsOn:  DeployApp
+#   displayName: "${{parameters.environment}} - functional automated tests"
+#   environment: "shopfacade-${{parameters.environment}}"
+#   pool: $(WindowPool)
+#   #pool: $(DeploymentPool)
+#   #container: ${{parameters.Container}}
+#   # condition: and(succeeded('deployapp'), eq( ${{parameters.runtests}} , 'true'))
+#   workspace:
+#    clean: all
+#   variables:
+#   - name: configurationpath
+#     value: '$(Build.SourcesDirectory)\UKHOADDSMockService\service-configuration'
+#   - name: overrideconfigurationpath
+#     value: '$(Build.SourcesDirectory)\UKHOADDSMockService\override-configuration'
+#     #value: '$(build.sourcesdirectory)\src\mocksssss\override-configuration'
+#   strategy:
+#     runOnce:
+#       deploy:
+#         steps:
+#           # - checkout: self
+#           #   submodules: recursive
+#           - template: continuous-testing.yml
+#             parameters:
+#               azuresubscription: ${{parameters.azuresubscription}}
