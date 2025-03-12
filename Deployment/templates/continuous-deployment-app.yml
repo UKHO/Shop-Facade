@@ -22,6 +22,7 @@ steps:
 
   - task: PowerShell@2
     displayName: "Extract Artifact ZIP"
+    condition: and(succeeded(), eq(variables['Environment.Name'], 'ShopFacade-Dev'))
     inputs:
       targetType: "inline"
       script: |
@@ -38,6 +39,7 @@ steps:
 
   - task: PowerShell@2
     displayName: "Set overrideconfigurationpath and configurationpath pipeline variables"
+    condition: and(succeeded(), eq(variables['Environment.Name'], 'ShopFacade-Dev'))
     inputs:
       targetType: 'inline'
       script: |
