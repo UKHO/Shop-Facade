@@ -12,4 +12,14 @@
     <PackageReference Include="WireMock.Net" Version="1.6.11" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Stubs\TestData\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Stubs\TestData\Permits.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

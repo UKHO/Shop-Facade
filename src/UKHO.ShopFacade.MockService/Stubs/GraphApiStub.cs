@@ -22,6 +22,7 @@ namespace UKHO.ShopFacade.MockService.Stubs
             var licenceIdForEmptyResponse = "3";
             var licenceIdFor204Response = "4";
 
+            var permitZipFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Stubs/TestData", "Permits.zip");
             // Mock endpoint for Graph API
             var endpoint = $"/sites/{_graphApiConfiguration.SiteId}/lists/{_graphApiConfiguration.ListId}/items";
 
@@ -105,6 +106,19 @@ namespace UKHO.ShopFacade.MockService.Stubs
                             }}
                             ]                        
                     }}")
+            );
+
+            //Temporarily added mock response for Permit Service endpoint to return permit zip file. This mock will be replaced with the common ADDSMock.
+            server.Given(
+            Request.Create()
+                    .WithPath("/v1/permits/s100")
+                    .UsingPost()
+                )
+            .RespondWith(
+                Response.Create()
+                    .WithStatusCode(200)
+                    .WithHeader("Content-Type", "application/json")
+                    .WithBodyFromFile(permitZipFilePath)
             );
         }
     }
