@@ -25,3 +25,7 @@ output "webapp_slot_name" {
 output "webapp_slot_default_site_hostname" {
   value = module.webapp_service.slot_default_site_hostname
 }
+
+output "adds_web_app_url" {
+value = "https://${module.webapp_service.slot_default_site_hostname}"
+}
