@@ -69,6 +69,8 @@ resource "azurerm_linux_web_app_slot" "staging" {
     ftps_state = "Disabled"
   }
 
+  app_settings = var.app_settings
+
   identity {
     type = "SystemAssigned"
   }
