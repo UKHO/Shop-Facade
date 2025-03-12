@@ -1,5 +1,7 @@
 ﻿using System.Net;
+using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.DataProvider;
+using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.Models.Response.Upn;
 
 namespace UKHO.ShopFacade.API.Services
@@ -7,22 +9,34 @@ namespace UKHO.ShopFacade.API.Services
     public class UpnService : IUpnService
     {
         private readonly IUpnDataProvider _upnDataProvider;
-        public UpnService(IUpnDataProvider upnDataProvider)
+        private readonly ILogger<UpnService> _logger;
+        public UpnService(IUpnDataProvider upnDataProvider, ILogger<UpnService> logger)
         {
             _upnDataProvider = upnDataProvider ?? throw new ArgumentNullException(nameof(upnDataProvider));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<UpnServiceResult> GetUpnDetails(int licenceId, string correlationId)
         {
+            _logger.LogInformation(EventIds.UPNServiceCallStarted.ToEventId(), ErrorDetails.UpnServiceCallStartedMessage);
+
             var upnDataProviderResult = await _upnDataProvider.GetUpnDetailsByLicenseId(licenceId, correlationId);
 
-            return upnDataProviderResult.StatusCode switch
+            switch (upnDataProviderResult.StatusCode)
             {
-                HttpStatusCode.OK => UpnServiceResult.Success(SetUpnDetailResponse(upnDataProviderResult)!),
-                HttpStatusCode.NoContent => UpnServiceResult.NoContent(),
-                HttpStatusCode.NotFound => UpnServiceResult.NotFound(upnDataProviderResult.ErrorResponse),
-                _ => UpnServiceResult.InternalServerError()
-            };
+                case HttpStatusCode.OK:
+                    _logger.LogInformation(EventIds.UPNServiceCallCompleted.ToEventId(), ErrorDetails.UpnServiceCallCompletedMessage);
+                    return UpnServiceResult.Success(SetUpnDetailResponse(upnDataProviderResult)!);
+                case HttpStatusCode.NoContent:
+                    _logger.LogWarning(EventIds.UPNServiceNoContentFound.ToEventId(), ErrorDetails.NoContentMessage);
+                    return UpnServiceResult.NoContent();
+                case HttpStatusCode.NotFound:
+                    _logger.LogWarning(EventIds.UpnServiceLicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
+                    return UpnServiceResult.NotFound(upnDataProviderResult.ErrorResponse);
+                default:
+                    _logger.LogError(EventIds.UpnServiceInternalError.ToEventId(), ErrorDetails.InternalErrorMessage);
+                    return UpnServiceResult.InternalServerError();
+            }
         }
 
         private static List<UserPermit> SetUpnDetailResponse(UpnDataProviderResult upnDataProviderResult)
