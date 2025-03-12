@@ -10,8 +10,7 @@ steps:
       script: |
         $url = "http://localhost:5678/"
         Write-Host "##vso[task.setvariable variable=GraphApiConfiguration.GraphApiBaseUrl]$url"
-        $env:GraphApiConfiguration.GraphApiBaseUrl = $url
-        Write-Host "GraphApiConfiguration.GraphApiBaseUrl: $env:GraphApiConfiguration.GraphApiBaseUrl"
+        Write-Host "GraphApiConfiguration.GraphApiBaseUrl: $url"
 
   - task: FileTransform@2
     displayName: "File Transform: Mock Service Application Settings"
