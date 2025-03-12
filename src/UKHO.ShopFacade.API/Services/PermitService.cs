@@ -28,7 +28,7 @@ namespace UKHO.ShopFacade.API.Services
             var result = HandleServiceResult(upnServiceResult.StatusCode, upnServiceResult.ErrorResponse);
             if (result != null) return result;
 
-            var salesCatalogueResult = await _salesCatalogueService.GetProductsCatalogueAsync();
+            var salesCatalogueResult = await _salesCatalogueService.GetProductsCatalogueAsync(correlationId);
             result = HandleServiceResult(salesCatalogueResult.StatusCode, salesCatalogueResult.ErrorResponse);
             if (result != null) return result;
 

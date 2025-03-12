@@ -58,10 +58,10 @@ namespace UKHO.ShopFacade.API.Controllers
                     _logger.LogWarning(EventIds.NoContentFound.ToEventId(), ErrorDetails.PermitNoContentMessage);
                     return NoContent();
                 case HttpStatusCode.NotFound:
-                    _logger.LogWarning(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
+                    _logger.LogWarning(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.PermitLicenceNotFoundMessage);
                     return NotFound(permitServiceResult.ErrorResponse);
                 default:
-                    _logger.LogError(EventIds.InternalError.ToEventId(), ErrorDetails.InternalErrorMessage);
+                    _logger.LogError(EventIds.InternalError.ToEventId(), ErrorDetails.PermitInternalErrorMessage);
                     return StatusCode((int)permitServiceResult.StatusCode);
             }
         }

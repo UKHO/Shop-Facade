@@ -4,6 +4,6 @@ namespace UKHO.ShopFacade.API.Services
 {
     public interface ISalesCatalogueService
     {
-        public Task<SalesCatalogueResult> GetProductsCatalogueAsync();
+        public Task<SalesCatalogueResult> GetProductsCatalogueAsync(string correlationId);
     }
 }

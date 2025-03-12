@@ -20,13 +20,15 @@ namespace UKHO.ShopFacade.Common.ClientProvider
             _tokenProvider = tokenProvider;
         }
 
-        public async Task<HttpResponseMessage> CallSalesCatalogueServiceApi()
+        public async Task<HttpResponseMessage> CallSalesCatalogueServiceApi(string correlationId)
         {
             var uri = $"/{_salesCatalogueConfig.Value.Version}/catalogues/{_salesCatalogueConfig.Value.ProductType}/basic";
             using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
             var authToken = _tokenProvider.GetManagedIdentityAuthAsync(_salesCatalogueConfig.Value.ResourceId!, _salesCatalogueConfig.Value.PublisherScope!).Result;
             httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+
+            httpRequestMessage.Headers.Add("X-Correlation-ID", correlationId);
 
             return await _httpClient.SendAsync(httpRequestMessage, CancellationToken.None);
         }

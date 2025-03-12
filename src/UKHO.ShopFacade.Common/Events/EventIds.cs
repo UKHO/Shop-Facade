@@ -88,30 +88,55 @@ namespace UKHO.ShopFacade.Common.Events
         /// </summary>
         NoContentFound = 950016,
 
-        /// <summary>
-        /// 950017 - GetPermits API call completed.
-        /// </summary>
-        GetPermitsCallCompleted = 950017,
+       /// <summary>
+       /// 950017 - GetPermits API call completed.
+       /// </summary>
+       GetPermitsCallCompleted = 950017,
 
         /// <summary>
-        /// 950018 - New access token is added to cache for external end point resource.
+        /// 950018 - UpnService call started.
         /// </summary>
-        CachingExternalEndPointToken = 950018,
+        UPNServiceCallStarted = 950018,
 
         /// <summary>
-        /// 950019 - Request for Permit Service endpoint is started.
+        /// 950019 - UpnService call completed.
         /// </summary>
-        GetPermitServiceRequestStarted = 950019,
+        UPNServiceCallCompleted = 950019,
 
         /// <summary>
-        /// 950020 - Request for Permit Service endpoint is completed.
+        /// 950020 - UpnService No Content Found Message.
         /// </summary>
-        GetPermitServiceRequestCompleted = 950020,
+        UPNServiceNoContentFound = 950020,
 
         /// <summary>
-        /// 950021 - Request for Permit Service Internal Server Error.
+        /// 950021 - UpnService No data found against license.
         /// </summary>
-        PermitServiceInternalError = 950021
+        UpnServiceLicenceNotFound = 950021,
+
+        /// <summary>
+        /// 950022 - UpnService Internal error occurred.
+        /// </summary>
+        UpnServiceInternalError = 950022,
+
+        /// <summary>
+        /// 950023 - New access token is added to cache for external end point resource.
+        /// </summary>
+        CachingExternalEndPointToken = 950023,
+
+        /// <summary>
+        /// 950024 - Request for Permit Service endpoint is started.
+        /// </summary>
+        GetPermitServiceRequestStarted = 950024,
+
+        /// <summary>
+        /// 950025 - Request for Permit Service endpoint is completed.
+        /// </summary>
+        GetPermitServiceRequestCompleted = 950025,
+
+        /// <summary>
+        /// 950026 - Request for Permit Service Internal Server Error.
+        /// </summary>
+        PermitServiceInternalError = 950026
 
 
     }

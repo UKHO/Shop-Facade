@@ -2,6 +2,6 @@
 {
     public interface ISalesCatalogueClient
     {
-        public Task<HttpResponseMessage> CallSalesCatalogueServiceApi();
+        public Task<HttpResponseMessage> CallSalesCatalogueServiceApi(string correlationId);
     }
 }
