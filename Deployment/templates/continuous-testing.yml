@@ -71,6 +71,8 @@ steps:
         # Print the pipeline variable "override-configuration"
         Write-Host "Pipeline Variable 'service-configuration': $env:OverrideConfigurationPath"
 
+        Write-Host "Pipeline Variable 'Port': $env:Port"
+
   - task: PowerShell@2
     condition: always()
     inputs:

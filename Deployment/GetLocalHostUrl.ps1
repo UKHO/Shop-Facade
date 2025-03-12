@@ -15,7 +15,7 @@ if ($nextPort -is [int]) {
     Write-Host "ADDSMockUrl: $env:ADDSMockUrl"
     Write-Host "##vso[task.setvariable variable=GraphApiConfiguration.GraphApiBaseUrl]$url"
     Write-Host "GraphApiConfiguration.GraphApiBaseUrl: $($env:GraphApiConfiguration.GraphApiBaseUrl)"
-    Write-Host "##vso[task.setvariable variable=Port]$nextPort"
+    Write-Host "##vso[task.setvariable variable=Port;isOutput=true]]$nextPort"
     $env:Port = $nextPort
     Write-Host "Port: $env:Port"
 } else {
