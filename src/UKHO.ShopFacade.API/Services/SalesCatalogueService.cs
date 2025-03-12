@@ -19,10 +19,10 @@ namespace UKHO.ShopFacade.API.Services
             _salesCatalogueClient = salesCatalogueClient;
         }
 
-        public async Task<SalesCatalogueResult> GetProductsCatalogueAsync()
+        public async Task<SalesCatalogueResult> GetProductsCatalogueAsync(string correlationId)
         {
             _logger.LogInformation(EventIds.GetSalesCatalogueDataRequestStarted.ToEventId(), ErrorDetails.GetSalesCatalogueDataRequestStartedMessage);
-            var httpResponse = await _salesCatalogueClient.CallSalesCatalogueServiceApi();
+            var httpResponse = await _salesCatalogueClient.CallSalesCatalogueServiceApi(correlationId);
             return await CreateSalesCatalogueServiceResponse(httpResponse);
         }
 

@@ -14,6 +14,7 @@ namespace UKHO.ShopFacade.API.Tests.Services
         private ISalesCatalogueClient _fakeSalesCatalogueClient;
         private ILogger<SalesCatalogueService> _fakeLogger;
         private SalesCatalogueService _salesCatalogueService;
+        private readonly string _correlationId = Guid.NewGuid().ToString();
 
         [SetUp]
         public void Setup()
@@ -36,10 +37,10 @@ namespace UKHO.ShopFacade.API.Tests.Services
                 Content = new StringContent(JsonConvert.SerializeObject(products))
             };
             httpResponse.Content.Headers.LastModified = DateTimeOffset.UtcNow;
-            A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi()).Returns(Task.FromResult(httpResponse));
+            A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi(A<string>.Ignored)).Returns(Task.FromResult(httpResponse));
 
             // Act
-            var result = await _salesCatalogueService.GetProductsCatalogueAsync();
+            var result = await _salesCatalogueService.GetProductsCatalogueAsync(_correlationId);
 
             // Assert
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
@@ -53,10 +54,10 @@ namespace UKHO.ShopFacade.API.Tests.Services
         {
             // Arrange
             var httpResponse = new HttpResponseMessage(HttpStatusCode.NotModified);
-            A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi()).Returns(Task.FromResult(httpResponse));
+            A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi(A<string>.Ignored)).Returns(Task.FromResult(httpResponse));
 
             // Act
-            var result = await _salesCatalogueService.GetProductsCatalogueAsync();
+            var result = await _salesCatalogueService.GetProductsCatalogueAsync(_correlationId);
 
             // Assert
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
@@ -74,10 +75,10 @@ namespace UKHO.ShopFacade.API.Tests.Services
             {
                 RequestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri("http://example.com"))
             };
-            A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi()).Returns(Task.FromResult(httpResponse));
+            A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi(A<string>.Ignored)).Returns(Task.FromResult(httpResponse));
 
             // Act
-            var result = await _salesCatalogueService.GetProductsCatalogueAsync();
+            var result = await _salesCatalogueService.GetProductsCatalogueAsync(_correlationId);
 
             // Assert
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));

@@ -17,7 +17,7 @@ namespace UKHO.ShopFacade.API.Services
         public async Task<PermitServiceResult> GetPermitDetails(int licenceId, string correlationId)
         {
             var upnServiceResult = await _upnService.GetUpnDetails(licenceId, correlationId);
-            var products = await _salesCatalogueService.GetProductsCatalogueAsync();
+            var products = await _salesCatalogueService.GetProductsCatalogueAsync(correlationId);
 
             return upnServiceResult.StatusCode switch
             {
