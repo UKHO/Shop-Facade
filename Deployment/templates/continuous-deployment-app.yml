@@ -20,6 +20,55 @@ steps:
       appName: "$(MOCK_WEB_APP_NAME)"  
       package: "$(Pipeline.Workspace)/UKHOShopFacadeMockServiceAPI/UKHOShopFacadeMockService.zip"
 
+  - task: PowerShell@2
+    displayName: "Extract Artifact ZIP"
+    inputs:
+      targetType: "inline"
+      script: |
+        $artifactPath = "$(Pipeline.Workspace)/UKHOADDSMockService"  # Path where artifact is downloaded
+        $zipFile = Get-ChildItem -Path $artifactPath -Filter "*.zip" | Select-Object -First 1
+        if ($zipFile) {
+            Write-Host "Extracting: $($zipFile.FullName)"
+            Expand-Archive -Path $zipFile.FullName -DestinationPath $artifactPath -Force
+            Write-Host "Extraction completed!"
+        } else {
+            Write-Host "No ZIP file found in artifact!"
+            exit 1
+        }
+
+  - task: PowerShell@2
+    displayName: "Set overrideconfigurationpath and configurationpath pipeline variables"
+    inputs:
+      targetType: 'inline'
+      script: |
+        # Find the service-configuration folder
+        $serviceConfigurationFolder = Get-ChildItem -Path "$(Pipeline.Workspace)/UKHOADDSMockService" -Recurse -Directory | Where-Object { $_.Name -eq "service-configuration" }
+
+        if ($serviceConfigurationFolder) {
+            $serviceConfigPath = $serviceConfigurationFolder.FullName
+            Write-Host "Found service-configuration folder: $serviceConfigPath"
+            Write-Host "##vso[task.setvariable variable=configurationpath]$serviceConfigPath"
+        } else {
+            Write-Host "Error: service-configuration folder not found!"
+            exit 1  # Fail pipeline if folder is missing
+        }
+
+        # Find the override-configuration folder
+        $overrideConfigurationFolder = Get-ChildItem -Path "$(Pipeline.Workspace)/UKHOADDSMockService" -Recurse -Directory | Where-Object { $_.Name -eq "override-configuration" }
+
+        if ($overrideConfigurationFolder) {
+            $overrideConfigPath = $overrideConfigurationFolder.FullName
+            Write-Host "Found override-configuration folder: $overrideConfigPath"
+            Write-Host "##vso[task.setvariable variable=overrideconfigurationpath]$overrideConfigPath"
+        } else {
+            Write-Host "Error: override-configuration folder not found!"
+            exit 1  # Fail pipeline if folder is missing
+        }
+
+        # Output confirmation
+        Write-Host "service-configuration is set to: $serviceConfigPath"
+        Write-Host "override-configuration is set to: $overrideConfigPath"
+
   - task: FileTransform@2
     displayName: "File Transform: ADDS Mock Service Application Settings"
     condition: and(succeeded(), eq(variables['Environment.Name'], 'ShopFacade-Dev'))
@@ -28,16 +77,16 @@ steps:
       xmlTransformationRules: ''
       jsonTargetFiles: '**/mock-configuration.json'
 
-  - task: AzureCLI@2
-    displayName: "View mock-configuration.json"
-    inputs:
-      azureSubscription: "${{ parameters.AzureSubscription }}"
-      scriptType: bash
-      scriptLocation: inlineScript
-      inlineScript: |
-        instance=$(az webapp list-instances --resource-group $(ResourceGroup) --name $(ADDS_MOCK_WEB_APP_NAME) --query "[0].id" -o tsv)
-        az webapp ssh --ids $instance --command "find /home -type d -name 'service-configuration'"  
-        cat '$(Pipeline.Workspace)/UKHOADDSMockService/mock-configuration.json'
+  # - task: AzureCLI@2
+  #   displayName: "View mock-configuration.json"
+  #   inputs:
+  #     azureSubscription: "${{ parameters.AzureSubscription }}"
+  #     scriptType: bash
+  #     scriptLocation: inlineScript
+  #     inlineScript: |
+  #       instance=$(az webapp list-instances --resource-group $(ResourceGroup) --name $(ADDS_MOCK_WEB_APP_NAME) --query "[0].id" -o tsv)
+  #       az webapp ssh --ids $instance --command "find /home -type d -name 'service-configuration'"  
+  #       cat '$(Pipeline.Workspace)/UKHOADDSMockService/mock-configuration.json'
 
   - task: AzureWebApp@1
     displayName: "Deploy to ShopFacade ADDS Mock"
