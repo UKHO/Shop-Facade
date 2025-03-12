@@ -8,7 +8,6 @@ module "webapp_service" {
   source                    = "./Modules/Webapp"
   name                      = local.web_app_name
   mock_webapp_name          = local.mock_web_app_name
-  adds_mock_webapp_name     = local.adds_mock_web_app_name
   service_name              = local.service_name                 
   resource_group_name       = azurerm_resource_group.rg.name
   env_name                  = local.env_name
@@ -26,12 +25,6 @@ module "webapp_service" {
     "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG"           = "1"    
   }
   mock_app_settings = {
-    "KeyVaultSettings__ServiceUri"                              = "https://${local.key_vault_name}.vault.azure.net/"
-    "ASPNETCORE_ENVIRONMENT"                                   = local.env_name
-    "WEBSITE_RUN_FROM_PACKAGE"                                 = "1"
-    "WEBSITE_ENABLE_SYNC_UPDATE_SITE"                          = "true"
-  }
-  adds_mock_app_settings = {
     "KeyVaultSettings__ServiceUri"                              = "https://${local.key_vault_name}.vault.azure.net/"
     "ASPNETCORE_ENVIRONMENT"                                   = local.env_name
     "WEBSITE_RUN_FROM_PACKAGE"                                 = "1"

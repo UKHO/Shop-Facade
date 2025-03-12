@@ -54,10 +54,6 @@ jobs:
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
     - name  : MOCK_WEB_APP_NAME
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.MOCK_WEB_APP_NAME'] ]
-    - name  : ADDS_MOCK_WEB_APP_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ADDS_MOCK_WEB_APP_NAME'] ]
-    - name  : "GraphApiConfiguration.GraphApiBaseUrl"
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ADDS_MOCK_WEBAPP_URL'] ]
   strategy:
     runOnce:
       deploy:
