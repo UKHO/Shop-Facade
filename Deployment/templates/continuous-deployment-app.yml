@@ -8,7 +8,7 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        $url = "http://localhost:5678/"
+        $url = "https://localhost:5678/"
         Write-Host "##vso[task.setvariable variable=GraphApiConfiguration.GraphApiBaseUrl]$url"
         Write-Host "GraphApiConfiguration.GraphApiBaseUrl: $url"
 
