@@ -17,6 +17,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Stubs\TestData\catalogue.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Stubs\TestData\Permits.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
