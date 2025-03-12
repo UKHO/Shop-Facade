@@ -22,7 +22,8 @@ module "webapp_service" {
     "ASPNETCORE_ENVIRONMENT"                                    = local.env_name
     "WEBSITE_RUN_FROM_PACKAGE"                                  = "1"
     "WEBSITE_ENABLE_SYNC_UPDATE_SITE"                           = "true"
-    "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG"           = "1"    
+    "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG"           = "1"
+    "WEBSITE_SKIP_RUNNING_KUDUAGENT"                            = "false"        
   }
   mock_app_settings = {
     "KeyVaultSettings__ServiceUri"                              = "https://${local.key_vault_name}.vault.azure.net/"
