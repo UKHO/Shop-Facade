@@ -72,10 +72,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
             var salesCatalogueResult = SalesCatalogueResult.Success(products);
             var s100PermitServiceResult = S100PermitServiceResult.Success(new MemoryStream(Encoding.UTF8.GetBytes(GetExpectedXmlString())));
 
-            A.CallTo(() => _fakeUpnService.GetUpnDetails(licenceId, correlationId)).Returns(upnServiceResult);
-            A.CallTo(() => _fakeSalesCatalogueService.GetProductsCatalogueAsync()).Returns(salesCatalogueResult);
-            A.CallTo(() => _fakeS100PermitService.GetS100PermitZipFileAsync(A<PermitRequest>.Ignored, correlationId)).Returns(s100PermitServiceResult);
-            A.CallTo(() => _fakePermitExpiryDaysConfiguration.Value).Returns(new PermitExpiryDaysConfiguration { PermitExpiryDays = 30 });
+            SetupFakeCalls(licenceId, upnServiceResult, salesCatalogueResult, s100PermitServiceResult);
 
             var result = await _permitService.GetPermitDetails(licenceId, correlationId);
 
@@ -90,10 +87,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
             var salesCatalogueResult = SalesCatalogueResult.Success(new List<Products>());
             var s100PermitServiceResult = S100PermitServiceResult.InternalServerError();
 
-            A.CallTo(() => _fakeUpnService.GetUpnDetails(licenceId, correlationId)).Returns(upnServiceResult);
-            A.CallTo(() => _fakeSalesCatalogueService.GetProductsCatalogueAsync()).Returns(salesCatalogueResult);
-            A.CallTo(() => _fakeS100PermitService.GetS100PermitZipFileAsync(A<PermitRequest>.Ignored, correlationId)).Returns(s100PermitServiceResult);
-            A.CallTo(() => _fakePermitExpiryDaysConfiguration.Value).Returns(new PermitExpiryDaysConfiguration { PermitExpiryDays = 30 });
+            SetupFakeCalls(licenceId, upnServiceResult, salesCatalogueResult, s100PermitServiceResult);
 
             var result = await _permitService.GetPermitDetails(licenceId, correlationId);
 
@@ -108,10 +102,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
             var salesCatalogueResult = SalesCatalogueResult.Success(new List<Products>());
             var s100PermitServiceResult = S100PermitServiceResult.Success(new MemoryStream(Encoding.UTF8.GetBytes(GetExpectedXmlString())));
 
-            A.CallTo(() => _fakeUpnService.GetUpnDetails(licenceId, correlationId)).Returns(upnServiceResult);
-            A.CallTo(() => _fakeSalesCatalogueService.GetProductsCatalogueAsync()).Returns(salesCatalogueResult);
-            A.CallTo(() => _fakeS100PermitService.GetS100PermitZipFileAsync(A<PermitRequest>.Ignored, correlationId)).Returns(s100PermitServiceResult);
-            A.CallTo(() => _fakePermitExpiryDaysConfiguration.Value).Returns(new PermitExpiryDaysConfiguration { PermitExpiryDays = 30 });
+            SetupFakeCalls(licenceId, upnServiceResult, salesCatalogueResult, s100PermitServiceResult);
 
             var result = await _permitService.GetPermitDetails(licenceId, correlationId);
 
@@ -126,10 +117,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
             var salesCatalogueResult = SalesCatalogueResult.InternalServerError(new ErrorResponse());
             var s100PermitServiceResult = S100PermitServiceResult.Success(new MemoryStream(Encoding.UTF8.GetBytes(GetExpectedXmlString())));
 
-            A.CallTo(() => _fakeUpnService.GetUpnDetails(licenceId, correlationId)).Returns(upnServiceResult);
-            A.CallTo(() => _fakeSalesCatalogueService.GetProductsCatalogueAsync()).Returns(salesCatalogueResult);
-            A.CallTo(() => _fakeS100PermitService.GetS100PermitZipFileAsync(A<PermitRequest>.Ignored, correlationId)).Returns(s100PermitServiceResult);
-            A.CallTo(() => _fakePermitExpiryDaysConfiguration.Value).Returns(new PermitExpiryDaysConfiguration { PermitExpiryDays = 30 });
+            SetupFakeCalls(licenceId, upnServiceResult, salesCatalogueResult, s100PermitServiceResult);
 
             var result = await _permitService.GetPermitDetails(licenceId, correlationId);
 
@@ -144,14 +132,19 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
             var salesCatalogueResult = SalesCatalogueResult.Success(new List<Products>());
             var s100PermitServiceResult = S100PermitServiceResult.Success(new MemoryStream(Encoding.UTF8.GetBytes(GetExpectedXmlString())));
 
-            A.CallTo(() => _fakeUpnService.GetUpnDetails(licenceId, correlationId)).Returns(upnServiceResult);
-            A.CallTo(() => _fakeSalesCatalogueService.GetProductsCatalogueAsync()).Returns(salesCatalogueResult);
-            A.CallTo(() => _fakeS100PermitService.GetS100PermitZipFileAsync(A<PermitRequest>.Ignored, correlationId)).Returns(s100PermitServiceResult);
-            A.CallTo(() => _fakePermitExpiryDaysConfiguration.Value).Returns(new PermitExpiryDaysConfiguration { PermitExpiryDays = 30 });
+            SetupFakeCalls(licenceId, upnServiceResult, salesCatalogueResult, s100PermitServiceResult);
 
             var result = await _permitService.GetPermitDetails(licenceId, correlationId);
 
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        }
+
+        private void SetupFakeCalls(int licenceId, UpnServiceResult upnServiceResult, SalesCatalogueResult salesCatalogueResult, S100PermitServiceResult s100PermitServiceResult)
+        {
+            A.CallTo(() => _fakeUpnService.GetUpnDetails(licenceId, correlationId)).Returns(upnServiceResult);
+            A.CallTo(() => _fakeSalesCatalogueService.GetProductsCatalogueAsync()).Returns(salesCatalogueResult);
+            A.CallTo(() => _fakeS100PermitService.GetS100PermitZipFileAsync(A<PermitRequest>.Ignored, correlationId)).Returns(s100PermitServiceResult);
+            A.CallTo(() => _fakePermitExpiryDaysConfiguration.Value).Returns(new PermitExpiryDaysConfiguration { PermitExpiryDays = 30 });
         }
 
         private static string GetExpectedXmlString()

@@ -39,7 +39,7 @@ namespace UKHO.ShopFacade.API.Controllers
         [SwaggerResponse(statusCode: (int)HttpStatusCode.Forbidden, description: "<p>Forbidden - you have no permission to use this API.</p>")]
         public async Task<IActionResult> GetPermits([FromRoute] string productType, [SwaggerParameter(Required = true)] int licenceId)
         {
-            _logger.LogInformation(EventIds.GetPermitsCallStarted.ToEventId(), ErrorDetails.GetPermitsCallStartedMessage);
+             _logger.LogInformation(EventIds.GetPermitsCallStarted.ToEventId(), ErrorDetails.GetPermitsCallStartedMessage);
 
             if (licenceId <= 0)
             {
@@ -52,7 +52,11 @@ namespace UKHO.ShopFacade.API.Controllers
             switch (permitServiceResult.StatusCode)
             {
                 case HttpStatusCode.OK:
+                    _logger.LogInformation(EventIds.GetPermitsCallCompleted.ToEventId(), ErrorDetails.GetPermitsCallCompletedMessage);
                     return File(permitServiceResult.Value, PermitServiceConstants.ZipContentType, PermitServiceConstants.PermitZipFileName);
+                case HttpStatusCode.NoContent:
+                    _logger.LogWarning(EventIds.NoContentFound.ToEventId(), ErrorDetails.PermitNoContentMessage);
+                    return NoContent();
                 case HttpStatusCode.NotFound:
                     _logger.LogWarning(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
                     return NotFound(permitServiceResult.ErrorResponse);

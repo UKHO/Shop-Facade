@@ -3,7 +3,6 @@ using System.Text;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Amqp.Transaction;
 using Microsoft.Extensions.Logging;
 using UKHO.ShopFacade.API.Controllers;
 using UKHO.ShopFacade.API.Services;
@@ -39,30 +38,10 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
             Assert.That(nullLogger!.ParamName, Is.EqualTo("logger"));
         }
 
-        [Test]
-        public async Task WhenPermitServiceReturnsOk_ThenGetPermitsReturnsFileResult()
+        [TestCase(0)]
+        [TestCase(-1)]
+        public async Task WhenLicenceIdIsInValid_ThenReturn400BadRequestResponse(int invalidLicenceId)
         {
-            int validLicenceId = 12345678;
-            string productType = "S100";
-            var expectedStream = new MemoryStream(Encoding.UTF8.GetBytes(GetExpectedXmlString()));
-
-            var permitServiceResult = PermitServiceResult.Success(expectedStream);
-            A.CallTo(() => _fakePermitService.GetPermitDetails(validLicenceId, A<string>.Ignored)).Returns(permitServiceResult);
-
-            var result = await _permitController.GetPermits(productType, validLicenceId);
-
-            var fileResult = result as FileStreamResult;
-            Assert.That(fileResult, Is.Not.Null);
-            Assert.That(fileResult!.FileDownloadName, Is.EqualTo("Permits.zip"));
-            Assert.That(fileResult.FileStream.Length, Is.EqualTo(expectedStream.Length));
-            Assert.That(fileResult.ContentType, Is.EqualTo("application/zip"));
-        }
-
-        [Test]
-        public async Task WhenLicenceIdIsInValid_ThenReturn400BadRequestResponse()
-        {
-            int invalidLicenceId = 0;
-
             var result = (BadRequestObjectResult)await _permitController.GetPermits(_fakeProductType, invalidLicenceId);
 
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
@@ -123,10 +102,63 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.InternalErrorMessage).MustHaveHappenedOnceExactly();
         }
 
+        [Test]
+        public async Task WhenS100PermitsNotAvailableForLicence_ThenReturn204NoContentResponse()
+        {
+            A.CallTo(() => _fakePermitService.GetPermitDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetPermitServiceResult(HttpStatusCode.NoContent));
+
+            var result = (NoContentResult)await _permitController.GetPermits(_fakeProductType, 7);
+
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NoContent));
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                && call.GetArgument<EventId>(1) == EventIds.GetPermitsCallStarted.ToEventId()
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetPermitsCallStartedMessage).MustHaveHappenedOnceExactly();
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                && call.GetArgument<LogLevel>(0) == LogLevel.Warning
+                                                && call.GetArgument<EventId>(1) == EventIds.NoContentFound.ToEventId()
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.PermitNoContentMessage).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task WhenPermitServiceReturnsOk_ThenGetPermitsReturnsFileResult()
+        {
+            int validLicenceId = 12345678;
+            var expectedStream = new MemoryStream(Encoding.UTF8.GetBytes(GetExpectedXmlString()));
+
+            A.CallTo(() => _fakePermitService.GetPermitDetails(validLicenceId, A<string>.Ignored)).Returns(GetPermitServiceResult(HttpStatusCode.OK));
+
+            var result = await _permitController.GetPermits(_fakeProductType, validLicenceId);
+
+            var fileResult = result as FileStreamResult;
+            Assert.That(fileResult, Is.Not.Null);
+            Assert.That(fileResult!.FileDownloadName, Is.EqualTo("Permits.zip"));
+            Assert.That(fileResult.ContentType, Is.EqualTo("application/zip"));
+            Assert.That(fileResult.FileStream.Length, Is.EqualTo(expectedStream.Length));
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                              && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                              && call.GetArgument<EventId>(1) == EventIds.GetPermitsCallStarted.ToEventId()
+                                              && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetPermitsCallStartedMessage).MustHaveHappenedOnceExactly();
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                && call.GetArgument<EventId>(1) == EventIds.GetPermitsCallCompleted.ToEventId()
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetPermitsCallCompletedMessage).MustHaveHappenedOnceExactly();
+
+
+        }
+
         private static PermitServiceResult GetPermitServiceResult(HttpStatusCode httpStatusCode)
         {
+            var expectedStream = new MemoryStream(Encoding.UTF8.GetBytes(GetExpectedXmlString()));
+
             return httpStatusCode switch
             {
+                HttpStatusCode.OK => PermitServiceResult.Success(expectedStream),
+                HttpStatusCode.NoContent => PermitServiceResult.NoContent(),
                 HttpStatusCode.NotFound => PermitServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
                 _ => PermitServiceResult.InternalServerError()
             };
