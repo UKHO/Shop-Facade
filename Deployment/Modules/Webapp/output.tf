@@ -27,5 +27,5 @@ output "mock_web_app_object_id" {
 }
 
 output "addsmock_slot_default_site_hostname" {
-  value = var.env_name == "dev" ? azurerm_linux_web_app.adds_mock_webapp_service.default_hostname : null
+  value = var.env_name == "dev" ? azurerm_linux_web_app.adds_mock_webapp_service[0].default_hostname : null
 }
