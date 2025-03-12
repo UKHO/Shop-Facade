@@ -99,22 +99,22 @@ namespace UKHO.ShopFacade.Common.Events
         UPNServiceCallStarted = 950018,
 
         /// <summary>
-        /// 950018 - UpnService call completed.
+        /// 950019 - UpnService call completed.
         /// </summary>
-        UPNServiceCallCompleted = 950018,
+        UPNServiceCallCompleted = 950019,
 
         /// <summary>
-        /// 950019 - UpnService No Content Found Message.
+        /// 950020 - UpnService No Content Found Message.
         /// </summary>
-        UPNServiceNoContentFound = 950019,
+        UPNServiceNoContentFound = 950020,
 
         /// <summary>
-        /// 950020 - UpnService No data found against license.
+        /// 950021 - UpnService No data found against license.
         /// </summary>
-        UpnServiceLicenceNotFound = 950020,
+        UpnServiceLicenceNotFound = 950021,
 
         /// <summary>
-        /// 950021 - UpnService Internal error occurred.
+        /// 950022 - UpnService Internal error occurred.
         /// </summary>
         UpnServiceInternalError = 950022
 
