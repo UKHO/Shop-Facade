@@ -101,22 +101,7 @@ namespace UKHO.ShopFacade.Common.Events
         /// <summary>
         /// 950019 - UpnService call completed.
         /// </summary>
-        UPNServiceCallCompleted = 950019,
-
-        /// <summary>
-        /// 950020 - UpnService No Content Found Message.
-        /// </summary>
-        UPNServiceNoContentFound = 950020,
-
-        /// <summary>
-        /// 950021 - UpnService No data found against license.
-        /// </summary>
-        UpnServiceLicenceNotFound = 950021,
-
-        /// <summary>
-        /// 950022 - UpnService Internal error occurred.
-        /// </summary>
-        UpnServiceInternalError = 950022
+        UPNServiceCallCompleted = 950019
 
     }
 

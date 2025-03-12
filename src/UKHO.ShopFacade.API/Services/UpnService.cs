@@ -28,13 +28,13 @@ namespace UKHO.ShopFacade.API.Services
                     _logger.LogInformation(EventIds.UPNServiceCallCompleted.ToEventId(), ErrorDetails.UpnServiceCallCompletedMessage);
                     return UpnServiceResult.Success(SetUpnDetailResponse(upnDataProviderResult)!);
                 case HttpStatusCode.NoContent:
-                    _logger.LogWarning(EventIds.UPNServiceNoContentFound.ToEventId(), ErrorDetails.NoContentMessage);
+                    _logger.LogWarning(EventIds.NoContentFound.ToEventId(), ErrorDetails.NoContentMessage);
                     return UpnServiceResult.NoContent();
                 case HttpStatusCode.NotFound:
-                    _logger.LogWarning(EventIds.UpnServiceLicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
+                    _logger.LogWarning(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
                     return UpnServiceResult.NotFound(upnDataProviderResult.ErrorResponse);
                 default:
-                    _logger.LogError(EventIds.UpnServiceInternalError.ToEventId(), ErrorDetails.InternalErrorMessage);
+                    _logger.LogError(EventIds.InternalError.ToEventId(), ErrorDetails.InternalErrorMessage);
                     return UpnServiceResult.InternalServerError();
             }
         }
