@@ -28,6 +28,16 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
         }
 
         [Test]
+        public async Task WhenLicenceIdIsValid_ThenReturn200OkResponse()
+        {
+            A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnServiceResult(HttpStatusCode.OK));
+
+            var result = await _permitService.GetPermitDetails(123, "correlationId");
+
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        [Test]
         public async Task WhenLicenceIsNotFound_ThenReturn404NotFoundResponse()
         {
             A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnServiceResult(HttpStatusCode.NotFound));
@@ -64,6 +74,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
         {
             return httpStatusCode switch
             {
+                HttpStatusCode.OK => UpnServiceResult.Success(new List<UserPermit>()),
                 HttpStatusCode.NoContent => UpnServiceResult.NoContent(),
                 HttpStatusCode.NotFound => UpnServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
             _ => UpnServiceResult.InternalServerError()
