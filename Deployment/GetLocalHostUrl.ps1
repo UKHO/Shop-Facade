@@ -14,8 +14,7 @@ if ($nextPort -is [int]) {
     $env:ADDSMockUrl = $url
     Write-Host "ADDSMockUrl: $env:ADDSMockUrl"
     Write-Host "##vso[task.setvariable variable=GraphApiConfiguration.GraphApiBaseUrl]$url"
-    [System.Environment]::SetEnvironmentVariable('GraphApiConfiguration.GraphApiBaseUrl', $url, [System.EnvironmentVariableTarget]::Process)
-    Write-Host "GraphApiConfiguration.GraphApiBaseUrl: $env:GraphApiConfiguration.GraphApiBaseUrl"
+    Write-Host "GraphApiConfiguration.GraphApiBaseUrl: $($env:GraphApiConfiguration.GraphApiBaseUrl)"
     Write-Host "##vso[task.setvariable variable=Port]$nextPort"
     $env:Port = $nextPort
     Write-Host "Port: $env:Port"
