@@ -24,6 +24,9 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
         {
             var response = await _permitEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "1");
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(response!.ContentType!.Equals("application/zip"));
+            Assert.That(response.RawBytes != null);
+            Assert.That(response!.RawBytes!.Length > 0);
         }
 
         [Test]
