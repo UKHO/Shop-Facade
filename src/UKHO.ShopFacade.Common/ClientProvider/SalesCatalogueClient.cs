@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using Microsoft.Extensions.Options;
 using UKHO.ShopFacade.Common.Authentication;
 using UKHO.ShopFacade.Common.Configuration;
+using UKHO.ShopFacade.Common.Constants;
 
 namespace UKHO.ShopFacade.Common.ClientProvider
 {
@@ -28,7 +29,7 @@ namespace UKHO.ShopFacade.Common.ClientProvider
             var authToken = _tokenProvider.GetManagedIdentityAuthAsync(_salesCatalogueConfig.Value.ResourceId!, _salesCatalogueConfig.Value.PublisherScope!).Result;
             httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
-            httpRequestMessage.Headers.Add("X-Correlation-ID", correlationId);
+            httpRequestMessage.Headers.Add(ApiHeaderKeys.XCorrelationIdHeaderKey, correlationId);
 
             return await _httpClient.SendAsync(httpRequestMessage, CancellationToken.None);
         }
