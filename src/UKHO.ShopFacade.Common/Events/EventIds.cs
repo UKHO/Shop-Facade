@@ -83,9 +83,9 @@ namespace UKHO.ShopFacade.Common.Events
         /// </summary>
         GetSalesCatalogueDataRequestCompleted = 950015,
 
-        /// <summary>
-        /// 950016 - No Content Found Message.
-        /// </summary>
+       /// <summary>
+       /// 950016 - No Content Found Message.
+       /// </summary>
         NoContentFound = 950016,
 
        /// <summary>
@@ -104,39 +104,25 @@ namespace UKHO.ShopFacade.Common.Events
         UPNServiceCallCompleted = 950019,
 
         /// <summary>
-        /// 950020 - UpnService No Content Found Message.
+        /// 950020 - New access token is added to cache for external end point resource.
         /// </summary>
-        UPNServiceNoContentFound = 950020,
+    
+        CachingExternalEndPointToken = 950020,
 
         /// <summary>
-        /// 950021 - UpnService No data found against license.
+        /// 950021 - Request for S100 Permit Service endpoint is started.
         /// </summary>
-        UpnServiceLicenceNotFound = 950021,
+        GetS100PermitServiceRequestStarted = 950021,
 
         /// <summary>
-        /// 950022 - UpnService Internal error occurred.
+        /// 950022 - Request for S100 Permit Service endpoint is completed.
         /// </summary>
-        UpnServiceInternalError = 950022,
+        GetS100PermitServiceRequestCompleted = 950022,
 
         /// <summary>
-        /// 950023 - New access token is added to cache for external end point resource.
+        /// 950023 - Request for S100 Permit Service Internal Server Error.
         /// </summary>
-        CachingExternalEndPointToken = 950023,
-
-        /// <summary>
-        /// 950024 - Request for S100 Permit Service endpoint is started.
-        /// </summary>
-        GetS100PermitServiceRequestStarted = 950024,
-
-        /// <summary>
-        /// 950025 - Request for S100 Permit Service endpoint is completed.
-        /// </summary>
-        GetS100PermitServiceRequestCompleted = 950025,
-
-        /// <summary>
-        /// 950026 - Request for S100 Permit Service Internal Server Error.
-        /// </summary>
-        S100PermitServiceInternalServerError = 950026
+        S100PermitServiceInternalServerError = 950023
 
 
     }
