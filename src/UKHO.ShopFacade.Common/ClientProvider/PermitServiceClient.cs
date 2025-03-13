@@ -11,17 +11,12 @@ using UKHO.ShopFacade.Common.Models.Response.S100Permit;
 namespace UKHO.ShopFacade.Common.ClientProvider
 {
     [ExcludeFromCodeCoverage]
-    public class PermitServiceClient : IPermitServiceClient
+    public class PermitServiceClient(HttpClient httpClient, IOptions<PermitServiceConfiguration> permitServiceConfig, IAuthTokenProvider tokenProvider) : IPermitServiceClient
     {
-        private readonly HttpClient _httpClient;
-        private readonly IOptions<PermitServiceConfiguration> _permitServiceConfig;
-        private readonly IAuthTokenProvider _tokenProvider;
-        public PermitServiceClient(HttpClient httpClient, IOptions<PermitServiceConfiguration> permitServiceConfig, IAuthTokenProvider tokenProvider)
-        {
-            _httpClient = httpClient;
-            _permitServiceConfig = permitServiceConfig;
-            _tokenProvider = tokenProvider;
-        }
+        private readonly HttpClient _httpClient = httpClient;
+        private readonly IOptions<PermitServiceConfiguration> _permitServiceConfig = permitServiceConfig;
+        private readonly IAuthTokenProvider _tokenProvider = tokenProvider;
+
         public async Task<HttpResponseMessage> CallPermitServiceApiAsync(PermitRequest requestBody, string correlationId)
         {
             var uri = $"/{_permitServiceConfig.Value.Version}/permits/s100";

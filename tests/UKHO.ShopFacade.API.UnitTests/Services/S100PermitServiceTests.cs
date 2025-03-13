@@ -27,13 +27,6 @@ public class S100PermitServiceTests
     }
 
     [Test]
-    public void WhenParameterIsNull_ThenConstructorThrowsArgumentNullException()
-    {
-        Assert.Throws<ArgumentNullException>(() => new S100PermitService(null!, _fakePermitServiceClient), "logger");
-        Assert.Throws<ArgumentNullException>(() => new S100PermitService(_fakeLogger, null!), "permitServiceClient");
-    }
-
-    [Test]
     public async Task WhenGetS100PermitZipFileAsyncApiCallIsSuccessful_ReturnsSuccessResult()
     {
         var expectedStream = new MemoryStream(Encoding.UTF8.GetBytes(GetExpectedXmlString()));

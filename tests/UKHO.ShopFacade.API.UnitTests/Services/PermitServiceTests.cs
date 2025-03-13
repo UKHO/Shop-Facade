@@ -33,15 +33,6 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
         }
 
         [Test]
-        public void WhenParameterIsNull_ThenConstructorThrowsArgumentNullException()
-        {
-            Assert.Throws<ArgumentNullException>(() => new PermitService(null!, _fakeSalesCatalogueService, _fakeS100PermitService, _fakePermitExpiryDaysConfiguration), "upnService");
-            Assert.Throws<ArgumentNullException>(() => new PermitService(_fakeUpnService, null!, _fakeS100PermitService, _fakePermitExpiryDaysConfiguration), "salesCatalogueService");
-            Assert.Throws<ArgumentNullException>(() => new PermitService(_fakeUpnService, _fakeSalesCatalogueService, null!, _fakePermitExpiryDaysConfiguration), "s100PermitService");
-            Assert.Throws<ArgumentNullException>(() => new PermitService(_fakeUpnService, _fakeSalesCatalogueService, _fakeS100PermitService, null!), "permitExpiryDaysConfiguration");
-        }
-
-        [Test]
         public async Task WhenAllServicesReturnSuccess_ThenGetPermitDetailsReturnsSuccess()
         {
             var licenceId = 123;
@@ -156,7 +147,6 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
             Assert.That(result.ErrorResponse?.Errors?[0].Source, Is.EqualTo(ErrorDetails.Source));
             Assert.That(result.ErrorResponse?.Errors?[0].Description, Is.EqualTo(ErrorDetails.LicenceNotFoundMessage));
         }
-
 
         private void SetupFakeCalls(int licenceId, UpnServiceResult upnServiceResult, SalesCatalogueResult salesCatalogueResult, S100PermitServiceResult s100PermitServiceResult)
         {

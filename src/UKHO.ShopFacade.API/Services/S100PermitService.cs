@@ -6,15 +6,10 @@ using UKHO.ShopFacade.Common.Models.Response.S100Permit;
 
 namespace UKHO.ShopFacade.API.Services
 {
-    public class S100PermitService : IS100PermitService
+    public class S100PermitService(ILogger<S100PermitService> logger, IPermitServiceClient permitServiceClient) : IS100PermitService
     {
-        private readonly ILogger<S100PermitService> _logger;
-        private readonly IPermitServiceClient _permitServiceClient;
-        public S100PermitService(ILogger<S100PermitService> logger, IPermitServiceClient permitServiceClient)
-        {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _permitServiceClient = permitServiceClient ?? throw new ArgumentNullException(nameof(permitServiceClient));
-        }
+        private readonly ILogger<S100PermitService> _logger = logger;
+        private readonly IPermitServiceClient _permitServiceClient = permitServiceClient;
 
         public async Task<S100PermitServiceResult> GetS100PermitZipFileAsync(PermitRequest permitRequest, string correlationId)
         {

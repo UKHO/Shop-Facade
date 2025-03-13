@@ -7,20 +7,12 @@ using UKHO.ShopFacade.Common.Models.Response.Upn;
 
 namespace UKHO.ShopFacade.API.Services
 {
-    public class PermitService : IPermitService
+    public class PermitService(IUpnService upnService, ISalesCatalogueService salesCatalogueService, IS100PermitService s100PermitService, IOptions<PermitExpiryDaysConfiguration> permitExpiryDaysConfiguration) : IPermitService
     {
-        private readonly IUpnService _upnService;
-        private readonly ISalesCatalogueService _salesCatalogueService;
-        private readonly IS100PermitService _s100PermitService;
-        private readonly IOptions<PermitExpiryDaysConfiguration> _permitExpiryDaysConfiguration;
-
-        public PermitService(IUpnService upnService, ISalesCatalogueService salesCatalogueService, IS100PermitService s100PermitService, IOptions<PermitExpiryDaysConfiguration> permitExpiryDaysConfiguration)
-        {
-            _upnService = upnService ?? throw new ArgumentNullException(nameof(upnService));
-            _salesCatalogueService = salesCatalogueService ?? throw new ArgumentNullException(nameof(salesCatalogueService));
-            _s100PermitService = s100PermitService ?? throw new ArgumentNullException(nameof(s100PermitService));
-            _permitExpiryDaysConfiguration = permitExpiryDaysConfiguration ?? throw new ArgumentNullException(nameof(permitExpiryDaysConfiguration));
-        }
+        private readonly IUpnService _upnService = upnService;
+        private readonly ISalesCatalogueService _salesCatalogueService = salesCatalogueService;
+        private readonly IS100PermitService _s100PermitService = s100PermitService;
+        private readonly IOptions<PermitExpiryDaysConfiguration> _permitExpiryDaysConfiguration = permitExpiryDaysConfiguration;
 
         public async Task<PermitServiceResult> GetPermitDetails(int licenceId, string correlationId)
         {
