@@ -39,11 +39,10 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
             Assert.That(nullUpnService!.ParamName, Is.EqualTo("upnService"));
         }
 
-        [Test]
-        public async Task WhenLicenceIdIsInvalid_ThenReturn400BadRequestResponse()
+        [TestCase(0)]
+        [TestCase(-1)]
+        public async Task WhenLicenceIdIsInvalid_ThenReturn400BadRequestResponse(int invalidLicenceId)
         {
-            int invalidLicenceId = 0;
-
             var result = (BadRequestObjectResult)await _upnController.GetUPNs(invalidLicenceId);
 
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));

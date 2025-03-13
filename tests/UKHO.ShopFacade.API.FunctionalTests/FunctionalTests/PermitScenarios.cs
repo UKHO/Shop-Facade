@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Newtonsoft.Json;
 using UKHO.ShopFacade.API.FunctionalTests.Auth;
 using UKHO.ShopFacade.API.FunctionalTests.Configuration;
 using UKHO.ShopFacade.API.FunctionalTests.Service;
@@ -44,6 +45,29 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
         {
             var response = await _permitEndpoint.GetUpnResponseAsync("Invalid Token", "1");
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+        }
+
+        [Test]
+        public async Task WhenPermitServiceEndpointCalledWithValidTokenAndNonExistingLicenceId_ThenPermitServiceReturns404NotFoundResponse()
+        {
+            var response = await _permitEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "3");
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            var jsonResponse = JsonConvert.DeserializeObject<dynamic>(response.Content!);
+            Assert.That((string)jsonResponse!.errors[0].description.ToString(), Is.EqualTo("Licence not found."));
+        }
+
+        [Test]
+        public async Task WhenSharePointListIsDown_ThenPermitServiceReturns500InternalServerErrorResponse()
+        {
+            var response = await _permitEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "2");
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
+        }
+
+        [Test]
+        public async Task WhenPermitServiceEndpointCalledWithValidTokenAndLicenceWithoutUpn_ThenPermitServiceReturns204NoContentResponse()
+        {
+            var response = await _permitEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(false), "4");
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
         }
 
     }

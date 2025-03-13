@@ -127,6 +127,7 @@ namespace UKHO.ShopFacade.API
 
 
             builder.Services.AddScoped<IUpnService, UpnService>();
+            builder.Services.AddScoped<IPermitService, PermitService>();
             builder.Services.AddScoped<IUpnDataProvider, UpnDataProvider>();
             builder.Services.AddScoped<IGraphClient, GraphClient>();
             builder.Services.AddScoped<IAuthenticationProvider, ManagedIdentityGraphAuthProvider>();

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.DataProvider;
@@ -12,20 +13,15 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
     public class UpnServiceTests
     {
         private IUpnDataProvider _fakeUpnDataProvider;
+        private ILogger<UpnService> _fakeLogger;
         private UpnService _upnService;
 
         [SetUp]
         public void Setup()
         {
             _fakeUpnDataProvider = A.Fake<IUpnDataProvider>();
-            _upnService = new UpnService(_fakeUpnDataProvider);
-        }
-
-        [Test]
-        public void WhenParameterIsNull_ThenConstructorThrowsArgumentNullException()
-        {
-            var nullUpnDataProvider = Assert.Throws<ArgumentNullException>(() => new UpnService(null!));
-            Assert.That(nullUpnDataProvider!.ParamName, Is.EqualTo("upnDataProvider"));
+            _fakeLogger = A.Fake<ILogger<UpnService>>();
+            _upnService = new UpnService(_fakeUpnDataProvider, _fakeLogger);
         }
 
         [Test]
