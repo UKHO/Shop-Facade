@@ -8,18 +8,11 @@ using UKHO.ShopFacade.Common.Constants;
 namespace UKHO.ShopFacade.Common.ClientProvider
 {
     [ExcludeFromCodeCoverage] //Excluded from code coverage as it has actual http calls 
-    public class SalesCatalogueClient : ISalesCatalogueClient
+    public class SalesCatalogueClient(HttpClient httpClient, IOptions<SalesCatalogueConfiguration> salesCatalogueConfig, IAuthTokenProvider tokenProvider) : ISalesCatalogueClient
     {
-        private readonly HttpClient _httpClient;
-        private readonly IOptions<SalesCatalogueConfiguration> _salesCatalogueConfig;
-        private readonly IAuthTokenProvider _tokenProvider;
-
-        public SalesCatalogueClient(HttpClient httpClient, IOptions<SalesCatalogueConfiguration> salesCatalogueConfig, IAuthTokenProvider tokenProvider)
-        {
-            _httpClient = httpClient;
-            _salesCatalogueConfig = salesCatalogueConfig;
-            _tokenProvider = tokenProvider;
-        }
+        private readonly HttpClient _httpClient = httpClient;
+        private readonly IOptions<SalesCatalogueConfiguration> _salesCatalogueConfig = salesCatalogueConfig;
+        private readonly IAuthTokenProvider _tokenProvider = tokenProvider;
 
         public async Task<HttpResponseMessage> CallSalesCatalogueServiceApi(string correlationId)
         {

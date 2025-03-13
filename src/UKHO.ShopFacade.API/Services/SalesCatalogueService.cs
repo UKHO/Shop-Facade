@@ -7,17 +7,11 @@ using UKHO.ShopFacade.Common.Models.Response.SalesCatalogue;
 
 namespace UKHO.ShopFacade.API.Services
 {
-    public class SalesCatalogueService : ISalesCatalogueService
+    public class SalesCatalogueService(ISalesCatalogueClient salesCatalogueClient,
+                                 ILogger<SalesCatalogueService> logger) : ISalesCatalogueService
     {
-        private readonly ILogger<SalesCatalogueService> _logger;
-        private readonly ISalesCatalogueClient _salesCatalogueClient;
-
-        public SalesCatalogueService(ISalesCatalogueClient salesCatalogueClient,
-                                     ILogger<SalesCatalogueService> logger)
-        {
-            _logger = logger;
-            _salesCatalogueClient = salesCatalogueClient;
-        }
+        private readonly ILogger<SalesCatalogueService> _logger = logger;
+        private readonly ISalesCatalogueClient _salesCatalogueClient = salesCatalogueClient;
 
         public async Task<SalesCatalogueResult> GetProductsCatalogueAsync(string correlationId)
         {
