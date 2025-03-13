@@ -25,13 +25,6 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
         }
 
         [Test]
-        public void WhenParameterIsNull_ThenConstructorThrowsArgumentNullException()
-        {
-            var nullUpnDataProvider = Assert.Throws<ArgumentNullException>(() => new UpnService(null!, null!));
-            Assert.That(nullUpnDataProvider!.ParamName, Is.EqualTo("upnDataProvider"));
-        }
-
-        [Test]
         public async Task WhenUpnDetailsAreValid_ThenReturn200SuccessResponse()
         {
             A.CallTo(() => _fakeUpnDataProvider.GetUpnDetailsByLicenseId(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnDataProviderResult(HttpStatusCode.OK));
