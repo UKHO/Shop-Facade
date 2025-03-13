@@ -3,16 +3,10 @@ using UKHO.ShopFacade.Common.Models.Response.Upn;
 
 namespace UKHO.ShopFacade.API.Services
 {
-    public class PermitService : IPermitService
+    public class PermitService(IUpnService upnService, ISalesCatalogueService salesCatalogueService) : IPermitService
     {
-        private readonly IUpnService _upnService;
-        private readonly ISalesCatalogueService _salesCatalogueService;
-
-        public PermitService(IUpnService upnService, ISalesCatalogueService salesCatalogueService)
-    {
-            _upnService = upnService;
-            _salesCatalogueService = salesCatalogueService;
-        }
+        private readonly IUpnService _upnService = upnService;
+        private readonly ISalesCatalogueService _salesCatalogueService = salesCatalogueService;
 
         public async Task<PermitServiceResult> GetPermitDetails(int licenceId, string correlationId)
         {
