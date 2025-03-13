@@ -23,10 +23,10 @@ namespace UKHO.ShopFacade.API.Services
         {
             _logger.LogInformation(EventIds.GetSalesCatalogueDataRequestStarted.ToEventId(), ErrorDetails.GetSalesCatalogueDataRequestStartedMessage);
             var httpResponse = await _salesCatalogueClient.CallSalesCatalogueServiceApi(correlationId);
-            return await CreateSalesCatalogueServiceResponse(httpResponse);
+            return await CreateSalesCatalogueServiceResponse(httpResponse, correlationId);
         }
 
-        private async Task<SalesCatalogueResult> CreateSalesCatalogueServiceResponse(HttpResponseMessage httpResponse)
+        private async Task<SalesCatalogueResult> CreateSalesCatalogueServiceResponse(HttpResponseMessage httpResponse, string correlationId)
         {
             SalesCatalogueResult response;
 
@@ -34,10 +34,10 @@ namespace UKHO.ShopFacade.API.Services
             {
                 response = httpResponse.StatusCode switch
                 {
-                    _ => SalesCatalogueResult.InternalServerError(SalesCatalogueResult.SetErrorResponse(httpResponse.Content.ReadAsStringAsync().Result, ErrorDetails.ScsSource, ErrorDetails.ScsInternalErrorMessage)),
+                    _ => SalesCatalogueResult.InternalServerError(SalesCatalogueResult.SetErrorResponse(correlationId, ErrorDetails.ScsSource, ErrorDetails.ScsInternalErrorMessage)),
                 };
 
-                _logger.LogInformation(EventIds.SalesCatalogueServiceNonOkResponse.ToEventId(), ErrorDetails.SalesCatalogueDataRequestInternalServerErrorMessage, httpResponse.RequestMessage!.RequestUri, httpResponse.StatusCode);
+                _logger.LogError(EventIds.SalesCatalogueServiceNonOkResponse.ToEventId(), ErrorDetails.SalesCatalogueDataRequestInternalServerErrorMessage, httpResponse.RequestMessage!.RequestUri, httpResponse.StatusCode);
             }
             else
             {
