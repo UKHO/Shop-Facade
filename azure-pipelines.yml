@@ -156,9 +156,9 @@ stages:
       - name: "AzureADConfiguration.ClientSecretNoRole"
         value: $(AzureADConfigurationClientSecretNoRole)
       - name: "ConfigurationPath"
-        value: '$(Pipeline.Workspace)/UKHOShopFacadeServiceAPI/App_Data/jobs/continuous/AddsMockWebJob/service-configuration'
+        value: './service-configuration'
       - name: "OverrideConfigurationPath"
-        value: '$(Pipeline.Workspace)/UKHOShopFacadeServiceAPI/App_Data/jobs/continuous/AddsMockWebJob/override-configuration'
+        value: './override-configuration'
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
