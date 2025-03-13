@@ -159,6 +159,9 @@ stages:
         value: './service-configuration'
       - name: "OverrideConfigurationPath"
         value: './override-configuration'
+      - name: "Port"
+        value: '443'
+
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
