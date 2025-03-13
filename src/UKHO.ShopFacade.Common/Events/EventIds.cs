@@ -83,9 +83,9 @@ namespace UKHO.ShopFacade.Common.Events
         /// </summary>
         GetSalesCatalogueDataRequestCompleted = 950015,
 
-        /// <summary>
-        /// 950016 - No Content Found Message.
-        /// </summary>
+       /// <summary>
+       /// 950016 - No Content Found Message.
+       /// </summary>
         NoContentFound = 950016,
 
        /// <summary>
@@ -104,24 +104,9 @@ namespace UKHO.ShopFacade.Common.Events
         UPNServiceCallCompleted = 950019,
 
         /// <summary>
-        /// 950020 - UpnService No Content Found Message.
+        /// 950020 - New access token is added to cache for external end point resource.
         /// </summary>
-        UPNServiceNoContentFound = 950020,
-
-        /// <summary>
-        /// 950021 - UpnService No data found against license.
-        /// </summary>
-        UpnServiceLicenceNotFound = 950021,
-
-        /// <summary>
-        /// 950022 - UpnService Internal error occurred.
-        /// </summary>
-        UpnServiceInternalError = 950022,
-
-        /// <summary>
-        /// 950023 - New access token is added to cache for external end point resource.
-        /// </summary>
-        CachingExternalEndPointToken = 950023
+        CachingExternalEndPointToken = 950020
     }
 
     /// <summary>

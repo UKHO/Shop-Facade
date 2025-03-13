@@ -9,9 +9,9 @@ namespace UKHO.ShopFacade.API.Services
         private readonly ISalesCatalogueService _salesCatalogueService;
 
         public PermitService(IUpnService upnService, ISalesCatalogueService salesCatalogueService)
-        {
-            _upnService = upnService ?? throw new ArgumentNullException(nameof(upnService));
-            _salesCatalogueService = salesCatalogueService ?? throw new ArgumentNullException(nameof(salesCatalogueService));
+    {
+            _upnService = upnService;
+            _salesCatalogueService = salesCatalogueService;
         }
 
         public async Task<PermitServiceResult> GetPermitDetails(int licenceId, string correlationId)

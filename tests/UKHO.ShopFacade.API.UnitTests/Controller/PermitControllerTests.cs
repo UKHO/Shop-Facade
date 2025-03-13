@@ -138,8 +138,6 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
         private static PermitServiceResult GetPermitServiceResult(HttpStatusCode httpStatusCode)
         {
-            var streamWriter = new StreamWriter(new MemoryStream());
-
             return httpStatusCode switch
             {
                 HttpStatusCode.OK => PermitServiceResult.Success(),

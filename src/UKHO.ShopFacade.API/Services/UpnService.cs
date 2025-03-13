@@ -6,15 +6,10 @@ using UKHO.ShopFacade.Common.Models.Response.Upn;
 
 namespace UKHO.ShopFacade.API.Services
 {
-    public class UpnService : IUpnService
+    public class UpnService(IUpnDataProvider upnDataProvider, ILogger<UpnService> logger) : IUpnService
     {
-        private readonly IUpnDataProvider _upnDataProvider;
-        private readonly ILogger<UpnService> _logger;
-        public UpnService(IUpnDataProvider upnDataProvider, ILogger<UpnService> logger)
-        {
-            _upnDataProvider = upnDataProvider ?? throw new ArgumentNullException(nameof(upnDataProvider));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        }
+        private readonly IUpnDataProvider _upnDataProvider = upnDataProvider;
+        private readonly ILogger<UpnService> _logger = logger;
 
         public async Task<UpnServiceResult> GetUpnDetails(int licenceId, string correlationId)
         {
