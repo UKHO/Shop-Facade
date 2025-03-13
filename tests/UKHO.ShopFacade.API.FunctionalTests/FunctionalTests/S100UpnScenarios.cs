@@ -77,50 +77,6 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
         //    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
         //}
 
-        [Test]
-        public async Task CommonMockTest()
-        {
-            Console.WriteLine("CommonMockTest Started");
-            string processName = "ADDSMock"; // Example process name
-
-            // Get all processes with the given name
-            Process[] processes = Process.GetProcessesByName(processName);
-
-            if (processes.Length > 0)
-            {
-                Console.WriteLine($"Process {processName} is running.");
-            }
-            else
-            {
-                Console.WriteLine($"Process {processName} is not running.");
-            }
-
-            string command = "tasklist | findstr ADDSMock.exe";
-            string processDetails = await RunConsoleCommand(command);
-
-            var pid = processes[0].Id;
-            Console.WriteLine($"Process ID: {pid}");
-
-            var ports = await RunConsoleCommand($"netstat -ano | findstr {pid}");
-
-            var options = new RestClientOptions("http://localhost:5678/");
-            var client = new RestClient(options);
-            Console.WriteLine($"Client initialization Started");
-
-            var request = new RestRequest("demo/health");
-            Console.WriteLine($"Request Started");
-
-            var response = await client.ExecuteAsync(request);
-            Console.Write(response.ToString());
-            Console.WriteLine($"Request executed");
-
-            // Log request and response details
-            Console.WriteLine($"Request URL: {client.BuildUri(request)}");
-            Console.WriteLine($"Response Status Code: {response.StatusCode}");
-            Console.WriteLine($"Response Content: {response.Content}");
-
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-        }
 
     }
 }
