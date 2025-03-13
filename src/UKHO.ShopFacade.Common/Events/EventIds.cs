@@ -124,19 +124,19 @@ namespace UKHO.ShopFacade.Common.Events
         CachingExternalEndPointToken = 950023,
 
         /// <summary>
-        /// 950024 - Request for Permit Service endpoint is started.
+        /// 950024 - Request for S100 Permit Service endpoint is started.
         /// </summary>
-        GetPermitServiceRequestStarted = 950024,
+        GetS100PermitServiceRequestStarted = 950024,
 
         /// <summary>
-        /// 950025 - Request for Permit Service endpoint is completed.
+        /// 950025 - Request for S100 Permit Service endpoint is completed.
         /// </summary>
-        GetPermitServiceRequestCompleted = 950025,
+        GetS100PermitServiceRequestCompleted = 950025,
 
         /// <summary>
-        /// 950026 - Request for Permit Service Internal Server Error.
+        /// 950026 - Request for S100 Permit Service Internal Server Error.
         /// </summary>
-        PermitServiceInternalError = 950026
+        S100PermitServiceInternalServerError = 950026
 
 
     }

@@ -20,6 +20,6 @@ namespace UKHO.ShopFacade.Common.Models.Response.S100Permit
 
         public static new S100PermitServiceResult NotFound(ErrorResponse errorResponse) => new(null, HttpStatusCode.NotFound, errorResponse);
 
-        public static S100PermitServiceResult InternalServerError() => new(null, HttpStatusCode.InternalServerError);
+        public static new S100PermitServiceResult InternalServerError(ErrorResponse errorResponse) => new(default!, HttpStatusCode.InternalServerError, errorResponse);
     }
 }

@@ -4,6 +4,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Options;
 using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Configuration;
+using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Models;
 using UKHO.ShopFacade.Common.Models.Response.S100Permit;
 using UKHO.ShopFacade.Common.Models.Response.SalesCatalogue;
@@ -85,7 +86,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
             var licenceId = 123;
             var upnServiceResult = UpnServiceResult.Success(new List<UserPermit>());
             var salesCatalogueResult = SalesCatalogueResult.Success(new List<Products>());
-            var s100PermitServiceResult = S100PermitServiceResult.InternalServerError();
+            var s100PermitServiceResult = S100PermitServiceResult.InternalServerError(new ErrorResponse());
 
             SetupFakeCalls(licenceId, upnServiceResult, salesCatalogueResult, s100PermitServiceResult);
 
@@ -110,7 +111,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
         }
 
         [Test]
-        public async Task WhenSalesCatalogueServiceReturnsError_ThenGetPermitDetailsReturnsInternalServerError()
+        public async Task WhenSalesCatalogueServiceReturnsError_ThenGetPermitDetailsReturnsInternalServerErrorResponse()
         {
             var licenceId = 123;
             var upnServiceResult = UpnServiceResult.Success(new List<UserPermit>());
@@ -125,7 +126,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
         }
 
         [Test]
-        public async Task WhenUpnServiceReturnsNoContent_ThenGetPermitDetailsReturnsNoContent()
+        public async Task WhenUpnServiceReturnsNoContentResponse_ThenGetPermitDetailsReturnsNoContentResponse()
         {
             var licenceId = 123;
             var upnServiceResult = UpnServiceResult.NoContent();
@@ -138,6 +139,24 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
 
             Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
         }
+
+        [Test]
+        public async Task WhenUpnServiceReturnsNotFoundResponse_ThenGetPermitDetailsReturnsNoFoundResponse()
+        {
+            var licenceId = 123;
+            var upnServiceResult = UpnServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = new List<ErrorDetail> { new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage } } });
+            var salesCatalogueResult = SalesCatalogueResult.Success(new List<Products>());
+            var s100PermitServiceResult = S100PermitServiceResult.Success(new MemoryStream(Encoding.UTF8.GetBytes(GetExpectedXmlString())));
+
+            SetupFakeCalls(licenceId, upnServiceResult, salesCatalogueResult, s100PermitServiceResult);
+
+            var result = await _permitService.GetPermitDetails(licenceId, _correlationId);
+
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+            Assert.That(result.ErrorResponse?.Errors?[0].Source, Is.EqualTo(ErrorDetails.Source));
+            Assert.That(result.ErrorResponse?.Errors?[0].Description, Is.EqualTo(ErrorDetails.LicenceNotFoundMessage));
+        }
+
 
         private void SetupFakeCalls(int licenceId, UpnServiceResult upnServiceResult, SalesCatalogueResult salesCatalogueResult, S100PermitServiceResult s100PermitServiceResult)
         {

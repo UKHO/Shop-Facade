@@ -81,19 +81,26 @@ public class S100PermitServiceTests
 
         A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
-                                                && call.GetArgument<EventId>(1) == EventIds.GetPermitServiceRequestStarted.ToEventId()
-                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetPermitServiceRequestStartedMessage).MustHaveHappenedOnceExactly();
+                                                && call.GetArgument<EventId>(1) == EventIds.GetS100PermitServiceRequestStarted.ToEventId()
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetS100PermitServiceRequestStartedMessage).MustHaveHappenedOnceExactly();
         A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                && call.GetArgument<LogLevel>(0) == LogLevel.Information
-                                               && call.GetArgument<EventId>(1) == EventIds.GetPermitServiceRequestCompleted.ToEventId()
-                                               && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetPermitServiceRequestCompletedMessage).MustHaveHappenedOnceExactly();
+                                               && call.GetArgument<EventId>(1) == EventIds.GetS100PermitServiceRequestCompleted.ToEventId()
+                                               && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetS100PermitServiceRequestCompletedMessage).MustHaveHappenedOnceExactly();
     }
 
     [Test]
-    public async Task WhenGetS100PermitZipFileAsyncApiCallFailed_ThenReturnsInternalServerError()
+    [TestCase(HttpStatusCode.BadRequest)]
+    [TestCase(HttpStatusCode.Unauthorized)]
+    [TestCase(HttpStatusCode.Forbidden)]
+    [TestCase(HttpStatusCode.InternalServerError)]
+    public async Task WhenGetS100PermitZipFileAsyncApiCallFailed_ThenReturnsInternalServerError(HttpStatusCode statusCode)
     {
         var permitRequest = new PermitRequest();
-        var httpResponse = new HttpResponseMessage(HttpStatusCode.InternalServerError);
+        var httpResponse = new HttpResponseMessage(statusCode)
+        {
+            RequestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri("http://example.com"))
+        };
 
         A.CallTo(() => _fakePermitServiceClient.CallPermitServiceApiAsync(A<PermitRequest>.Ignored, A<string>.Ignored))
             .Returns(httpResponse);
@@ -105,12 +112,12 @@ public class S100PermitServiceTests
 
         A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
-                                                && call.GetArgument<EventId>(1) == EventIds.GetPermitServiceRequestStarted.ToEventId()
-                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetPermitServiceRequestStartedMessage).MustHaveHappenedOnceExactly();
+                                                && call.GetArgument<EventId>(1) == EventIds.GetS100PermitServiceRequestStarted.ToEventId()
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetS100PermitServiceRequestStartedMessage).MustHaveHappenedOnceExactly();
         A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Error
-                                                && call.GetArgument<EventId>(1) == EventIds.PermitServiceInternalError.ToEventId()
-                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.PermitServiceInternalErrorMessage).MustHaveHappenedOnceExactly();
+                                                && call.GetArgument<EventId>(1) == EventIds.S100PermitServiceInternalServerError.ToEventId()
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.S100PermitServiceInternalServerErrorMessage).MustHaveHappenedOnceExactly();
 
     }
 
