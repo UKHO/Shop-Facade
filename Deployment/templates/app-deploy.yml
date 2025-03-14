@@ -64,8 +64,8 @@ jobs:
     runOnce:
       deploy:
         steps:
-          - checkout: self
-            submodules: recursive
+          # - checkout: self
+          #   submodules: recursive
           - template: continuous-deployment-app.yml
             parameters:
               AzureSubscription: ${{parameters.AzureSubscription}}
