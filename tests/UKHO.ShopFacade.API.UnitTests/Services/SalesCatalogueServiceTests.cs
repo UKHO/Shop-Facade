@@ -14,6 +14,7 @@ namespace UKHO.ShopFacade.API.Tests.Services
         private ISalesCatalogueClient _fakeSalesCatalogueClient;
         private ILogger<SalesCatalogueService> _fakeLogger;
         private SalesCatalogueService _salesCatalogueService;
+        private readonly string _correlationId = Guid.NewGuid().ToString();
 
         [SetUp]
         public void Setup()
@@ -36,16 +37,16 @@ namespace UKHO.ShopFacade.API.Tests.Services
                 Content = new StringContent(JsonConvert.SerializeObject(products))
             };
             httpResponse.Content.Headers.LastModified = DateTimeOffset.UtcNow;
-            A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi()).Returns(Task.FromResult(httpResponse));
+            A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi(A<string>.Ignored)).Returns(Task.FromResult(httpResponse));
 
             // Act
-            var result = await _salesCatalogueService.GetProductsCatalogueAsync();
+            var result = await _salesCatalogueService.GetProductsCatalogueAsync(_correlationId);
 
             // Assert
-            Assert.That(result.ResponseCode, Is.EqualTo(HttpStatusCode.OK));
-            Assert.That(result.ResponseBody, Is.Not.Null);
-            Assert.That(result.ResponseBody.Count, Is.EqualTo(1));
-            Assert.That(result.ResponseBody[0].ProductName, Is.EqualTo("Product1"));
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(result.Value, Is.Not.Null);
+            Assert.That(result.Value.Count, Is.EqualTo(1));
+            Assert.That(result.Value[0].ProductName, Is.EqualTo("Product1"));
         }
 
         [Test]
@@ -53,32 +54,35 @@ namespace UKHO.ShopFacade.API.Tests.Services
         {
             // Arrange
             var httpResponse = new HttpResponseMessage(HttpStatusCode.NotModified);
-            A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi()).Returns(Task.FromResult(httpResponse));
+            A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi(A<string>.Ignored)).Returns(Task.FromResult(httpResponse));
 
             // Act
-            var result = await _salesCatalogueService.GetProductsCatalogueAsync();
+            var result = await _salesCatalogueService.GetProductsCatalogueAsync(_correlationId);
 
             // Assert
-            Assert.That(result.ResponseCode, Is.EqualTo(HttpStatusCode.NotModified));
-            Assert.That(result.ResponseBody, Is.Null);
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NotModified));
+            Assert.That(result.Value, Is.Empty);
         }
 
         [Test]
-        public async Task GetProductsFromSpecificDateAsync_ReturnsSalesCatalogueResponse_WhenResponseIsError()
+        [TestCase(HttpStatusCode.BadRequest)]
+        [TestCase(HttpStatusCode.Unauthorized)]
+        [TestCase(HttpStatusCode.Forbidden)]
+        public async Task GetProductsFromSpecificDateAsync_ReturnsSalesCatalogueResponse_WhenResponseIsError(HttpStatusCode statusCode)
         {
             // Arrange
-            var httpResponse = new HttpResponseMessage(HttpStatusCode.BadRequest)
+            var httpResponse = new HttpResponseMessage(statusCode)
             {
                 RequestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri("http://example.com"))
             };
-            A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi()).Returns(Task.FromResult(httpResponse));
+            A.CallTo(() => _fakeSalesCatalogueClient.CallSalesCatalogueServiceApi(A<string>.Ignored)).Returns(Task.FromResult(httpResponse));
 
             // Act
-            var result = await _salesCatalogueService.GetProductsCatalogueAsync();
+            var result = await _salesCatalogueService.GetProductsCatalogueAsync(_correlationId);
 
             // Assert
-            Assert.That(result.ResponseCode, Is.EqualTo(HttpStatusCode.BadRequest));
-            Assert.That(result.ResponseBody, Is.Null);
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
+            Assert.That(result.Value, Is.Null);
         }
     }
 }

@@ -11,13 +11,15 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
     public class PermitServiceTests
     {
         private IUpnService _fakeUpnService;
+        private ISalesCatalogueService _salesCatalogueService;
         private PermitService _permitService;
 
         [SetUp]
         public void Setup()
         {
             _fakeUpnService = A.Fake<IUpnService>();
-            _permitService = new PermitService(_fakeUpnService);
+            _salesCatalogueService = A.Fake<ISalesCatalogueService>();
+            _permitService = new PermitService(_fakeUpnService, _salesCatalogueService);
         }
 
         [Test]
