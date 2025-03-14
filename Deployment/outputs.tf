@@ -27,7 +27,7 @@ output "webapp_slot_default_site_hostname" {
 }
 
 output "adds_web_app_url" {
-value = local.env_name == "dev" ? "http://${module.webapp_service.addsmock_slot_default_site_hostname}:5678/graphapi/" : null
+value = local.env_name == "dev" ? "http://${module.webapp_service.addsmock_slot_default_site_hostname}/graphapi/" : null
 }
 
 output "addsmock_default_site_hostname" {
