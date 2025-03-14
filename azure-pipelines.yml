@@ -162,7 +162,7 @@ stages:
       - name: "UseSsl"
         value: "false"
       - name: "Port"
-        value: "80"
+        value: "5678"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
