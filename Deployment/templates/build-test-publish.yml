@@ -238,6 +238,13 @@ jobs:
     - checkout: self
       submodules: true
 
+    - script: |
+        git submodule foreach 'git checkout MockDeploymentTestBranch'
+
+        git submodule foreach 'git pull origin MockDeploymentTestBranch'
+
+      displayName: 'Checkout specific branch for submodules'
+ 
     - task: UseDotNet@2
       displayName: 'Use .NET 8.0.x sdk'
       inputs:
@@ -263,7 +270,6 @@ jobs:
         nugetConfigPath: '$(Build.SourcesDirectory)\src\MockSSSSS\BuildNuget.config'
         workingDirectory: '$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock'
         packagesDirectory: '$(Build.SourcesDirectory)\ADDSMock\packages'
-
 
     - task: CopyFiles@2
       displayName: "Copy additional configuration directories"
