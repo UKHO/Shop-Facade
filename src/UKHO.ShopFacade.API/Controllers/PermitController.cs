@@ -53,7 +53,7 @@ namespace UKHO.ShopFacade.API.Controllers
             {
                 case HttpStatusCode.OK:
                     _logger.LogInformation(EventIds.GetPermitsCallCompleted.ToEventId(), ErrorDetails.GetPermitsCallCompletedMessage);
-                    return Ok();
+                    return File(permitServiceResult.Value, PermitServiceConstants.ZipContentType, PermitServiceConstants.PermitZipFileName);
                 case HttpStatusCode.NoContent:
                     _logger.LogWarning(EventIds.NoContentFound.ToEventId(), ErrorDetails.PermitNoContentMessage);
                     return NoContent();

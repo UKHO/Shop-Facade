@@ -22,6 +22,7 @@ namespace UKHO.ShopFacade.MockService.Stubs
             var licenceIdForEmptyResponse = "3";
             var licenceIdFor204Response = "4";
 
+            var testDataPath = Path.Combine(Directory.GetCurrentDirectory(), "Stubs/TestData");
             // Mock endpoint for Graph API
             var endpoint = $"/sites/{_graphApiConfiguration.SiteId}/lists/{_graphApiConfiguration.ListId}/items";
 
@@ -105,6 +106,31 @@ namespace UKHO.ShopFacade.MockService.Stubs
                             }}
                             ]                        
                     }}")
+            );
+
+            //Temporarily added the following mock responses for Permit Service & SCS endpoints. This mock will be replaced with the common ADDSMock.
+            server.Given(
+                Request.Create()
+                    .WithPath("/v1/permits/s100")       //Permit Service endpoint
+                    .UsingPost()
+                )
+            .RespondWith(
+        Response.Create()
+                    .WithStatusCode(200)
+                    .WithHeader("Content-Type", "application/json")
+                    .WithBodyFromFile(testDataPath+"/Permits.zip")
+            );
+
+            server.Given(
+                Request.Create()
+                    .WithUrl(new RegexMatcher(".*/v2/catalogues/s100/basic.*"))         //SCS endpoint
+                    .UsingGet()
+                )
+            .RespondWith(
+        Response.Create()
+                    .WithStatusCode(200)
+                    .WithHeader("Content-Type", "application/json")
+                    .WithBodyFromFile(testDataPath + "/catalogue.json")
             );
         }
     }

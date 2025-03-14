@@ -106,7 +106,22 @@ namespace UKHO.ShopFacade.Common.Events
         /// <summary>
         /// 950020 - New access token is added to cache for external end point resource.
         /// </summary>
-        CachingExternalEndPointToken = 950020
+        CachingExternalEndPointToken = 950020,
+
+        /// <summary>
+        /// 950021 - Request for S100 Permit Service endpoint is started.
+        /// </summary>
+        GetS100PermitServiceRequestStarted = 950021,
+
+        /// <summary>
+        /// 950022 - Request for S100 Permit Service endpoint is completed.
+        /// </summary>
+        GetS100PermitServiceRequestCompleted = 950022,
+
+        /// <summary>
+        /// 950023 - Request for S100 Permit Service Internal Server Error.
+        /// </summary>
+        S100PermitServiceInternalServerError = 950023
     }
 
     /// <summary>

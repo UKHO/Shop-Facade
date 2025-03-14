@@ -48,10 +48,20 @@ namespace UKHO.ShopFacade.API.UnitTests.Services
             Assert.That(result.ErrorResponse.Errors[0].Description, Is.EqualTo(ErrorDetails.LicenceNotFoundMessage));
         }
 
+        [Test]
+        public async Task WhenUPNsNotAvailableForLicence_ThenReturn204NoContentResponse()
+        {
+            A.CallTo(() => _fakeUpnDataProvider.GetUpnDetailsByLicenseId(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnDataProviderResult(HttpStatusCode.NoContent));
+            var result = await _upnService.GetUpnDetails(123, "correlationId");
+
+            Assert.That(result.StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        }
+
         private static UpnDataProviderResult GetUpnDataProviderResult(HttpStatusCode httpStatusCode)
         {
             return httpStatusCode switch
             {
+                HttpStatusCode.NoContent => UpnDataProviderResult.NoContent(),
                 HttpStatusCode.NotFound => UpnDataProviderResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = new List<ErrorDetail> { new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage } } }),
                 _ => UpnDataProviderResult.Success(new S100UpnRecord { ECDIS_UPN1_Title = "Title1", ECDIS_UPN_1 = "UPN1", ECDIS_UPN2_Title = "Title2", ECDIS_UPN_2 = "UPN2", ECDIS_UPN3_Title = "Title3", ECDIS_UPN_3 = "UPN3", ECDIS_UPN4_Title = "Title4", ECDIS_UPN_4 = "UPN4", ECDIS_UPN5_Title = "Title5", ECDIS_UPN_5 = "UPN5" }),
             };

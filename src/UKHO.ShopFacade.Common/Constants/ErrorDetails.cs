@@ -33,5 +33,12 @@ namespace UKHO.ShopFacade.Common.Constants
         public const string GetSalesCatalogueDataRequestStartedMessage = "Retrieval process of the latest S-100 basic catalogue data from Sales catalogue service is started.";
         public const string GetSalesCatalogueDataRequestCompletedMessage = "Retrieval process of the latest S-100 basic catalogue data from Sales catalogue service is completed.";
         public const string SalesCatalogueDataRequestInternalServerErrorMessage = "Error in sales catalogue service with uri:{RequestUri} and responded with {StatusCode}.";
+
+        //Error messages for S100 permit service
+        public const string S100PermitServiceSource = "S100 permit service";
+        public const string GetS100PermitServiceRequestStartedMessage = "Retrieval process of the permit data from s100 permit service is started.";
+        public const string GetS100PermitServiceRequestCompletedMessage = "Retrieval process of the permit data from s100 permit service is completed.";
+        public const string S100PermitServiceInternalServerErrorMessage = "Error in s100 permit service with uri:{RequestUri} and responded with {StatusCode}";
+
     }
 }
