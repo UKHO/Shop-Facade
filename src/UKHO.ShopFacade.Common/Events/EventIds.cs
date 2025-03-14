@@ -106,7 +106,6 @@ namespace UKHO.ShopFacade.Common.Events
         /// <summary>
         /// 950020 - New access token is added to cache for external end point resource.
         /// </summary>
-    
         CachingExternalEndPointToken = 950020,
 
         /// <summary>

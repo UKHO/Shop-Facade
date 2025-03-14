@@ -134,8 +134,8 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
             var fileResult = result as FileStreamResult;
             Assert.That(fileResult, Is.Not.Null);
-            Assert.That(fileResult!.FileDownloadName, Is.EqualTo("Permits.zip"));
-            Assert.That(fileResult.ContentType, Is.EqualTo("application/zip"));
+            Assert.That(fileResult!.FileDownloadName, Is.EqualTo(PermitServiceConstants.PermitZipFileName));
+            Assert.That(fileResult.ContentType, Is.EqualTo(PermitServiceConstants.ZipContentType));
             Assert.That(fileResult.FileStream.Length, Is.EqualTo(expectedStream.Length));
 
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
