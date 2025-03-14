@@ -123,8 +123,6 @@ namespace UKHO.ShopFacade.Common.Events
         /// 950023 - Request for S100 Permit Service Internal Server Error.
         /// </summary>
         S100PermitServiceInternalServerError = 950023
-
-
     }
 
     /// <summary>
