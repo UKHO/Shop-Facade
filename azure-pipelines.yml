@@ -156,9 +156,13 @@ stages:
       - name: "AzureADConfiguration.ClientSecretNoRole"
         value: $(AzureADConfigurationClientSecretNoRole)
       - name: "ConfigurationPath"
-        value: '$(Pipeline.Workspace)\UKHOADDSMockService\service-configuration'
+        value: '/home/site/wwwroot/service-configuration/demo/files'
       - name: "OverrideConfigurationPath"
-        value: '$(Pipeline.Workspace)\UKHOADDSMockService\override-configuration'
+        value: '/home/site/wwwroot/override-configuration/demo/files'
+      - name: "UseSsl"
+        value: "false"
+      - name: "Port"
+        value: "5678"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:

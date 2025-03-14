@@ -53,7 +53,7 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        # Find and print the path of the "service-configuration" folder
+        ## Find and print the path of the "service-configuration" folder
 
         Get-ChildItem -Path $(Build.SourcesDirectory) -Recurse -File
 
