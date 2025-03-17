@@ -160,9 +160,9 @@ stages:
       - name: "OverrideConfigurationPath"
         value: '/home/site/wwwroot/override-configuration/demo/files'
       - name: "UseSsl"
-        value: "false"
+        value: "true"
       - name: "Port"
-        value: "5678"
+        value: "443"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
