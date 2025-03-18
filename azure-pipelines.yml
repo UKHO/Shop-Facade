@@ -160,7 +160,9 @@ stages:
       - name: "OverrideConfigurationPath"
         value: 'override-configurations'
       - name: "UseSsl"
-        value: "true"
+        value: "false"
+      - name: "Port"
+        value: "5678"
 
     jobs:
       - template: Deployment/templates/app-deploy.yml
