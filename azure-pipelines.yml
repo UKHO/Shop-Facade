@@ -161,8 +161,7 @@ stages:
         value: 'override-configurations'
       - name: "UseSsl"
         value: "true"
-      - name: "Port"
-        value: "8080"
+
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
