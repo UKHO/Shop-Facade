@@ -92,13 +92,11 @@ resource "azurerm_linux_web_app" "adds_mock_webapp_service" {
     ftps_state = "Disabled"
   }
      
-  app_settings = merge(var.adds_mock_app_settings, {
-    "WEBSITES_PORT" = "8080"
-  })
+  app_settings = var.adds_mock_app_settings
 
   identity {
     type = "SystemAssigned"
   }
 
-  https_only = false
+  https_only = true
 }
