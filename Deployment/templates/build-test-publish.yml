@@ -246,10 +246,12 @@ jobs:
         git fetch
  
         # Checkout the specific branch
-        git checkout MockDeploymentTestBranch
+        #git checkout MockDeploymentTestBranch
+        git checkout MockDeploymentWithHostBuilder
  
         # Optionally, pull the latest changes
-        git pull origin MockDeploymentTestBranch
+        #git pull origin MockDeploymentTestBranch
+        git pull origin MockDeploymentWithHostBuilder
       displayName: 'Checkout specific branch in submodule'
  
     - task: UseDotNet@2
