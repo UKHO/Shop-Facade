@@ -121,7 +121,17 @@ namespace UKHO.ShopFacade.Common.Events
         /// <summary>
         /// 950023 - Request for S100 Permit Service Internal Server Error.
         /// </summary>
-        S100PermitServiceInternalServerError = 950023
+        S100PermitServiceInternalServerError = 950023,
+
+        /// <summary>
+        /// 950024 - Retry attempt for Sales Catalogue Service.
+        /// </summary>
+        RetryAttemptForSalesCatalogueService = 950024,
+
+        /// <summary>
+        /// 950025 - Retry attempt for Permit Service.
+        /// </summary>
+        RetryAttemptForPermitService = 950025
     }
 
     /// <summary>
