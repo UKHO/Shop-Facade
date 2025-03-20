@@ -175,7 +175,8 @@ jobs:
 
     - checkout: self
       submodules: true
-      fetchDepth: 0
+
+    - script: git submodule update --init --force --remote
  
     - task: UseDotNet@2
       displayName: 'Use .NET 8.0.x sdk'
