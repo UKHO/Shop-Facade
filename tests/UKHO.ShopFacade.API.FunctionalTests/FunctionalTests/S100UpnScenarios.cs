@@ -53,12 +53,12 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
         }
 
-        //[Test]
-        //public async Task WhenUpnServiceEndpointCalledWithInvalidToken_ThenUpnServiceReturns401UnauthorizedResponse()
-        //{
-        //    var response = await _s100UpnEndpoint.GetUpnResponseAsync("Invalid Token", "1");
-        //    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
-        //}
+        [Test]
+        public async Task WhenUpnServiceEndpointCalledWithInvalidToken_ThenUpnServiceReturns401UnauthorizedResponse()
+        {
+            var response = await _s100UpnEndpoint.GetUpnResponseAsync("Invalid Token", "1");
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+        }
 
         //[Test]
         //public async Task WhenUpnServiceEndpointCalledWithValidTokenAndNonExistingLicenceId_ThenUpnServiceReturns404NotFoundResponse()
