@@ -172,25 +172,8 @@ jobs:
     clean: all
   displayName: "Dotnet Build publish ADDS Mock Service"
   steps:
-
     - checkout: self
       submodules: true
-
-    # - powershell: |
-    #     # Navigate to the submodule directory
-    #     cd $(Build.SourcesDirectory)\src\MockSSSSS
-
-    #     # Fetch all branches
-    #     git fetch
- 
-    #     # Checkout the specific branch
-    #     #git checkout MockDeploymentTestBranch
-    #     git checkout MockDeploymentWithHostBuilder
- 
-    #     # Optionally, pull the latest changes
-    #     #git pull origin MockDeploymentTestBranch
-    #     git pull origin MockDeploymentWithHostBuilder
-    #   displayName: 'Checkout specific branch in submodule'
  
     - task: UseDotNet@2
       displayName: 'Use .NET 8.0.x sdk'
@@ -199,12 +182,12 @@ jobs:
         useGlobalJson: true
         workingDirectory: '$(Build.SourcesDirectory)\src'
 
-    # - task: PowerShell@2
-    #   inputs:
-    #     targetType: 'inline'
-    #     script: |
-    #       Get-ChildItem "$(Build.SourcesDirectory)\src\MockSSSSS"            
-    #       Get-ChildItem "$(Build.SourcesDirectory)\src" -Recurse -File
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: |
+          Get-ChildItem "$(Build.SourcesDirectory)\src\MockSSSSS"            
+          Get-ChildItem "$(Build.SourcesDirectory)\src" -Recurse -File
               
     - task: DotNetCoreCLI@2
       displayName: ".Net Core - NuGet restore for non test projects only"
