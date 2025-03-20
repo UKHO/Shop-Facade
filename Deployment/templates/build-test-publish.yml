@@ -175,6 +175,22 @@ jobs:
 
     - checkout: self
       submodules: true
+
+    # - powershell: |
+    #     # Navigate to the submodule directory
+    #     cd $(Build.SourcesDirectory)\src\MockSSSSS
+
+    #     # Fetch all branches
+    #     git fetch
+ 
+    #     # Checkout the specific branch
+    #     #git checkout MockDeploymentTestBranch
+    #     git checkout MockDeploymentWithHostBuilder
+ 
+    #     # Optionally, pull the latest changes
+    #     #git pull origin MockDeploymentTestBranch
+    #     git pull origin MockDeploymentWithHostBuilder
+    #   displayName: 'Checkout specific branch in submodule'
  
     - task: UseDotNet@2
       displayName: 'Use .NET 8.0.x sdk'
@@ -203,14 +219,14 @@ jobs:
         packagesDirectory: '$(Build.SourcesDirectory)\ADDSMock\packages'
 
     - task: CopyFiles@2
-      displayName: "Copy additional configuration directories - override-configuration"
+      displayName: "Copy additional configuration directories"
       inputs:
         SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\override-configuration'
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\override-configuration'
 
     - task: CopyFiles@2
-      displayName: "Copy additional configuration directories - service-configuration"
+      displayName: "Copy additional configuration directories"
       inputs:
         SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\service-configuration'
         Contents: '**'
