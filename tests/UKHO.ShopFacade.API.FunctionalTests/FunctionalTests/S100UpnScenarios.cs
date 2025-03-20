@@ -39,19 +39,19 @@ namespace UKHO.ShopFacade.API.FunctionalTests.FunctionalTests
             Assert.That(jsonResponse!.Count > 0);
         }
 
-        //[Test]
-        //public async Task WhenUpnServiceEndpointCalledWithValidTokenWithNoRole_ThenUpnServiceReturns403ForbiddenResponse()
-        //{
-        //    var response = await _s100UpnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(true), "1");
-        //    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
-        //}
+        [Test]
+        public async Task WhenUpnServiceEndpointCalledWithValidTokenWithNoRole_ThenUpnServiceReturns403ForbiddenResponse()
+        {
+            var response = await _s100UpnEndpoint.GetUpnResponseAsync(await _authTokenProvider.GetAzureADTokenAsync(true), "1");
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
+        }
 
-        //[Test]
-        //public async Task WhenUpnServiceEndpointCalledWithoutToken_ThenUpnServiceReturns401UnauthorizedResponse()
-        //{
-        //    var response = await _s100UpnEndpoint.GetUpnResponseAsync("", "1");
-        //    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
-        //}
+        [Test]
+        public async Task WhenUpnServiceEndpointCalledWithoutToken_ThenUpnServiceReturns401UnauthorizedResponse()
+        {
+            var response = await _s100UpnEndpoint.GetUpnResponseAsync("", "1");
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Unauthorized));
+        }
 
         //[Test]
         //public async Task WhenUpnServiceEndpointCalledWithInvalidToken_ThenUpnServiceReturns401UnauthorizedResponse()
