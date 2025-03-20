@@ -21,7 +21,7 @@ namespace UKHO.ShopFacade.Common.Policies
                 .WaitAndRetryAsync(retryCount, retryAttempt => TimeSpan.FromSeconds(sleepDuration),
                     onRetry: (response, timespan, retryAttempt, context) =>
                     {
-                        _logger.LogInformation(eventId.ToEventId(), "Failed to connect {service} | StatusCode: {statusCode}. Retry attempted: {retryAttempt}.", service, response.Result.StatusCode.ToString(), retryAttempt);
+                        _logger.LogInformation(eventId.ToEventId(), "Failed to connect {service} | StatusCode: {statusCode} | Retry attempted: {retryAttempt}.", service, response.Result.StatusCode.ToString(), retryAttempt);
                     });
         }
     }
