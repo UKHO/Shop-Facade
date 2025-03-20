@@ -172,6 +172,7 @@ jobs:
     clean: all
   displayName: "Dotnet Build publish ADDS Mock Service"
   steps:
+
     - checkout: self
       submodules: true
  
@@ -186,7 +187,8 @@ jobs:
       inputs:
         targetType: 'inline'
         script: |
-          Get-ChildItem "$(Build.SourcesDirectory)\src\MockSSSSS"            
+          Get-ChildItem "$(Build.SourcesDirectory)\src\MockSSSSS"
+            
           Get-ChildItem "$(Build.SourcesDirectory)\src" -Recurse -File
               
     - task: DotNetCoreCLI@2
@@ -214,44 +216,86 @@ jobs:
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
 
-    # - task: PowerShell@2
-    #   displayName: "Update mock-configuration.json with paths"
-    #   inputs:
-    #     targetType: 'inline'
-    #     script: |
-    #       $mockConfigPath = "$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock\mock-configuration.json"
-    #       $configPath = "$(configurationpath)"
-    #       $overrideConfigPath = "$(overrideconfigurationpath)"
-    #       $useSsl = $false
+    - task: PowerShell@2
+      displayName: "Set overrideconfigurationpath and configurationpath pipeline variables"
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Find the service-configuration folder
+          $serviceConfigurationFolder = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService" -Recurse -Directory | Where-Object { $_.Name -eq "service-configuration" }
 
-    #       if (Test-Path $mockConfigPath) {
-    #           $json = Get-Content $mockConfigPath -Raw | ConvertFrom-Json
-    #           $json.configurationPath = $configPath
-    #           $json.overrideConfigurationPath = $overrideConfigPath
-    #           $json.useSsl = $useSsl
-    #           $json | ConvertTo-Json -Depth 32 | Set-Content $mockConfigPath
-    #           Write-Host "Updated mock-configuration.json with paths."
-    #       } else {
-    #           Write-Host "Error: mock-configuration.json not found!"
-    #           exit 1  # Fail pipeline if file is missing
-    #       }
+          if ($serviceConfigurationFolder) {
+              $serviceConfigPath = $serviceConfigurationFolder.FullName
+              Write-Host "Found service-configuration folder: $serviceConfigPath"
+              Write-Host "##vso[task.setvariable variable=configurationpath]$serviceConfigPath"
+          } else {
+              Write-Host "Error: service-configuration folder not found!"
+              exit 1  # Fail pipeline if folder is missing
+          }
 
-    # - task: PowerShell@2
-    #   condition: always()
+          # Find the override-configuration folder
+          $overrideConfigurationFolder = Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService" -Recurse -Directory | Where-Object { $_.Name -eq "override-configuration" }
+
+          if ($overrideConfigurationFolder) {
+              $overrideConfigPath = $overrideConfigurationFolder.FullName
+              Write-Host "Found override-configuration folder: $overrideConfigPath"
+              Write-Host "##vso[task.setvariable variable=overrideconfigurationpath]$overrideConfigPath"
+          } else {
+              Write-Host "Error: override-configuration folder not found!"
+              exit 1  # Fail pipeline if folder is missing
+          }
+
+          # Output confirmation
+          Write-Host "service-configuration is set to: $serviceConfigPath"
+          Write-Host "override-configuration is set to: $overrideConfigPath"
+
+
+
+    # - task: FileTransform@2
+    #   displayName: "File Transform: Mock Service Settings"
     #   inputs:
+    #     folderPath: '$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock'
+    #     xmlTransformationRules: ''
+    #     jsonTargetFiles: '**/mock-configuration.json'
+
+    - task: PowerShell@2
+      displayName: "Update mock-configuration.json with paths"
+      inputs:
+        targetType: 'inline'
+        script: |
+          $mockConfigPath = "$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock\mock-configuration.json"
+          $configPath = "$(configurationpath)"
+          $overrideConfigPath = "$(overrideconfigurationpath)"
+          $useSsl = $false
+
+          if (Test-Path $mockConfigPath) {
+              $json = Get-Content $mockConfigPath -Raw | ConvertFrom-Json
+              $json.configurationPath = $configPath
+              $json.overrideConfigurationPath = $overrideConfigPath
+              $json.useSsl = $useSsl
+              $json | ConvertTo-Json -Depth 32 | Set-Content $mockConfigPath
+              Write-Host "Updated mock-configuration.json with paths."
+          } else {
+              Write-Host "Error: mock-configuration.json not found!"
+              exit 1  # Fail pipeline if file is missing
+          }
+
+    - task: PowerShell@2
+      condition: always()
+      inputs:
    
-    #     targetType: 'inline'
-    #     script: |
-    #       $file = Get-ChildItem -Path "$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock" -Recurse -File -Filter "mock-configuration.json" | Select-Object -First 1
+        targetType: 'inline'
+        script: |
+          $file = Get-ChildItem -Path "$(Build.SourcesDirectory)\src\MockSSSSS\src\ADDSMock" -Recurse -File -Filter "mock-configuration.json" | Select-Object -First 1
        
-    #       if ($file) {
-    #           # Read and print the content of the found file
-    #           $content = Get-Content $file.FullName -Raw
-    #           Write-Host "File Found: $($file.FullName)"
-    #           Write-Host "Content: $content"
-    #       } else {
-    #           Write-Host "File 'mock-configuration.json' not found in $(Build.SourcesDirectory)"
-    #       }
+          if ($file) {
+              # Read and print the content of the found file
+              $content = Get-Content $file.FullName -Raw
+              Write-Host "File Found: $($file.FullName)"
+              Write-Host "Content: $content"
+          } else {
+              Write-Host "File 'mock-configuration.json' not found in $(Build.SourcesDirectory)"
+          }
 
     - task: DotNetCoreCLI@2
       displayName: "dotnet build task"
@@ -270,19 +314,19 @@ jobs:
         zipAfterPublish: false
         modifyOutputPath: false
 
-    # - task: CopyFiles@2
-    #   displayName: "Copy additional configuration directories"
-    #   inputs:
-    #     SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\override-configuration'
-    #     Contents: '**'
-    #     TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\override-configuration'
+    - task: CopyFiles@2
+      displayName: "Copy additional configuration directories"
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\override-configuration'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\override-configuration'
 
-    # - task: CopyFiles@2
-    #   displayName: "Copy additional configuration directories"
-    #   inputs:
-    #     SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\service-configuration'
-    #     Contents: '**'
-    #     TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
+    - task: CopyFiles@2
+      displayName: "Copy additional configuration directories"
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)\src\MockSSSSS\service-configuration'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
 
     - task: ArchiveFiles@2
       displayName: "Zip ADDS Mock Service"
@@ -297,6 +341,7 @@ jobs:
       displayName: "Publish ADDS Mock Service Artifact"
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService/UKHOADDSMockService.zip'
+        ArtifactName: UKHOADDSMockService
 
 - job: PublishFunctionalTests
   workspace:
