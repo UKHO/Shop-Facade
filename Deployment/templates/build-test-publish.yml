@@ -238,21 +238,21 @@ jobs:
     - checkout: self
       submodules: true
 
-    - powershell: |
-        # Navigate to the submodule directory
-        cd $(Build.SourcesDirectory)\src\MockSSSSS
+    # - powershell: |
+    #     # Navigate to the submodule directory
+    #     cd $(Build.SourcesDirectory)\src\MockSSSSS
 
-        # Fetch all branches
-        git fetch
+    #     # Fetch all branches
+    #     git fetch
  
-        # Checkout the specific branch
-        #git checkout MockDeploymentTestBranch
-        git checkout MockDeploymentWithHostBuilder
+    #     # Checkout the specific branch
+    #     #git checkout MockDeploymentTestBranch
+    #     git checkout MockDeploymentWithHostBuilder
  
-        # Optionally, pull the latest changes
-        #git pull origin MockDeploymentTestBranch
-        git pull origin MockDeploymentWithHostBuilder
-      displayName: 'Checkout specific branch in submodule'
+    #     # Optionally, pull the latest changes
+    #     #git pull origin MockDeploymentTestBranch
+    #     git pull origin MockDeploymentWithHostBuilder
+    #   displayName: 'Checkout specific branch in submodule'
  
     - task: UseDotNet@2
       displayName: 'Use .NET 8.0.x sdk'
