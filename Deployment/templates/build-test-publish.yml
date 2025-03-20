@@ -167,6 +167,17 @@ jobs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
         ArtifactName: UKHOShopFacadeServiceAPI
 
+
+- job: BuildAndPublishADDSMockServices
+  workspace:
+    clean: all
+  displayName: "Dotnet Build publish ADDS Mock Services"        
+  steps:
+    - checkout: self
+      submodules: true
+
+    - script: git submodule update --init --force --remote
+  
 - job: BuildAndPublishADDSMockService
   workspace:
     clean: all
