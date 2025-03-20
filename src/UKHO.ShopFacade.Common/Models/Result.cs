@@ -12,11 +12,14 @@ namespace UKHO.ShopFacade.Common.Models
 
         public ErrorResponse ErrorResponse { get; }
 
-        protected Result(T value, HttpStatusCode statusCode, ErrorResponse? errorResponse = null)
+        public string Origin { get; set; }
+
+        protected Result(T value, HttpStatusCode statusCode, ErrorResponse? errorResponse = null, string origin = null)
         {
             Value = value;
             StatusCode = statusCode;
             ErrorResponse = errorResponse!;
+            Origin = origin;
         }
 
         public bool IsSuccess => StatusCode == HttpStatusCode.OK;
