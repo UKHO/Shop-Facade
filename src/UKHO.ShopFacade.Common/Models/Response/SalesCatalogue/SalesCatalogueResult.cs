@@ -6,8 +6,8 @@ namespace UKHO.ShopFacade.Common.Models.Response.SalesCatalogue
     [ExcludeFromCodeCoverage]
     public class SalesCatalogueResult : ServiceResponseResult<List<Products>>
     {
-        private SalesCatalogueResult(List<Products> value, HttpStatusCode statusCode, ErrorResponse? errorResponse = null)
-    : base(value!, statusCode, errorResponse!)
+        private SalesCatalogueResult(List<Products> value, HttpStatusCode statusCode, ErrorResponse? errorResponse = null, string? origin = null)
+    : base(value!, statusCode, errorResponse!, origin!)
         {
         }
 
@@ -15,6 +15,6 @@ namespace UKHO.ShopFacade.Common.Models.Response.SalesCatalogue
 
         public static SalesCatalogueResult NotModified(List<Products> value) => new(value, HttpStatusCode.NotModified);
 
-        public static new SalesCatalogueResult InternalServerError(ErrorResponse errorResponse) => new(default!, HttpStatusCode.InternalServerError, errorResponse);
+        public static new SalesCatalogueResult InternalServerError(ErrorResponse errorResponse, string origin) => new(default!, HttpStatusCode.InternalServerError, errorResponse, origin);
     }
 }
