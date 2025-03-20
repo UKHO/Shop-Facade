@@ -175,13 +175,7 @@ jobs:
 
     - checkout: self
       submodules: true
-
-    - powershell: |
-        # Navigate to the submodule directory
-         cd $(Build.SourcesDirectory)\src\MockSSSSS
-         git submodule update --init --recursive
-      displayName: 'Checkout specific branch in submodule'
-
+      fetchDepth: 0
  
     - task: UseDotNet@2
       displayName: 'Use .NET 8.0.x sdk'
