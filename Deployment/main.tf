@@ -25,7 +25,6 @@ module "webapp_service" {
     "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG"           = "1"    
   }
   adds_mock_app_settings = {
-    "KeyVaultSettings__ServiceUri"                              = "https://${local.key_vault_name}.vault.azure.net/"
     "ASPNETCORE_ENVIRONMENT"                                   = local.env_name
     "WEBSITE_RUN_FROM_PACKAGE"                                 = "1"
     "WEBSITE_ENABLE_SYNC_UPDATE_SITE"                          = "true"
@@ -39,9 +38,6 @@ locals {
     "webapp_slot"     = module.webapp_service.slot_object_id
   }
   
-  kv_read_access_list_with_addsmock = merge(local.kv_read_access_list, {
-    "adds_mock_service" = local.env_name == "dev" ? module.webapp_service.adds_mock_web_app_object_id : ""
-    })
 }
 
 module "app_insights" {
