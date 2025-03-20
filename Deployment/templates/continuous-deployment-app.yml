@@ -3,22 +3,23 @@ parameters:
     type: string
 
 steps:
+
   - task: FileTransform@2
-    displayName: "File Transform: Mock Service Application Settings"
+    displayName: "File Transform: ADDS Mock Service Application Settings"
     condition: and(succeeded(), eq(variables['Environment.Name'], 'ShopFacade-Dev'))
     inputs:
-      folderPath: '$(Pipeline.Workspace)/UKHOShopFacadeMockServiceAPI/*.zip'
+      folderPath: '$(Pipeline.Workspace)/UKHOADDSMockService/*.zip'
       xmlTransformationRules: ''
-      jsonTargetFiles: '**/appsettings.json'
+      jsonTargetFiles: '**/mock-configuration.json'
 
   - task: AzureWebApp@1
-    displayName: "Deploy to ShopFacade Mock API Service"
+    displayName: "Deploy to ShopFacade ADDS Mock"
     condition: and(succeeded(), eq(variables['Environment.Name'], 'ShopFacade-Dev'))
     inputs:
       azureSubscription: "${{ parameters.AzureSubscription }}" 
       appType: 'webAppLinux'
-      appName: "$(MOCK_WEB_APP_NAME)"  
-      package: "$(Pipeline.Workspace)/UKHOShopFacadeMockServiceAPI/UKHOShopFacadeMockService.zip"
+      appName: "$(ADDS_MOCK_WEB_APP_NAME)"  
+      package: "$(Pipeline.Workspace)/UKHOADDSMockService/UKHOADDSMockService.zip"
 
   - task: FileTransform@2
     displayName: "File Transform: WebAppSettings"

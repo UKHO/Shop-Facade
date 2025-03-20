@@ -54,8 +54,9 @@ $terraformOutput = terraform output -json | ConvertFrom-Json
 write-output "Set JSON output into pipeline variables"
 Write-Host "##vso[task.setvariable variable=WEB_APP_NAME;isOutput=true]$($terraformOutput.webapp_name.value)"
 Write-Host "##vso[task.setvariable variable=keyvaulturi;isOutput=true]$($terraformOutput.keyvault_uri.value)"
-Write-Host "##vso[task.setvariable variable=MOCK_WEB_APP_NAME;isOutput=true]$($terraformOutput.mock_webapp_name.value)"
+Write-Host "##vso[task.setvariable variable=ADDS_MOCK_WEB_APP_NAME;isOutput=true]$($terraformOutput.adds_mock_webapp_name.value)"
 Write-Host "##vso[task.setvariable variable=ResourceGroup;isOutput=true]$($terraformOutput.resource_group.value)"
 Write-Host "##vso[task.setvariable variable=WEB_APP_SLOT_NAME;isOutput=true]$($terraformOutput.webapp_slot_name.value)"
 Write-Host "##vso[task.setvariable variable=WEB_APP_SLOT_HOST_NAME;isOutput=true]$($terraformOutput.webapp_slot_default_site_hostname.value)"
+Write-Host "##vso[task.setvariable variable=ADDS_MOCK_HOSTNAME;isOutput=true]$($terraformOutput.addsmock_default_site_hostname.value)"
 $terraformOutput | ConvertTo-Json -Depth 5 > $terraformJsonOutputFile
