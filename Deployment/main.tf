@@ -31,8 +31,6 @@ module "webapp_service" {
   }
   tags                                                          = local.tags
  }
-}
-
 
 locals {
   kv_read_access_list = {
