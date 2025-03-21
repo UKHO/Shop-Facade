@@ -30,7 +30,9 @@ module "webapp_service" {
     "WEBSITE_ENABLE_SYNC_UPDATE_SITE"                          = "true"
   }
   tags                                                          = local.tags
+ }
 }
+
 
 locals {
   kv_read_access_list = {
@@ -42,8 +44,6 @@ locals {
   kv_read_access_list_with_addsmock = {
     "webapp_service"  = module.webapp_service.adds_mock_web_app_object_id
   }
-  
-}
 
 module "app_insights" {
   source              = "./Modules/AppInsights"
