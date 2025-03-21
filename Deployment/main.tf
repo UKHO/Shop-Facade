@@ -37,6 +37,7 @@ locals {
     "webapp_service"  = module.webapp_service.web_app_object_id
     "webapp_slot"     = module.webapp_service.slot_object_id
   }
+}
 
 module "app_insights" {
   source              = "./Modules/AppInsights"
