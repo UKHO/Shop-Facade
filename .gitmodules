@@ -1,4 +1,5 @@
-[submodule "src/MockSSSSS"]
-	path = src/MockSSSSS
+[submodule "src/UKHO.ADDS-Mock"]
+	path = src/UKHO.ADDS-Mock
 	url = https://github.com/UKHO/UKHO.ADDS.Mocks.git
     branch = main
+
