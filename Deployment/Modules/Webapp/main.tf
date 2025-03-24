@@ -49,7 +49,7 @@ resource "azurerm_linux_web_app_slot" "staging" {
     type = "SystemAssigned"
   }
 
-  https_only = azurerm_linux_web_app.webapp_service.https_only
+  https_only = true
 }
 
 resource "azurerm_linux_web_app" "adds_mock_webapp_service" {
