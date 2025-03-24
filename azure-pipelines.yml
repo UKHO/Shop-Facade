@@ -149,8 +149,6 @@ stages:
         value: $(AzureADConfigurationAutoTestClientIdNoRole)
       - name: "AzureADConfiguration.ClientSecretNoRole"
         value: $(AzureADConfigurationClientSecretNoRole)
-      - name: "ConfigurationPath"
-        value: '/home/site/wwwroot/service-configuration'
       - name: "OverrideConfigurationPath"
         value: '/home/site/wwwroot/override-configurations'
     jobs:

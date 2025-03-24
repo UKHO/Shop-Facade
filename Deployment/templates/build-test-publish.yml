@@ -201,12 +201,12 @@ jobs:
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\override-configuration'
 
-    # - task: CopyFiles@2
-    #   displayName: "Copy additional configuration directoriesc- Service Configuration"
-    #   inputs:
-    #     SourceFolder: '$(Build.SourcesDirectory)\src\UKHO.ADDS-Mock\service-configuration'
-    #     Contents: '**'
-    #     TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
+    - task: CopyFiles@2
+      displayName: "Copy additional configuration directoriesc- Service Configuration"
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)\src\UKHO.ADDS-Mock\service-configuration'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
 
     - task: DotNetCoreCLI@2
       displayName: "dotnet build task"
