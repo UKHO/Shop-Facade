@@ -69,7 +69,7 @@ resource "azurerm_linux_web_app" "adds_mock_webapp_service" {
   }
      
   app_settings = merge(var.adds_mock_app_settings, {
-    "WEBSITES_PORT" = "5678"
+    "WEBSITES_PORT" = "8080"
   })
 
   identity {

@@ -151,6 +151,8 @@ stages:
         value: $(AzureADConfigurationClientSecretNoRole)
       - name: "OverrideConfigurationPath"
         value: '/home/site/wwwroot/override-configurations'
+      - name: "Port"
+        value: '8080'
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
