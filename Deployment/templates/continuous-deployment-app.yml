@@ -3,7 +3,6 @@ parameters:
     type: string
 
 steps:
-
   - task: FileTransform@2
     displayName: "File Transform: ADDS Mock Service Application Settings"
     condition: and(succeeded(), eq(variables['Environment.Name'], 'ShopFacade-Dev'))

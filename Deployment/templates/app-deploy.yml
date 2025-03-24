@@ -31,9 +31,7 @@ jobs:
                   parameters:
                     ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
                     AzureSubscription: ${{parameters.AzureSubscription}}
-
-
-                          
+                       
 - deployment: DeployApp
   dependsOn: DevDeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Dotnet App"

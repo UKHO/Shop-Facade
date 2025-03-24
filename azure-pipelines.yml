@@ -1,5 +1,4 @@
 name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd).$(BuildCounter)
- 
 
 parameters:
   - name: ContinueEvenIfResourcesAreGettingDestroyed
