@@ -167,18 +167,15 @@ jobs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.API/UKHOShopFacadeServiceAPI.zip'
         ArtifactName: UKHOShopFacadeServiceAPI
 
-- job: BuildAndPublishMockService
+- job: BuildAndPublishADDSMockService
   workspace:
     clean: all
-  displayName: "Dotnet Build publish Mock API"
+  displayName: "Dotnet Build publish ADDS Mock Service"
   steps:
-    - task: PowerShell@2
-      displayName: "Set assembly version numbers based on build ID"
-      inputs:
-        targetType: filePath
-        filePath: '$(Build.SourcesDirectory)\Apply-AssemblyVersionAndDefaults.ps1'
-        arguments: '-buildNumber "$(Build.BuildNumber)" -solutionDirectory "$(Build.SourcesDirectory)\src\UKHO.ShopFacade.MockService\" -UKHOAssemblyCompany "$env:UKHOAssemblyCompany" -UKHOAssemblyCopyright "$(UKHOAssemblyCopyright)" -UKHOAssemblyVersionPrefix "$env:UKHOAssemblyVersionPrefix" -UKHOAssemblyProduct "$(UKHOAssemblyProduct) MockService"'
 
+    - checkout: self
+      submodules: true
+ 
     - task: UseDotNet@2
       displayName: 'Use .NET 8.0.x sdk'
       inputs:
@@ -190,44 +187,58 @@ jobs:
       displayName: ".Net Core - NuGet restore for non test projects only"
       inputs:
         command: "restore"
-        projects: '**/*UKHO.ShopFacade.MockService.csproj'
+        projects: '**/*ADDSMock.csproj'
         feedsToUse: config
         noCache: true
-        nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
-        workingDirectory: '$(Build.SourcesDirectory)\src\UKHO.ShopFacade.MockService'
-        packagesDirectory: '$(Build.SourcesDirectory)\UKHO.ShopFacade.MockService\packages' 
+        nugetConfigPath: '$(Build.SourcesDirectory)\mock\UKHO.ADDS-Mock\BuildNuget.config'
+        workingDirectory: '$(Build.SourcesDirectory)\mock\UKHO.ADDS-Mock\src\ADDSMock'
+        packagesDirectory: '$(Build.SourcesDirectory)\ADDSMock\packages'
+
+    - task: CopyFiles@2
+      displayName: "Copy additional configuration directories - Override Configuration"
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)\mock\UKHO.ADDS-Mock\override-configuration'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\override-configuration'
+
+    - task: CopyFiles@2
+      displayName: "Copy additional configuration directories - Service Configuration"
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)\mock\UKHO.ADDS-Mock\service-configuration'
+        Contents: '**'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
 
     - task: DotNetCoreCLI@2
       displayName: "dotnet build task"
       inputs:
         command: "build"
-        projects: '**/*UKHO.ShopFacade.MockService.csproj'
+        projects: '**/*ADDSMock.csproj'
         arguments: '--configuration $(BuildConfiguration)'
 
     - task: DotNetCoreCLI@2
-      displayName: "Publish ShopFacade Mock Service API "
+      displayName: "Publish ADDS Mock Service"
       inputs:
         command: "publish"
         publishWebProjects: false
-        projects: '**/*UKHO.ShopFacade.MockService.csproj'
-        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.MockService'
+        projects: '**/*ADDSMock.csproj'
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService'
         zipAfterPublish: false
         modifyOutputPath: false
 
     - task: ArchiveFiles@2
-      displayName: "Zip ShopFacade Mock Service"
+      displayName: "Zip ADDS Mock Service"
       inputs:
-        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/UKHO.ShopFacade.MockService/'
+        rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/UKHO.ADDS.MockService/'
         includeRootFolder: false
         archiveType: "zip"
-        archiveFile: '$(Build.ArtifactStagingDirectory)/UKHO.ShopFacade.MockService/UKHOShopFacadeMockService.zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/UKHO.ADDS.MockService/UKHOADDSMockService.zip'
         replaceExistingArchive: true
 
     - task: PublishBuildArtifacts@1
-      displayName: "Publish ShopFacade Mock WebAPI Artifact"
+      displayName: "Publish ADDS Mock Service Artifact"
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ShopFacade.MockService/UKHOShopFacadeMockService.zip'
-        ArtifactName: UKHOShopFacadeMockServiceAPI
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService/UKHOADDSMockService.zip'
+        ArtifactName: UKHOADDSMockService
 
 - job: PublishFunctionalTests
   workspace:
