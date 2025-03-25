@@ -6,9 +6,8 @@ resource "azurerm_key_vault" "kv" {
   resource_group_name         = var.resource_group_name
   enabled_for_disk_encryption = true
   tenant_id                   = var.tenant_id
-
-  sku_name = "standard"
-  tags = var.tags
+  sku_name                    = "standard"
+  tags                        = var.tags
 
 }
 
