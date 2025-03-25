@@ -31,7 +31,7 @@ namespace UKHO.ShopFacade.API.Services
                     _ => SalesCatalogueResult.InternalServerError(SalesCatalogueResult.SetErrorResponse(correlationId, ErrorDetails.ScsSource, ErrorDetails.ScsInternalErrorMessage)),
                 };
 
-                _logger.LogError(EventIds.SalesCatalogueServiceNonOkResponse.ToEventId(), ErrorDetails.SalesCatalogueDataRequestInternalServerErrorMessage, httpResponse.RequestMessage!.RequestUri, httpResponse.StatusCode);
+                _logger.LogError(EventIds.SalesCatalogueServiceNonOkResponse.ToEventId(), ErrorDetails.SalesCatalogueDataRequestInternalServerErrorMessage, httpResponse.StatusCode, httpResponse.RequestMessage!.RequestUri);
             }
             else
             {

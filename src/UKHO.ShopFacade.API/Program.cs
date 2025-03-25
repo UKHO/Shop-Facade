@@ -21,7 +21,9 @@ using UKHO.ShopFacade.Common.ClientProvider;
 using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.DataProvider;
+using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.HealthCheck;
+using UKHO.ShopFacade.Common.Policies;
 
 namespace UKHO.ShopFacade.API
 {
@@ -82,6 +84,7 @@ namespace UKHO.ShopFacade.API
 
         private static void ConfigureServices(WebApplicationBuilder builder)
         {
+            RetryPolicyConfiguration retryPolicyConfiguration;
             var configuration = builder.Configuration;
 
             builder.Services.AddLogging(loggingBuilder =>
@@ -102,6 +105,7 @@ namespace UKHO.ShopFacade.API
             builder.Services.AddApplicationInsightsTelemetry(options);
             builder.Services.Configure<EventHubLoggingConfiguration>(configuration.GetSection(EventHubLoggingConfiguration));
             builder.Services.Configure<GraphApiConfiguration>(configuration.GetSection(GraphApiConfiguration));
+            builder.Services.Configure<RetryPolicyConfiguration>(configuration.GetSection("RetryPolicyConfiguration"));
 
             builder.Services.AddControllers();
             builder.Services.AddDistributedMemoryCache();
@@ -156,6 +160,27 @@ namespace UKHO.ShopFacade.API
                 client.DefaultRequestHeaders.UserAgent.Add(productHeaderValue);
             });
             builder.Services.AddScoped<IS100PermitService, S100PermitService>();
+            builder.Services.AddScoped<RetryPolicyProvider>();
+
+            retryPolicyConfiguration = configuration.GetSection("RetryPolicyConfiguration").Get<RetryPolicyConfiguration>()!;
+
+            builder.Services.AddHttpClient<ISalesCatalogueClient, SalesCatalogueClient>(c =>
+            {
+                c.BaseAddress = new Uri(configuration.GetValue<string>("SalesCatalogue:BaseUrl"));
+            }).AddPolicyHandler((services, request) =>
+            {
+                var retryPolicyProvider = services.GetRequiredService<RetryPolicyProvider>();
+                return retryPolicyProvider.GetRetryPolicy("Sales Catalogue Service", EventIds.RetryAttemptForSalesCatalogueService, retryPolicyConfiguration.RetryCount, retryPolicyConfiguration.Duration);
+            });
+
+            builder.Services.AddHttpClient<IPermitServiceClient, PermitServiceClient>(c =>
+            {
+                c.BaseAddress = new Uri(configuration.GetValue<string>("PermitServiceConfiguration:BaseUrl"));
+            }).AddPolicyHandler((services, request) =>
+            {
+                var retryPolicyProvider = services.GetRequiredService<RetryPolicyProvider>();
+                return retryPolicyProvider.GetRetryPolicy("Permit Service", EventIds.RetryAttemptForPermitService, retryPolicyConfiguration.RetryCount, retryPolicyConfiguration.Duration);
+            });
         }
 
         private static void ConfigureLogging(WebApplication webApplication)
