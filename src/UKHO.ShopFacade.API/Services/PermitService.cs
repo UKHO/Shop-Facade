@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Extension;
 using UKHO.ShopFacade.Common.Models;
-using UKHO.ShopFacade.Common.Models.Response.Upn;
+using UKHO.ShopFacade.Common.Models.Response.Permit;
 
 namespace UKHO.ShopFacade.API.Services
 {

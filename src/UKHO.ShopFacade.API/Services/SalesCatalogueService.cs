@@ -26,12 +26,13 @@ namespace UKHO.ShopFacade.API.Services
 
             if (httpResponse.StatusCode != HttpStatusCode.OK && httpResponse.StatusCode != HttpStatusCode.NotModified)
             {
+                var errorResponse = await httpResponse.Content.ReadAsStringAsync();
                 response = httpResponse.StatusCode switch
                 {
                     _ => SalesCatalogueResult.InternalServerError(SalesCatalogueResult.SetErrorResponse(correlationId, ErrorDetails.ScsSource, ErrorDetails.ScsInternalErrorMessage)),
                 };
 
-                _logger.LogError(EventIds.SalesCatalogueServiceNonOkResponse.ToEventId(), ErrorDetails.SalesCatalogueDataRequestInternalServerErrorMessage, httpResponse.RequestMessage!.RequestUri, httpResponse.StatusCode);
+                _logger.LogError(EventIds.SalesCatalogueServiceNonOkResponse.ToEventId(), ErrorDetails.SalesCatalogueDataRequestInternalServerErrorMessage, ErrorDetails.ScsSource, httpResponse.RequestMessage!.RequestUri, httpResponse.StatusCode, errorResponse);
             }
             else
             {

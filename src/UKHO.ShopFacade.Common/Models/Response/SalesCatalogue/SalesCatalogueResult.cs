@@ -12,9 +12,7 @@ namespace UKHO.ShopFacade.Common.Models.Response.SalesCatalogue
         }
 
         public static new SalesCatalogueResult Success(List<Products> value) => new(value, HttpStatusCode.OK);
-
         public static SalesCatalogueResult NotModified(List<Products> value) => new(value, HttpStatusCode.NotModified);
-
         public static new SalesCatalogueResult InternalServerError(ErrorResponse errorResponse) => new(default!, HttpStatusCode.InternalServerError, errorResponse);
     }
 }

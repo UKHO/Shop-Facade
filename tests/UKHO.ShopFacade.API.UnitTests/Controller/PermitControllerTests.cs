@@ -9,7 +9,7 @@ using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.Models;
-using UKHO.ShopFacade.Common.Models.Response.Upn;
+using UKHO.ShopFacade.Common.Models.Response.Permit;
 
 namespace UKHO.ShopFacade.API.UnitTests.Controller
 {

@@ -1,4 +1,4 @@
-﻿using UKHO.ShopFacade.Common.Models.Response.Upn;
+﻿using UKHO.ShopFacade.Common.Models.Response.Permit;
 
 namespace UKHO.ShopFacade.API.Services
 {

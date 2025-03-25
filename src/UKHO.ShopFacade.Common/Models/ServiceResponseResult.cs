@@ -12,15 +12,10 @@ namespace UKHO.ShopFacade.Common.Models
         }
 
         public static ServiceResponseResult<T> Success(T value) => new(value, HttpStatusCode.OK);
-
         public static ServiceResponseResult<T> NoContent() => new(default, HttpStatusCode.NoContent);
-
         public static ServiceResponseResult<T> NotFound(ErrorResponse errorResponse) => new(default, HttpStatusCode.NotFound, errorResponse);
-
         public static ServiceResponseResult<T> BadRequest(ErrorResponse errorResponse) => new(default, HttpStatusCode.BadRequest, errorResponse);
-
         public static ServiceResponseResult<T> InternalServerError(ErrorResponse errorResponse) => new(default, HttpStatusCode.InternalServerError, errorResponse);
-
         public static ErrorResponse SetErrorResponse(string correlationId, string source, string description)
         {
             return new ErrorResponse
