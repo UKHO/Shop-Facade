@@ -8,14 +8,14 @@ using UKHO.ShopFacade.Common.Models.Response.SalesCatalogue;
 namespace UKHO.ShopFacade.API.Services
 {
     public class SalesCatalogueService(ISalesCatalogueClient salesCatalogueClient,
-                                 ILogger<SalesCatalogueService> logger) : ISalesCatalogueService
+                                     ILogger<SalesCatalogueService> logger) : ISalesCatalogueService
     {
         private readonly ILogger<SalesCatalogueService> _logger = logger;
         private readonly ISalesCatalogueClient _salesCatalogueClient = salesCatalogueClient;
 
         public async Task<SalesCatalogueResult> GetProductsCatalogueAsync(string correlationId)
         {
-            _logger.LogInformation(EventIds.GetSalesCatalogueDataRequestStarted.ToEventId(), ErrorDetails.GetSalesCatalogueDataRequestStartedMessage);
+            _logger.LogInformation(EventIds.GetSalesCatalogueDataRequestStarted.ToEventId(), ErrorDetails.GetSalesCatalogueDataRequestStartedMessage, ErrorDetails.ScsSource);
             var httpResponse = await _salesCatalogueClient.CallSalesCatalogueServiceApi(correlationId);
             return await CreateSalesCatalogueServiceResponse(httpResponse, correlationId);
         }
@@ -23,31 +23,29 @@ namespace UKHO.ShopFacade.API.Services
         private async Task<SalesCatalogueResult> CreateSalesCatalogueServiceResponse(HttpResponseMessage httpResponse, string correlationId)
         {
             SalesCatalogueResult response;
+            var responseBody = await httpResponse.Content.ReadAsStringAsync();
 
             if (httpResponse.StatusCode != HttpStatusCode.OK && httpResponse.StatusCode != HttpStatusCode.NotModified)
             {
-                var errorResponse = await httpResponse.Content.ReadAsStringAsync();
                 response = httpResponse.StatusCode switch
                 {
                     _ => SalesCatalogueResult.InternalServerError(SalesCatalogueResult.SetErrorResponse(correlationId, ErrorDetails.ScsSource, ErrorDetails.ScsInternalErrorMessage)),
                 };
 
-                _logger.LogError(EventIds.SalesCatalogueServiceNonOkResponse.ToEventId(), ErrorDetails.SalesCatalogueDataRequestInternalServerErrorMessage, ErrorDetails.ScsSource, httpResponse.RequestMessage!.RequestUri, httpResponse.StatusCode, errorResponse);
+                _logger.LogError(EventIds.SalesCatalogueServiceNonOkResponse.ToEventId(), ErrorDetails.SalesCatalogueDataRequestInternalServerErrorMessage, ErrorDetails.ScsSource, httpResponse.RequestMessage!.RequestUri, httpResponse.StatusCode, responseBody);
             }
             else
             {
-                var body = await httpResponse.Content.ReadAsStringAsync();
-
                 if (httpResponse.StatusCode == HttpStatusCode.OK)
                 {
-                    response = SalesCatalogueResult.Success(JsonConvert.DeserializeObject<List<Products>>(body)!);
+                    response = SalesCatalogueResult.Success(JsonConvert.DeserializeObject<List<Products>>(responseBody)!);
                 }
                 else
                 {
                     response = SalesCatalogueResult.NotModified([]);
                 }
 
-                _logger.LogInformation(EventIds.GetSalesCatalogueDataRequestCompleted.ToEventId(), ErrorDetails.GetSalesCatalogueDataRequestCompletedMessage);
+                _logger.LogInformation(EventIds.GetSalesCatalogueDataRequestCompleted.ToEventId(), ErrorDetails.GetSalesCatalogueDataRequestCompletedMessage, ErrorDetails.ScsSource);
             }
 
             return response;

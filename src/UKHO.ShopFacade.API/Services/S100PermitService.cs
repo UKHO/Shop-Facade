@@ -13,7 +13,7 @@ namespace UKHO.ShopFacade.API.Services
 
         public async Task<S100PermitServiceResult> GetS100PermitZipFileAsync(PermitRequest permitRequest, string correlationId)
         {
-            _logger.LogInformation(EventIds.GetS100PermitServiceRequestStarted.ToEventId(), ErrorDetails.GetS100PermitServiceRequestStartedMessage);
+            _logger.LogInformation(EventIds.GetS100PermitServiceRequestStarted.ToEventId(), ErrorDetails.GetS100PermitServiceRequestStartedMessage, ErrorDetails.S100PermitServiceSource);
             var response = await _permitServiceClient.CallPermitServiceApiAsync(permitRequest, correlationId);
             return await CreatePermitServiceResponse(response, correlationId);
         }
@@ -25,7 +25,7 @@ namespace UKHO.ShopFacade.API.Services
             {
                 var body = await httpResponse.Content.ReadAsStreamAsync();
                 response = S100PermitServiceResult.Success(body);
-                _logger.LogInformation(EventIds.GetS100PermitServiceRequestCompleted.ToEventId(), ErrorDetails.GetS100PermitServiceRequestCompletedMessage);
+                _logger.LogInformation(EventIds.GetS100PermitServiceRequestCompleted.ToEventId(), ErrorDetails.GetS100PermitServiceRequestCompletedMessage, ErrorDetails.S100PermitServiceSource);
             }
             else
             {
