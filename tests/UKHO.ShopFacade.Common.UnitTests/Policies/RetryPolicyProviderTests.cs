@@ -10,6 +10,7 @@ namespace UKHO.ShopFacade.Common.UnitTests.Policies
     {
         private ILogger<RetryPolicyProvider> _fakeLogger;
         private RetryPolicyProvider _fakeRetryPolicyProvider;
+        private const string _serviceName = "PermitService";
 
         [SetUp]
         public void Setup()
@@ -18,26 +19,51 @@ namespace UKHO.ShopFacade.Common.UnitTests.Policies
             _fakeRetryPolicyProvider = new RetryPolicyProvider(_fakeLogger);
         }
 
+
         [Test]
-        public async Task WhenValidInputsProvided_ThenSCSRetrypolicySuccessfullyExecuted()
+        public async Task WhenInternalServerErrorOccured_ThenRetryPolicyGetsApplied()
         {
             var httpResponseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-            var policy = _fakeRetryPolicyProvider.GetRetryPolicy("SalesCatalogueService", EventIds.RetryAttemptForSalesCatalogueService, 3, 5);
+            var policy = _fakeRetryPolicyProvider.GetRetryPolicy(_serviceName, EventIds.RetryAttemptForPermitService, 3, 5);
             await policy.ExecuteAsync(() => Task.FromResult(httpResponseMessage));
 
             Assert.That(httpResponseMessage, Is.InstanceOf<HttpResponseMessage>());
             Assert.That(httpResponseMessage.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                && call.GetArgument<LogLevel>(0) == LogLevel.Warning
+                                                && call.GetArgument<EventId>(1) == EventIds.RetryAttemptForPermitService.ToEventId()).MustHaveHappened();
+        }
+
+
+        [Test]
+        public async Task WhenOkResponseOccured_ThenRetrypolicyNotApplied()
+        {
+            var httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+            var policy = _fakeRetryPolicyProvider.GetRetryPolicy(_serviceName, EventIds.RetryAttemptForPermitService, 3, 5);
+            await policy.ExecuteAsync(() => Task.FromResult(httpResponseMessage));
+
+            Assert.That(httpResponseMessage, Is.InstanceOf<HttpResponseMessage>());
+            Assert.That(httpResponseMessage.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                && call.GetArgument<LogLevel>(0) == LogLevel.Warning
+                                                && call.GetArgument<EventId>(1) == EventIds.RetryAttemptForPermitService.ToEventId()).MustNotHaveHappened();
         }
 
         [Test]
-        public async Task WhenValidInputsProvided_ThenPermitServiceRetrypolicySuccessfullyExecuted()
+        public async Task WhenBadRequestResponseOccured_ThenRetrypolicyNotApplied()
         {
-            var httpResponseMessage = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-            var policy = _fakeRetryPolicyProvider.GetRetryPolicy("PermitService", EventIds.RetryAttemptForPermitService, 3, 5);
+            var httpResponseMessage = new HttpResponseMessage(HttpStatusCode.BadRequest);
+            var policy = _fakeRetryPolicyProvider.GetRetryPolicy(_serviceName, EventIds.RetryAttemptForPermitService, 3, 5);
             await policy.ExecuteAsync(() => Task.FromResult(httpResponseMessage));
 
             Assert.That(httpResponseMessage, Is.InstanceOf<HttpResponseMessage>());
-            Assert.That(httpResponseMessage.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
+            Assert.That(httpResponseMessage.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                && call.GetArgument<LogLevel>(0) == LogLevel.Warning
+                                                && call.GetArgument<EventId>(1) == EventIds.RetryAttemptForPermitService.ToEventId()).MustNotHaveHappened();
         }
     }
 }
