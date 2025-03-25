@@ -36,7 +36,7 @@ namespace UKHO.ShopFacade.API.Services
                     _ => S100PermitServiceResult.InternalServerError(S100PermitServiceResult.SetErrorResponse(correlationId, ErrorDetails.S100PermitServiceSource, ErrorDetails.S100PermitServiceInternalServerErrorMessage))
                 };
 
-                _logger.LogError(EventIds.S100PermitServiceInternalServerError.ToEventId(), ErrorDetails.S100PermitServiceInternalServerErrorMessage, ErrorDetails.S100PermitServiceSource, httpResponse.RequestMessage!.RequestUri, httpResponse.StatusCode, errorResponse);
+                _logger.LogError(EventIds.S100PermitServiceInternalServerError.ToEventId(), ErrorDetails.S100PermitServiceInternalServerErrorMessage, ErrorDetails.S100PermitServiceSource, httpResponse.StatusCode, httpResponse.RequestMessage!.RequestUri, errorResponse);
             }
             return response;
         }
