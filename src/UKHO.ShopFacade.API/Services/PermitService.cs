@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Extension;
 using UKHO.ShopFacade.Common.Models;
-using UKHO.ShopFacade.Common.Models.Response.Upn;
+using UKHO.ShopFacade.Common.Models.Response.Permit;
 
 namespace UKHO.ShopFacade.API.Services
 {
@@ -14,7 +14,7 @@ namespace UKHO.ShopFacade.API.Services
         private readonly IS100PermitService _s100PermitService = s100PermitService;
         private readonly IOptions<PermitExpiryDaysConfiguration> _permitExpiryDaysConfiguration = permitExpiryDaysConfiguration;
 
-        public async Task<PermitServiceResult> GetPermitDetails(int licenceId, string correlationId)
+        public async Task<PermitResult> GetPermitDetails(int licenceId, string correlationId)
         {
             var upnServiceResult = await _upnService.GetUpnDetails(licenceId, correlationId);
             var result = HandleServiceResult(upnServiceResult.StatusCode, upnServiceResult.ErrorResponse);
@@ -27,17 +27,17 @@ namespace UKHO.ShopFacade.API.Services
             var permitRequest = PermitRequestMapper.MapToPermitRequest(salesCatalogueResult.Value, upnServiceResult.Value, _permitExpiryDaysConfiguration.Value.PermitExpiryDays);
             var s100PermitServiceResult = await _s100PermitService.GetS100PermitZipFileAsync(permitRequest, correlationId);
 
-            return HandleServiceResult(s100PermitServiceResult.StatusCode, s100PermitServiceResult.ErrorResponse) ?? PermitServiceResult.Success(s100PermitServiceResult.Value);
+            return HandleServiceResult(s100PermitServiceResult.StatusCode, s100PermitServiceResult.ErrorResponse) ?? PermitResult.Success(s100PermitServiceResult.Value);
         }
 
-        private PermitServiceResult? HandleServiceResult(HttpStatusCode statusCode, ErrorResponse? errorResponse)
+        private PermitResult? HandleServiceResult(HttpStatusCode statusCode, ErrorResponse? errorResponse)
         {
             return statusCode switch
             {
                 HttpStatusCode.OK => null,
-                HttpStatusCode.NoContent => PermitServiceResult.NoContent(),
-                HttpStatusCode.NotFound => PermitServiceResult.NotFound(errorResponse!),
-                _ => PermitServiceResult.InternalServerError()
+                HttpStatusCode.NoContent => PermitResult.NoContent(),
+                HttpStatusCode.NotFound => PermitResult.NotFound(errorResponse!),
+                _ => PermitResult.InternalServerError(errorResponse!)
             };
         }
     }

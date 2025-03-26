@@ -72,6 +72,8 @@ stages:
       workspace:
         clean: all
       steps:
+        - checkout: self
+          submodules: true
         - task: UseDotNet@2
           displayName: 'Use .NET SDK'
           inputs:
@@ -98,7 +100,7 @@ stages:
             workingDirectory: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.API.UnitTests'
             targetType: 'inline'
             pwsh: true
-            script: $(Agent.BuildDirectory)/tools/dotnet-stryker
+            script: $(Agent.BuildDirectory)/tools/dotnet-stryker --test-project $(Build.SourcesDirectory)/tests/UKHO.ShopFacade.API.UnitTests/UKHO.ShopFacade.API.UnitTests.csproj
 
         - task: PublishMutationReport@0
           displayName: 'Publish Strkyer Mutator Report'
@@ -112,7 +114,7 @@ stages:
             workingDirectory: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.Common.UnitTests'
             targetType: 'inline'
             pwsh: true
-            script: $(Agent.BuildDirectory)/tools/dotnet-stryker
+            script: $(Agent.BuildDirectory)/tools/dotnet-stryker --test-project $(Build.SourcesDirectory)/tests/UKHO.ShopFacade.Common.UnitTests/UKHO.ShopFacade.Common.UnitTests.csproj
 
         - task: PublishMutationReport@0
           displayName: 'Publish Strkyer Mutator Report'

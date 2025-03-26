@@ -17,6 +17,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKHO.ShopFacade.Common.Unit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKHO.ShopFacade.API.FunctionalTests", "tests\UKHO.ShopFacade.API.FunctionalTests\UKHO.ShopFacade.API.FunctionalTests.csproj", "{F846C90A-5A00-4480-8D25-92F57AF7EFCA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mock", "mock", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADDSMock", "mock\UKHO.ADDS-Mock\src\ADDSMock\ADDSMock.csproj", "{FD14106D-62F6-3DC5-0758-64A0E0B6A264}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +47,10 @@ Global
 		{F846C90A-5A00-4480-8D25-92F57AF7EFCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F846C90A-5A00-4480-8D25-92F57AF7EFCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F846C90A-5A00-4480-8D25-92F57AF7EFCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD14106D-62F6-3DC5-0758-64A0E0B6A264}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD14106D-62F6-3DC5-0758-64A0E0B6A264}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD14106D-62F6-3DC5-0758-64A0E0B6A264}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD14106D-62F6-3DC5-0758-64A0E0B6A264}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +61,7 @@ Global
 		{D500FE30-5C90-4C26-9696-091A32633DEC} = {3A291465-A94F-4E66-ADB0-C49EB6004D74}
 		{0BFC380C-B77A-41AD-BA5F-0F30647B4C04} = {3A291465-A94F-4E66-ADB0-C49EB6004D74}
 		{F846C90A-5A00-4480-8D25-92F57AF7EFCA} = {3A291465-A94F-4E66-ADB0-C49EB6004D74}
+		{FD14106D-62F6-3DC5-0758-64A0E0B6A264} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {52136940-4B85-4A52-AFEC-19E607700E78}

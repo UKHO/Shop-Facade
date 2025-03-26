@@ -9,7 +9,7 @@ using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.Models;
-using UKHO.ShopFacade.Common.Models.Response.Upn;
+using UKHO.ShopFacade.Common.Models.Response.Permit;
 
 namespace UKHO.ShopFacade.API.UnitTests.Controller
 {
@@ -75,11 +75,6 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
                                                 && call.GetArgument<EventId>(1) == EventIds.GetPermitsCallStarted.ToEventId()
                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetPermitsCallStartedMessage).MustHaveHappenedOnceExactly();
-
-            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
-                                                && call.GetArgument<LogLevel>(0) == LogLevel.Warning
-                                                && call.GetArgument<EventId>(1) == EventIds.LicenceNotFound.ToEventId()
-                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.LicenceNotFoundMessage).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -87,7 +82,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         {
             A.CallTo(() => _fakePermitService.GetPermitDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetPermitServiceResult(HttpStatusCode.InternalServerError));
 
-            var result = (StatusCodeResult)await _permitController.GetPermits(_fakeProductType, 1);
+            var result = (ObjectResult)await _permitController.GetPermits(_fakeProductType, 1);
 
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.InternalServerError));
 
@@ -99,7 +94,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Error
                                                 && call.GetArgument<EventId>(1) == EventIds.InternalError.ToEventId()
-                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.InternalErrorMessage).MustHaveHappenedOnceExactly();
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.PermitInternalServerErrorMessage).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -115,11 +110,6 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
                                                 && call.GetArgument<EventId>(1) == EventIds.GetPermitsCallStarted.ToEventId()
                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetPermitsCallStartedMessage).MustHaveHappenedOnceExactly();
-
-            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
-                                                && call.GetArgument<LogLevel>(0) == LogLevel.Warning
-                                                && call.GetArgument<EventId>(1) == EventIds.NoContentFound.ToEventId()
-                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.PermitNoContentMessage).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -151,16 +141,16 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
         }
 
-        private static PermitServiceResult GetPermitServiceResult(HttpStatusCode httpStatusCode)
+        private static PermitResult GetPermitServiceResult(HttpStatusCode httpStatusCode)
         {
             var expectedStream = new MemoryStream(Encoding.UTF8.GetBytes(GetExpectedXmlString()));
 
             return httpStatusCode switch
             {
-                HttpStatusCode.OK => PermitServiceResult.Success(expectedStream),
-                HttpStatusCode.NoContent => PermitServiceResult.NoContent(),
-                HttpStatusCode.NotFound => PermitServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
-                _ => PermitServiceResult.InternalServerError()
+                HttpStatusCode.OK => PermitResult.Success(expectedStream),
+                HttpStatusCode.NoContent => PermitResult.NoContent(),
+                HttpStatusCode.NotFound => PermitResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
+                _ => PermitResult.InternalServerError(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.PermitInternalServerErrorMessage }] })
             };
         }
         private static string GetExpectedXmlString()

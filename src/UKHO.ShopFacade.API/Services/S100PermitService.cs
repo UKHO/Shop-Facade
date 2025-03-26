@@ -13,10 +13,9 @@ namespace UKHO.ShopFacade.API.Services
 
         public async Task<S100PermitServiceResult> GetS100PermitZipFileAsync(PermitRequest permitRequest, string correlationId)
         {
-            _logger.LogInformation(EventIds.GetS100PermitServiceRequestStarted.ToEventId(), ErrorDetails.GetS100PermitServiceRequestStartedMessage);
+            _logger.LogInformation(EventIds.GetS100PermitServiceRequestStarted.ToEventId(), ErrorDetails.GetS100PermitServiceRequestStartedMessage, ErrorDetails.S100PermitServiceSource);
             var response = await _permitServiceClient.CallPermitServiceApiAsync(permitRequest, correlationId);
-            var result = await CreatePermitServiceResponse(response, correlationId);
-            return result;
+            return await CreatePermitServiceResponse(response, correlationId);
         }
 
         private async Task<S100PermitServiceResult> CreatePermitServiceResponse(HttpResponseMessage httpResponse, string correlationId)
@@ -26,16 +25,18 @@ namespace UKHO.ShopFacade.API.Services
             {
                 var body = await httpResponse.Content.ReadAsStreamAsync();
                 response = S100PermitServiceResult.Success(body);
-                _logger.LogInformation(EventIds.GetS100PermitServiceRequestCompleted.ToEventId(), ErrorDetails.GetS100PermitServiceRequestCompletedMessage);
+                _logger.LogInformation(EventIds.GetS100PermitServiceRequestCompleted.ToEventId(), ErrorDetails.GetS100PermitServiceRequestCompletedMessage, ErrorDetails.S100PermitServiceSource);
             }
             else
             {
+                var errorResponse = await httpResponse.Content.ReadAsStringAsync();
+
                 response = httpResponse.StatusCode switch
                 {
-                    _ => S100PermitServiceResult.InternalServerError(S100PermitServiceResult.SetErrorResponse(correlationId, ErrorDetails.S100PermitServiceSource, ErrorDetails.S100PermitServiceInternalServerErrorMessage)),
+                    _ => S100PermitServiceResult.InternalServerError(S100PermitServiceResult.SetErrorResponse(correlationId, ErrorDetails.S100PermitServiceSource, ErrorDetails.S100PermitServiceInternalServerErrorMessage))
                 };
 
-                _logger.LogError(EventIds.S100PermitServiceInternalServerError.ToEventId(), ErrorDetails.S100PermitServiceInternalServerErrorMessage, httpResponse.StatusCode, httpResponse.RequestMessage!.RequestUri);
+                _logger.LogError(EventIds.S100PermitServiceInternalServerError.ToEventId(), ErrorDetails.S100PermitServiceInternalServerErrorMessage, ErrorDetails.S100PermitServiceSource, httpResponse.StatusCode, httpResponse.RequestMessage!.RequestUri, errorResponse);
             }
             return response;
         }
