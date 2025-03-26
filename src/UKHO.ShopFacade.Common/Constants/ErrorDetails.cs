@@ -23,19 +23,19 @@ namespace UKHO.ShopFacade.Common.Constants
         //Error messages for permit controller
         public const string GetPermitsCallStartedMessage = "GetPermits API call started.";
         public const string GetPermitsCallCompletedMessage = "GetPermits API call completed.";
-        public const string PermitInternalServerErrorMessage = "Error occurred while processing GetPermits request.";
+        public const string PermitInternalServerErrorMessage = "Error occurred while processing GetPermits API request.";
 
         //Error messages for sales catalogue service
         public const string ScsSource = "Sales catalogue service";
         public const string ScsInternalErrorMessage = "Error occurred while processing request from {ScsSource}.";
         public const string GetSalesCatalogueDataRequestStartedMessage = "Retrieval process of the latest S-100 basic catalogue data from {ScsSource} is started.";
         public const string GetSalesCatalogueDataRequestCompletedMessage = "Retrieval process of the latest S-100 basic catalogue data from {ScsSource} is completed.";
-        public const string SalesCatalogueDataRequestInternalServerErrorMessage = "Error occurred while processing {ScsSource} request | StatusCode: {StatusCode} | Uri: {RequestUri} | Error: {errorResponse}.";
+        public const string SalesCatalogueDataRequestInternalServerErrorMessage = "Error occurred while processing {ScsSource} request | StatusCode: {StatusCode} | Uri: {RequestUri} | Error: {errorResponse}";
 
         //Error messages for S100 permit service
         public const string S100PermitServiceSource = "S100 permit service";
         public const string GetS100PermitServiceRequestStartedMessage = "Retrieval process of the permit data from {S100PermitServiceSource} is started.";
         public const string GetS100PermitServiceRequestCompletedMessage = "Retrieval process of the permit data from {S100PermitServiceSource} is completed.";
-        public const string S100PermitServiceInternalServerErrorMessage = "Error occurred while processing {S100PermitServiceSource} request | StatusCode: {StatusCode} | Uri: {RequestUri} | Error: {errorResponse}.";
+        public const string S100PermitServiceInternalServerErrorMessage = "Error occurred while processing {S100PermitServiceSource} request | StatusCode: {StatusCode} | Uri: {RequestUri} | Error: {errorResponse}";
     }
 }
