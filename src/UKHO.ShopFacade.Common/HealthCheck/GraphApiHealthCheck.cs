@@ -29,7 +29,7 @@ namespace UKHO.ShopFacade.Common.HealthCheck
                 const string filterCondition = $"fields/Title eq '1'";
 
                 var listItemCollectionResponse = await _graphClient.GetListItemCollectionResponse(UpnDataProviderConstants.ExpandFields, filterCondition);
-                _logger.LogDebug(EventIds.GraphApiIsHealthy.ToEventId(), "Graph Api is healthy");
+                _logger.LogInformation(EventIds.GraphApiIsHealthy.ToEventId(), "Graph Api is healthy");
                 return HealthCheckResult.Healthy("Graph api is healthy");
             }
             catch (Exception ex)
