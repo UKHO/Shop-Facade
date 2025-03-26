@@ -1,4 +1,4 @@
-﻿using UKHO.ShopFacade.Common.Models;
+﻿using UKHO.ShopFacade.Common.Models.Response.Upn;
 
 namespace UKHO.ShopFacade.Common.DataProvider
 {

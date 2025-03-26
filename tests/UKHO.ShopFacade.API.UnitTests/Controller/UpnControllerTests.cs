@@ -8,7 +8,7 @@ using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.Models;
-using UKHO.ShopFacade.Common.Models.Response;
+using UKHO.ShopFacade.Common.Models.Response.Upn;
 
 namespace UKHO.ShopFacade.API.UnitTests.Controller
 {
@@ -39,11 +39,10 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
             Assert.That(nullUpnService!.ParamName, Is.EqualTo("upnService"));
         }
 
-        [Test]
-        public async Task WhenLicenceIdIsInvalid_ThenReturn400BadRequestResponse()
+        [TestCase(0)]
+        [TestCase(-1)]
+        public async Task WhenLicenceIdIsInvalid_ThenReturn400BadRequestResponse(int invalidLicenceId)
         {
-            int invalidLicenceId = 0;
-
             var result = (BadRequestObjectResult)await _upnController.GetUPNs(invalidLicenceId);
 
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
@@ -84,6 +83,26 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                  && call.GetArgument<LogLevel>(0) == LogLevel.Information
                                                  && call.GetArgument<EventId>(1) == EventIds.GetUPNsCallCompleted.ToEventId()
                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallCompletedMessage).MustHaveHappenedOnceExactly();
+        }
+
+        [Test]
+        public async Task WhenUPNsNotAvailableForLicence_ThenReturn204NoContentResponse()
+        {
+            A.CallTo(() => _fakeUpnService.GetUpnDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetUpnServiceResult(HttpStatusCode.NoContent));
+
+            var result = (NoContentResult)await _upnController.GetUPNs(7);
+
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NoContent));
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                  && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                                  && call.GetArgument<EventId>(1) == EventIds.GetUPNsCallStarted.ToEventId()
+                                                  && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetUPNsCallStartedMessage).MustHaveHappenedOnceExactly();
+
+            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
+                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Warning
+                                                 && call.GetArgument<EventId>(1) == EventIds.NoContentFound.ToEventId()
+                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.NoContentMessage).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -133,6 +152,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
             return httpStatusCode switch
             {
                 HttpStatusCode.OK => UpnServiceResult.Success(new List<UserPermit>() { new() { Title = "upn1", Upn = "1A1DAD797C" } }),
+                HttpStatusCode.NoContent => UpnServiceResult.NoContent(),
                 HttpStatusCode.NotFound => UpnServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
                 _ => UpnServiceResult.InternalServerError()
             };

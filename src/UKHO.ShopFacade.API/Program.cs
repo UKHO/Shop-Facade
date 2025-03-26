@@ -1,18 +1,19 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Headers;
 using System.Reflection;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.OpenApi.Models;
-using UKHO.ShopFacade.API.Filters;
 using UKHO.Logging.EventHubLogProvider;
+using UKHO.ShopFacade.API.Filters;
 using UKHO.ShopFacade.API.Middleware;
 using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Authentication;
@@ -20,7 +21,9 @@ using UKHO.ShopFacade.Common.ClientProvider;
 using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.DataProvider;
+using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.HealthCheck;
+using UKHO.ShopFacade.Common.Policies;
 
 namespace UKHO.ShopFacade.API
 {
@@ -81,6 +84,7 @@ namespace UKHO.ShopFacade.API
 
         private static void ConfigureServices(WebApplicationBuilder builder)
         {
+            RetryPolicyConfiguration retryPolicyConfiguration;
             var configuration = builder.Configuration;
 
             builder.Services.AddLogging(loggingBuilder =>
@@ -101,11 +105,13 @@ namespace UKHO.ShopFacade.API
             builder.Services.AddApplicationInsightsTelemetry(options);
             builder.Services.Configure<EventHubLoggingConfiguration>(configuration.GetSection(EventHubLoggingConfiguration));
             builder.Services.Configure<GraphApiConfiguration>(configuration.GetSection(GraphApiConfiguration));
+            builder.Services.Configure<RetryPolicyConfiguration>(configuration.GetSection("RetryPolicyConfiguration"));
 
             builder.Services.AddControllers();
+            builder.Services.AddDistributedMemoryCache();
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-          
+            builder.Services.Configure<AzureAdConfiguration>(configuration.GetSection(AzureAdConfiguration));
             var azureAdConfiguration = builder.Configuration.GetSection(AzureAdConfiguration).Get<AzureAdConfiguration>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(AzureAdScheme, options =>
@@ -119,13 +125,62 @@ namespace UKHO.ShopFacade.API
                     .RequireAuthenticatedUser()
                     .AddAuthenticationSchemes(AzureAdScheme)
                     .Build())
-                .AddPolicy(ShopFacadeConstants.ShopFacadePolicy, policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePolicy));
+                .AddPolicy(ShopFacadeConstants.ShopFacadeUpnPolicy,
+                    policy => policy.RequireRole(ShopFacadeConstants.ShopFacadeUpnPolicy))
+                .AddPolicy(ShopFacadeConstants.ShopFacadePermitPolicy,
+                policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePermitPolicy));
+
 
             builder.Services.AddScoped<IUpnService, UpnService>();
+            builder.Services.AddScoped<IPermitService, PermitService>();
             builder.Services.AddScoped<IUpnDataProvider, UpnDataProvider>();
             builder.Services.AddScoped<IGraphClient, GraphClient>();
             builder.Services.AddScoped<IAuthenticationProvider, ManagedIdentityGraphAuthProvider>();
             builder.Services.AddHealthChecks().AddCheck<GraphApiHealthCheck>("GraphApiHealthCheck");
+
+            builder.Services.Configure<SalesCatalogueConfiguration>(builder.Configuration.GetSection("SalesCatalogue"));
+            builder.Services.AddSingleton<ISalesCatalogueService, SalesCatalogueService>();
+            builder.Services.AddSingleton<IAuthTokenProvider, AuthTokenProvider>();
+            builder.Services.AddSingleton<ICacheProvider, CacheProvider>();
+            builder.Services.AddHttpClient<ISalesCatalogueClient, SalesCatalogueClient>(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["SalesCatalogue:BaseUrl"]);
+                var productHeaderValue = new ProductInfoHeaderValue("ShopFacade",
+                                        Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyFileVersionAttribute>().Single().Version);
+                client.DefaultRequestHeaders.UserAgent.Add(productHeaderValue);
+            });
+
+            builder.Services.Configure<PermitServiceConfiguration>(builder.Configuration.GetSection("PermitServiceConfiguration"));
+            builder.Services.Configure<PermitExpiryDaysConfiguration>(builder.Configuration.GetSection("PermitExpiryDaysConfiguration"));
+            builder.Services.AddHttpClient<IPermitServiceClient, PermitServiceClient>(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["PermitServiceConfiguration:BaseUrl"]);
+                var productHeaderValue = new ProductInfoHeaderValue("ShopFacade",
+                                        Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyFileVersionAttribute>().Single().Version);
+                client.DefaultRequestHeaders.UserAgent.Add(productHeaderValue);
+            });
+            builder.Services.AddScoped<IS100PermitService, S100PermitService>();
+            builder.Services.AddScoped<RetryPolicyProvider>();
+
+            retryPolicyConfiguration = configuration.GetSection("RetryPolicyConfiguration").Get<RetryPolicyConfiguration>()!;
+
+            builder.Services.AddHttpClient<ISalesCatalogueClient, SalesCatalogueClient>(c =>
+            {
+                c.BaseAddress = new Uri(configuration.GetValue<string>("SalesCatalogue:BaseUrl"));
+            }).AddPolicyHandler((services, request) =>
+            {
+                var retryPolicyProvider = services.GetRequiredService<RetryPolicyProvider>();
+                return retryPolicyProvider.GetRetryPolicy("Sales Catalogue Service", EventIds.RetryAttemptForSalesCatalogueService, retryPolicyConfiguration.RetryCount, retryPolicyConfiguration.Duration);
+            });
+
+            builder.Services.AddHttpClient<IPermitServiceClient, PermitServiceClient>(c =>
+            {
+                c.BaseAddress = new Uri(configuration.GetValue<string>("PermitServiceConfiguration:BaseUrl"));
+            }).AddPolicyHandler((services, request) =>
+            {
+                var retryPolicyProvider = services.GetRequiredService<RetryPolicyProvider>();
+                return retryPolicyProvider.GetRetryPolicy("Permit Service", EventIds.RetryAttemptForPermitService, retryPolicyConfiguration.RetryCount, retryPolicyConfiguration.Duration);
+            });
         }
 
         private static void ConfigureLogging(WebApplication webApplication)

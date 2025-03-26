@@ -7,7 +7,7 @@ data "azurerm_subnet" "main_subnet" {
 module "webapp_service" {
   source                    = "./Modules/Webapp"
   name                      = local.web_app_name
-  mock_webapp_name          = local.mock_web_app_name
+  adds_mock_webapp_name     = local.adds_mock_web_app_name
   service_name              = local.service_name                 
   resource_group_name       = azurerm_resource_group.rg.name
   env_name                  = local.env_name
@@ -24,26 +24,20 @@ module "webapp_service" {
     "WEBSITE_ENABLE_SYNC_UPDATE_SITE"                           = "true"
     "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG"           = "1"    
   }
-  mock_app_settings = {
-    "KeyVaultSettings__ServiceUri"                              = "https://${local.key_vault_name}.vault.azure.net/"
+  adds_mock_app_settings = {
     "ASPNETCORE_ENVIRONMENT"                                   = local.env_name
     "WEBSITE_RUN_FROM_PACKAGE"                                 = "1"
     "WEBSITE_ENABLE_SYNC_UPDATE_SITE"                          = "true"
   }
   tags                                                          = local.tags
-}
+ }
 
 locals {
   kv_read_access_list = {
     "webapp_service"  = module.webapp_service.web_app_object_id
     "webapp_slot"     = module.webapp_service.slot_object_id
   }
-  
-  kv_read_access_list_with_mock = merge(local.kv_read_access_list, {
-    "mock_service" = local.env_name == "dev" ? module.webapp_service.mock_web_app_object_id : ""
-    })
 }
-
 
 module "app_insights" {
   source              = "./Modules/AppInsights"
@@ -69,7 +63,7 @@ module "key_vault" {
   env_name            = local.env_name
   tenant_id           = module.webapp_service.web_app_tenant_id
   location            = azurerm_resource_group.rg.location
-  read_access_objects = local.env_name == "dev" ? local.kv_read_access_list_with_mock : local.kv_read_access_list
+  read_access_objects =  local.kv_read_access_list
   secrets = {
     "EventHubLoggingConfiguration--ConnectionString"            = module.eventhub.log_primary_connection_string
     "EventHubLoggingConfiguration--EntityPath"                  = module.eventhub.entity_path

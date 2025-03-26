@@ -6,7 +6,7 @@ using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.Models;
-using UKHO.ShopFacade.Common.Models.Response;
+using UKHO.ShopFacade.Common.Models.Response.Upn;
 
 namespace UKHO.ShopFacade.API.Controllers
 {
@@ -35,8 +35,8 @@ namespace UKHO.ShopFacade.API.Controllers
         /// <response code="404">Licence not found.</response>
         /// <response code="500">Internal Server Error.</response>
         [HttpGet]
-        [Route("/licences/{licenceId}/s100/userPermits")]
-        [Authorize(Policy = ShopFacadeConstants.ShopFacadePolicy)]
+        [Route("v1/licences/{licenceId}/s100/userPermits")]
+        [Authorize(Policy = ShopFacadeConstants.ShopFacadeUpnPolicy)]
         [Produces("application/json")]
         [SwaggerOperation(Tags = new[] { "Licensing" }, Description = "<p>Returns all S-100 User Permit Numbers (UPNs) associated with the requested licence. There can be one or more S-100 UPNs for a licence.</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, type: typeof(List<UserPermit>), description: "<p>OK - Returns UPNs for the licence.</p>")]
@@ -63,6 +63,9 @@ namespace UKHO.ShopFacade.API.Controllers
                 case HttpStatusCode.OK:
                     _logger.LogInformation(EventIds.GetUPNsCallCompleted.ToEventId(), ErrorDetails.GetUPNsCallCompletedMessage);
                     return Ok(upnServiceResult.Value);
+                case HttpStatusCode.NoContent:
+                    _logger.LogWarning(EventIds.NoContentFound.ToEventId(), ErrorDetails.NoContentMessage);
+                    return NoContent();
                 case HttpStatusCode.NotFound:
                     _logger.LogWarning(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.LicenceNotFoundMessage);
                     return NotFound(upnServiceResult.ErrorResponse);

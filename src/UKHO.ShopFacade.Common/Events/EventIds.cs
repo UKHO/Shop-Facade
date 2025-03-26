@@ -61,7 +61,77 @@ namespace UKHO.ShopFacade.Common.Events
         /// <summary>
         /// 950011 - Graph Api is unhealthy.
         /// </summary>
-        GraphApiIsUnhealthy = 950011
+        GraphApiIsUnhealthy = 950011,
+
+        /// <summary>
+        /// 950012 - GetPermits API call started.
+        /// </summary>
+        GetPermitsCallStarted = 950012,
+
+        /// <summary>
+        /// 950013 - Request for sales catalogue service endpoint is failed due to non ok response.
+        /// </summary>
+        SalesCatalogueServiceNonOkResponse = 950013,
+
+        /// <summary>
+        /// 950014 - Request for sales catalogue service catalogue endpoint is started.
+        /// </summary>
+        GetSalesCatalogueDataRequestStarted = 950014,
+
+        /// <summary>
+        /// 950015 - Request for sales catalogue service catalogue endpoint is completed.
+        /// </summary>
+        GetSalesCatalogueDataRequestCompleted = 950015,
+
+       /// <summary>
+       /// 950016 - No Content Found Message.
+       /// </summary>
+        NoContentFound = 950016,
+
+       /// <summary>
+       /// 950017 - GetPermits API call completed.
+       /// </summary>
+       GetPermitsCallCompleted = 950017,
+
+        /// <summary>
+        /// 950018 - UpnService call started.
+        /// </summary>
+        UPNServiceCallStarted = 950018,
+
+        /// <summary>
+        /// 950019 - UpnService call completed.
+        /// </summary>
+        UPNServiceCallCompleted = 950019,
+
+        /// <summary>
+        /// 950020 - New access token is added to cache for external end point resource.
+        /// </summary>
+        CachingExternalEndPointToken = 950020,
+
+        /// <summary>
+        /// 950021 - Request for S100 Permit Service endpoint is started.
+        /// </summary>
+        GetS100PermitServiceRequestStarted = 950021,
+
+        /// <summary>
+        /// 950022 - Request for S100 Permit Service endpoint is completed.
+        /// </summary>
+        GetS100PermitServiceRequestCompleted = 950022,
+
+        /// <summary>
+        /// 950023 - Request for S100 Permit Service Internal Server Error.
+        /// </summary>
+        S100PermitServiceInternalServerError = 950023,
+
+        /// <summary>
+        /// 950024 - Retry attempt for Sales Catalogue Service.
+        /// </summary>
+        RetryAttemptForSalesCatalogueService = 950024,
+
+        /// <summary>
+        /// 950025 - Retry attempt for Permit Service.
+        /// </summary>
+        RetryAttemptForPermitService = 950025
     }
 
     /// <summary>

@@ -6,15 +6,9 @@ namespace UKHO.ShopFacade.Common.Models
     [ExcludeFromCodeCoverage]
     public class ServiceResponseResult<T> : Result<T>
     {
-        public new T Value { get; }
-
-        public new ErrorResponse ErrorResponse { get; }
-
         protected ServiceResponseResult(T? value, HttpStatusCode statusCode, ErrorResponse? errorResponse = null)
             : base(value!, statusCode, errorResponse!)
         {
-            Value = value!;
-            ErrorResponse = errorResponse!;
         }
 
         public static ServiceResponseResult<T> Success(T value) => new(value, HttpStatusCode.OK);
@@ -24,6 +18,8 @@ namespace UKHO.ShopFacade.Common.Models
         public static ServiceResponseResult<T> NotFound(ErrorResponse errorResponse) => new(default, HttpStatusCode.NotFound, errorResponse);
 
         public static ServiceResponseResult<T> BadRequest(ErrorResponse errorResponse) => new(default, HttpStatusCode.BadRequest, errorResponse);
+
+        public static ServiceResponseResult<T> InternalServerError(ErrorResponse errorResponse) => new(default, HttpStatusCode.InternalServerError, errorResponse);
 
         public static ErrorResponse SetErrorResponse(string correlationId, string source, string description)
         {
