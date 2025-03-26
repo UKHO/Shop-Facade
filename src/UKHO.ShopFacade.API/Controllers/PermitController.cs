@@ -44,25 +44,23 @@ namespace UKHO.ShopFacade.API.Controllers
             if (licenceId <= 0)
             {
                 _logger.LogWarning(EventIds.InvalidLicenceId.ToEventId(), ErrorDetails.InvalidLicenceIdMessage);
-                return BadRequest(PermitServiceResult.SetErrorResponse(GetCorrelationId(), ErrorDetails.Source, ErrorDetails.InvalidLicenceIdMessage));
+                return BadRequest(PermitResult.SetErrorResponse(GetCorrelationId(), ErrorDetails.Source, ErrorDetails.InvalidLicenceIdMessage));
             }
 
-            var permitServiceResult = await _permitService.GetPermitDetails(licenceId, GetCorrelationId());
+            var permitResult = await _permitService.GetPermitDetails(licenceId, GetCorrelationId());
 
-            switch (permitServiceResult.StatusCode)
+            switch (permitResult.StatusCode)
             {
                 case HttpStatusCode.OK:
                     _logger.LogInformation(EventIds.GetPermitsCallCompleted.ToEventId(), ErrorDetails.GetPermitsCallCompletedMessage);
-                    return File(permitServiceResult.Value, PermitServiceConstants.ZipContentType, PermitServiceConstants.PermitZipFileName);
+                    return File(permitResult.Value, PermitServiceConstants.ZipContentType, PermitServiceConstants.PermitZipFileName);
                 case HttpStatusCode.NoContent:
-                    _logger.LogWarning(EventIds.NoContentFound.ToEventId(), ErrorDetails.PermitNoContentMessage);
                     return NoContent();
                 case HttpStatusCode.NotFound:
-                    _logger.LogWarning(EventIds.LicenceNotFound.ToEventId(), ErrorDetails.PermitLicenceNotFoundMessage);
-                    return NotFound(permitServiceResult.ErrorResponse);
+                    return NotFound(permitResult.ErrorResponse);
                 default:
-                    _logger.LogError(EventIds.InternalError.ToEventId(), ErrorDetails.PermitInternalErrorMessage);
-                    return StatusCode((int)permitServiceResult.StatusCode);
+                    _logger.LogError(EventIds.InternalError.ToEventId(), ErrorDetails.PermitInternalServerErrorMessage);
+                    return StatusCode((int)permitResult.StatusCode);
             }
         }
     }

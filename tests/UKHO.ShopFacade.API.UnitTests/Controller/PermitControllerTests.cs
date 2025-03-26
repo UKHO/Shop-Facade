@@ -75,11 +75,6 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
                                                 && call.GetArgument<EventId>(1) == EventIds.GetPermitsCallStarted.ToEventId()
                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetPermitsCallStartedMessage).MustHaveHappenedOnceExactly();
-
-            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
-                                                && call.GetArgument<LogLevel>(0) == LogLevel.Warning
-                                                && call.GetArgument<EventId>(1) == EventIds.LicenceNotFound.ToEventId()
-                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.LicenceNotFoundMessage).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -99,7 +94,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
             A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Error
                                                 && call.GetArgument<EventId>(1) == EventIds.InternalError.ToEventId()
-                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.InternalErrorMessage).MustHaveHappenedOnceExactly();
+                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.PermitInternalServerErrorMessage).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -115,11 +110,6 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                                                 && call.GetArgument<LogLevel>(0) == LogLevel.Information
                                                 && call.GetArgument<EventId>(1) == EventIds.GetPermitsCallStarted.ToEventId()
                                                 && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.GetPermitsCallStartedMessage).MustHaveHappenedOnceExactly();
-
-            A.CallTo(_fakeLogger).Where(call => call.Method.Name == "Log"
-                                                && call.GetArgument<LogLevel>(0) == LogLevel.Warning
-                                                && call.GetArgument<EventId>(1) == EventIds.NoContentFound.ToEventId()
-                                                && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == ErrorDetails.PermitNoContentMessage).MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -151,16 +141,16 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
 
         }
 
-        private static PermitServiceResult GetPermitServiceResult(HttpStatusCode httpStatusCode)
+        private static PermitResult GetPermitServiceResult(HttpStatusCode httpStatusCode)
         {
             var expectedStream = new MemoryStream(Encoding.UTF8.GetBytes(GetExpectedXmlString()));
 
             return httpStatusCode switch
             {
-                HttpStatusCode.OK => PermitServiceResult.Success(expectedStream),
-                HttpStatusCode.NoContent => PermitServiceResult.NoContent(),
-                HttpStatusCode.NotFound => PermitServiceResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
-                _ => PermitServiceResult.InternalServerError()
+                HttpStatusCode.OK => PermitResult.Success(expectedStream),
+                HttpStatusCode.NoContent => PermitResult.NoContent(),
+                HttpStatusCode.NotFound => PermitResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
+                _ => PermitResult.InternalServerError()
             };
         }
         private static string GetExpectedXmlString()
