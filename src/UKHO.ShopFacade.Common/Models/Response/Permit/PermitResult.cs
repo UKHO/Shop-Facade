@@ -14,6 +14,6 @@ namespace UKHO.ShopFacade.Common.Models.Response.Permit
         public static new PermitResult Success(Stream value) => new(value, HttpStatusCode.OK);
         public static new PermitResult NoContent() => new(null, HttpStatusCode.NoContent);
         public static new PermitResult NotFound(ErrorResponse errorResponse) => new(null, HttpStatusCode.NotFound, errorResponse);
-        public static PermitResult InternalServerError() => new(null, HttpStatusCode.InternalServerError);
+        public static new PermitResult InternalServerError(ErrorResponse errorResponse) => new(null, HttpStatusCode.InternalServerError, errorResponse);
     }
 }

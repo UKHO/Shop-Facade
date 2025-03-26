@@ -82,7 +82,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
         {
             A.CallTo(() => _fakePermitService.GetPermitDetails(A<int>.Ignored, A<string>.Ignored)).Returns(GetPermitServiceResult(HttpStatusCode.InternalServerError));
 
-            var result = (StatusCodeResult)await _permitController.GetPermits(_fakeProductType, 1);
+            var result = (ObjectResult)await _permitController.GetPermits(_fakeProductType, 1);
 
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.InternalServerError));
 
@@ -150,7 +150,7 @@ namespace UKHO.ShopFacade.API.UnitTests.Controller
                 HttpStatusCode.OK => PermitResult.Success(expectedStream),
                 HttpStatusCode.NoContent => PermitResult.NoContent(),
                 HttpStatusCode.NotFound => PermitResult.NotFound(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.LicenceNotFoundMessage }] }),
-                _ => PermitResult.InternalServerError()
+                _ => PermitResult.InternalServerError(new ErrorResponse() { CorrelationId = Guid.NewGuid().ToString(), Errors = [new ErrorDetail() { Source = ErrorDetails.Source, Description = ErrorDetails.PermitInternalServerErrorMessage }] })
             };
         }
         private static string GetExpectedXmlString()
