@@ -72,6 +72,8 @@ stages:
       workspace:
         clean: all
       steps:
+        - checkout: self
+          submodules: true
         - task: UseDotNet@2
           displayName: 'Use .NET SDK'
           inputs:
@@ -105,7 +107,6 @@ stages:
           inputs:
             reportPattern: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.API.UnitTests/**/mutation-report.html'
             reportDisplayName: 'API UnitTests'
-
 
         - task: Powershell@2
           displayName: "Run Stryker for Common UnitTests"
