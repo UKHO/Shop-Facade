@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Graph.Models;
 using UKHO.ShopFacade.Common.ClientProvider;
 using UKHO.ShopFacade.Common.DataProvider;
+using UKHO.ShopFacade.Common.Events;
 using UKHO.ShopFacade.Common.HealthCheck;
 
 namespace UKHO.ShopFacade.Common.Tests.HealthCheck
@@ -36,6 +37,11 @@ namespace UKHO.ShopFacade.Common.Tests.HealthCheck
             // Assert
             Assert.That(result.Status, Is.EqualTo(HealthStatus.Healthy));
             Assert.That(result.Description, Is.EqualTo("Graph api is healthy"));
+
+            A.CallTo(_logger).Where(call => call.Method.Name == "Log"
+                                               && call.GetArgument<LogLevel>(0) == LogLevel.Information
+                                               && call.GetArgument<EventId>(1) == EventIds.GraphApiIsHealthy.ToEventId()
+                                               && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "Graph Api is healthy").MustHaveHappenedOnceExactly();
         }
 
         [Test]
@@ -51,6 +57,11 @@ namespace UKHO.ShopFacade.Common.Tests.HealthCheck
             // Assert
             Assert.That(result.Status, Is.EqualTo(HealthStatus.Unhealthy));
             Assert.That(result.Description, Is.EqualTo("Graph api is unhealthy"));
+
+            A.CallTo(_logger).Where(call => call.Method.Name == "Log"
+                                             && call.GetArgument<LogLevel>(0) == LogLevel.Error
+                                             && call.GetArgument<EventId>(1) == EventIds.GraphApiIsUnhealthy.ToEventId()
+            && call.GetArgument<IEnumerable<KeyValuePair<string, object>>>(2)!.ToDictionary(c => c.Key, c => c.Value)["{OriginalFormat}"].ToString() == "Health check for the Graph Api threw an exception").MustHaveHappenedOnceExactly();
         }
     }
 }
