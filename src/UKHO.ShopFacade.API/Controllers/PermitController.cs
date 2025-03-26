@@ -41,7 +41,7 @@ namespace UKHO.ShopFacade.API.Controllers
         [SwaggerResponse(statusCode: (int)HttpStatusCode.Forbidden, description: "<p>Forbidden - you have no permission to use this API.</p>")]
         public async Task<IActionResult> GetPermits([FromRoute] string productType, [SwaggerParameter(Required = true)] int licenceId)
         {
-             _logger.LogInformation(EventIds.GetPermitsCallStarted.ToEventId(), ErrorDetails.GetPermitsCallStartedMessage);
+            _logger.LogInformation(EventIds.GetPermitsCallStarted.ToEventId(), ErrorDetails.GetPermitsCallStartedMessage);
 
             if (licenceId <= 0)
             {
@@ -62,7 +62,7 @@ namespace UKHO.ShopFacade.API.Controllers
                     return NotFound(permitResult.ErrorResponse);
                 default:
                     _logger.LogError(EventIds.InternalError.ToEventId(), ErrorDetails.PermitInternalServerErrorMessage);
-                    return StatusCode((int)permitResult.StatusCode, JsonSerializer.Deserialize<InternalServerErrorResponse>(permitResult.ErrorResponse.CorrelationId!));
+                    return StatusCode((int)permitResult.StatusCode, new InternalServerErrorResponse { CorrelationId = permitResult.ErrorResponse.CorrelationId });
             }
         }
     }
