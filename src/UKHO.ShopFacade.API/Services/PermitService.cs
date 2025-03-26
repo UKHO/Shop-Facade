@@ -37,7 +37,7 @@ namespace UKHO.ShopFacade.API.Services
                 HttpStatusCode.OK => null,
                 HttpStatusCode.NoContent => PermitResult.NoContent(),
                 HttpStatusCode.NotFound => PermitResult.NotFound(errorResponse!),
-                _ => PermitResult.InternalServerError()
+                _ => PermitResult.InternalServerError(errorResponse!)
             };
         }
     }

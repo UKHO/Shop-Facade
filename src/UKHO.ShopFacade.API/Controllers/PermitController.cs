@@ -1,10 +1,12 @@
 ﻿using System.Net;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UKHO.ShopFacade.API.Services;
 using UKHO.ShopFacade.Common.Constants;
 using UKHO.ShopFacade.Common.Events;
+using UKHO.ShopFacade.Common.Models;
 using UKHO.ShopFacade.Common.Models.Response.Permit;
 
 namespace UKHO.ShopFacade.API.Controllers
@@ -60,7 +62,7 @@ namespace UKHO.ShopFacade.API.Controllers
                     return NotFound(permitResult.ErrorResponse);
                 default:
                     _logger.LogError(EventIds.InternalError.ToEventId(), ErrorDetails.PermitInternalServerErrorMessage);
-                    return StatusCode((int)permitResult.StatusCode);
+                    return StatusCode((int)permitResult.StatusCode, JsonSerializer.Deserialize<InternalServerErrorResponse>(permitResult.ErrorResponse.CorrelationId!));
             }
         }
     }
