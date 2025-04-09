@@ -5,9 +5,8 @@ parameters:
     displayName: "Continue even if resources are getting destroyed"
     type: boolean
     default: false
-
-  - name: DisableDependencyCheck
-    displayName: "Disable OWASP dependency checking"
+  - name: DisableStryker
+    displayName: "Disable Stryker"
     type: boolean
     default: false
 
@@ -65,7 +64,7 @@ resources:
 stages:
   - stage: Stryker_Mutator
     displayName: "Stryker Mutator"
-    condition: eq('${{ parameters.DisableDependencyCheck }}', false)  
+    condition: eq('${{ parameters.DisableStryker }}', false)  
     dependsOn: []
     jobs:
     - job: Stryker
@@ -128,7 +127,6 @@ stages:
     jobs:
     - template: Deployment/templates/build-test-publish.yml  
       parameters:
-        DisableDependencyCheck: ${{ parameters.DisableDependencyCheck }}
         Container: ${{ variables.Container }}
 
   - stage: Devdeploy
