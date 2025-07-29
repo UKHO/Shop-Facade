@@ -16,46 +16,67 @@ parameters:
   default: false
 
 jobs:
-- deployment: DeployApp
-  timeoutInMinutes: 75
-  displayName: "${{parameters.Environment}} - deploy terraform and dotnet App"
-  environment: "-${{parameters.Environment}}"
+- deployment: DevDeployTerraform
+  displayName: "${{parameters.Environment}} - Deploy Terraform"
+  environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
   container: ${{parameters.Container}}
   workspace:
     clean: all
+  strategy:
+          runOnce:
+            deploy:
+              steps:
+                - template: continuous-deployment.yml
+                  parameters:
+                    ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+                    AzureSubscription: ${{parameters.AzureSubscription}}
+                       
+- deployment: DeployApp
+  dependsOn: DevDeployTerraform
+  displayName: "${{parameters.Environment}} - Deploy Dotnet App"
+  environment: "ShopFacade-${{parameters.Environment}}"
+  pool: $(DeploymentPool)
+  container: ${{parameters.Container}}
+  workspace:
+   clean: all
   variables:
+    - name  : WEB_APP_NAME
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
+    - name  : "KeyVaultSettings.ServiceUri" 
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
+    - name  : ResourceGroup
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ResourceGroup'] ]
+    - name  : WEB_APP_SLOT_NAME
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
+    - name  : WEB_APP_SLOT_HOST_NAME
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
+    - name  : ADDS_MOCK_WEB_APP_NAME
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ADDS_MOCK_WEB_APP_NAME'] ]
   strategy:
     runOnce:
       deploy:
         steps:
           - checkout: self
             submodules: recursive
-
-          - template: continuous-deployment.yml
+          - template: continuous-deployment-app.yml
             parameters:
-              ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
               AzureSubscription: ${{parameters.AzureSubscription}}
 
-          - template: continuous-deployment-apim.yml
-            parameters:
-              ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-              AzureSubscription: "UKHO-APIM-SOLAS-${{parameters.LiveOrNonLive}}"
-              TerraformKeyVault: $(APIM_TERRAFORM_KEYVAULT)
-              APIMResourceGroup: $(APIM_RESOURCE_GROUP_NAME)
-              APIMServiceInstance: $(APIM_SERVICE_NAME)
-              tfstateStorageAccountName: $(APIM_TFSTATE_STORAGE_ACCOUNT_NAME)
-
 - deployment: FunctionalTests
-  dependsOn: DeployApp
-  displayName: "Run Functional Tests ${{parameters.pathSuffix}}"
-  environment: "-${{parameters.Environment}}"
+  dependsOn:  DeployApp
+  displayName: "${{parameters.Environment}} - Functional Automated Tests"
+  environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
-  container: ${{parameters.Container}}
-  condition: ${{parameters.RunTests}}
-  variables:
+  condition: and(succeeded('DeployApp'), eq( ${{parameters.RunTests}} , 'true'))
+  workspace:
+   clean: all
   strategy:
     runOnce:
       deploy:
         steps:
-        
+          - checkout: self
+            submodules: recursive
+          - template: continuous-testing.yml
+            parameters:
+              AzureSubscription: ${{parameters.AzureSubscription}}

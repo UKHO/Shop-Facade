@@ -1,18 +1,12 @@
-name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yy)$(DayOfYear).$(BuildCounter)
+name: $(BuildDefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd).$(BuildCounter)
 
 parameters:
   - name: ContinueEvenIfResourcesAreGettingDestroyed
     displayName: "Continue even if resources are getting destroyed"
     type: boolean
     default: false
- 
-  - name: disableStryker
+  - name: DisableStryker
     displayName: "Disable Stryker"
-    type: boolean
-    default: false
-
-  - name: DisableDependencyCheck
-    displayName: "Disable OWASP dependency checking"
     type: boolean
     default: false
 
@@ -45,17 +39,19 @@ variables:
   - name: UKHOAssemblyVersionPrefix
     value: "1.0."
   - name: UKHOAssemblyProduct
-    value: "Exchange Set Service"
+    value: "Shop Facade"
   - name: UKHOAssemblyCopyright
-    value: "Copyright � UK Hydrographic Office"
+    value: "Copyright © UK Hydrographic Office"
   - name: Container
-    value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.9.6"
+    value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.10.4"
   - name: DeploymentPool
     value: "Mare Nectaris"
-  - name: SdkVersion
-    value: "8.0.x"
   - name: WindowPool
     value: "NautilusBuild"
+  - name: CoverageThresholdLimit
+    value: "90"
+  - name: SdkVersion
+    value: "8.x"
 
 resources:
   repositories:
@@ -68,13 +64,15 @@ resources:
 stages:
   - stage: Stryker_Mutator
     displayName: "Stryker Mutator"
-    condition: ${{ eq(parameters.disableStryker, false) }}
+    condition: eq('${{ parameters.DisableStryker }}', false)  
     dependsOn: []
     jobs:
     - job: Stryker
       workspace:
         clean: all
       steps:
+        - checkout: self
+          submodules: true
         - task: UseDotNet@2
           displayName: 'Use .NET SDK'
           inputs:
@@ -96,17 +94,32 @@ stages:
             arguments: install dotnet-stryker --tool-path $(Agent.BuildDirectory)/tools
 
         - task: Powershell@2
-          displayName: "Run Stryker"
+          displayName: "Run Stryker for UnitTests"
           inputs:
-            workingDirectory: '$(Build.SourcesDirectory)\UKHO.ExchangeSetService.API'
+            workingDirectory: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.API.UnitTests'
             targetType: 'inline'
             pwsh: true
-            script: $(Agent.BuildDirectory)/tools/dotnet-stryker
+            script: $(Agent.BuildDirectory)/tools/dotnet-stryker --test-project $(Build.SourcesDirectory)/tests/UKHO.ShopFacade.API.UnitTests/UKHO.ShopFacade.API.UnitTests.csproj
 
-        - task: PublishMutationReport@1
-          displayName: 'Publish Stryker Mutator Report'
+        - task: PublishMutationReport@0
+          displayName: 'Publish Strkyer Mutator Report'
           inputs:
-            reportPattern: '**/mutation-report.html'
+            reportPattern: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.API.UnitTests/**/mutation-report.html'
+            reportDisplayName: 'API UnitTests'
+
+        - task: Powershell@2
+          displayName: "Run Stryker for Common UnitTests"
+          inputs:
+            workingDirectory: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.Common.UnitTests'
+            targetType: 'inline'
+            pwsh: true
+            script: $(Agent.BuildDirectory)/tools/dotnet-stryker --test-project $(Build.SourcesDirectory)/tests/UKHO.ShopFacade.Common.UnitTests/UKHO.ShopFacade.Common.UnitTests.csproj
+
+        - task: PublishMutationReport@0
+          displayName: 'Publish Strkyer Mutator Report'
+          inputs:
+            reportPattern: '$(Build.SourcesDirectory)/tests/UKHO.ShopFacade.Common.UnitTests/**/mutation-report.html'
+            reportDisplayName: 'Common UnitTests'
 
   - stage: BuildTestPublish
     displayName: "Build, test and publish"
@@ -114,19 +127,38 @@ stages:
     jobs:
     - template: Deployment/templates/build-test-publish.yml  
       parameters:
-        DisableDependencyCheck: ${{ parameters.DisableDependencyCheck }}
-        DotNetVersion: '8.0.x'
- 
+        Container: ${{ variables.Container }}
+
   - stage: Devdeploy
     dependsOn:
     - BuildTestPublish
     displayName: "Dev deploy (inc terraform, webapp deploy)"
+    variables:
+      - group: "Shop-Facade-Dev"
+      - group: "Shop-Facade-Dev-TF"
+      - group: "Shop-Facade-Dev-KV"
+      - name: "AzureADConfiguration.TenantId"
+        value: $(AzureADConfigurationTenantId)
+      - name: "AzureADConfiguration.ClientId"
+        value: $(AzureADConfigurationClientId)
+      - name: "AzureADConfiguration.AutoTestClientId"
+        value: $(AzureADConfigurationAutoTestClientId)
+      - name: "AzureADConfiguration.ClientSecret"
+        value: $(AzureADConfigurationClientSecret)
+      - name: "AzureADConfiguration.AutoTestClientIdNoRole"
+        value: $(AzureADConfigurationAutoTestClientIdNoRole)
+      - name: "AzureADConfiguration.ClientSecretNoRole"
+        value: $(AzureADConfigurationClientSecretNoRole)
+      - name: "OverrideConfigurationPath"
+        value: '/home/site/wwwroot/override-configurations'
+      - name: "Port"
+        value: '8080'
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          Environment: "dev"
+          Environment: "Dev"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: ""
+          AzureSubscription: "ShopFacade-Dev-A.011.15.12"
           Container: ${{variables.Container}} 
           RunTests: true
 
@@ -134,12 +166,29 @@ stages:
     dependsOn:
     - Devdeploy
     displayName: "vNextIat Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+    variables:
+      - group: "Shop-Facade-vNextIAT"
+      - group: "Shop-Facade-vNextIAT-TF"
+      - group: "Shop-Facade-vNextIAT-KV"
+      - name: "AzureADConfiguration.TenantId"
+        value: $(AzureADConfigurationTenantId)
+      - name: "AzureADConfiguration.ClientId"
+        value: $(AzureADConfigurationClientId)
+      - name: "AzureADConfiguration.AutoTestClientId"
+        value: $(AzureADConfigurationAutoTestClientId)
+      - name: "AzureADConfiguration.ClientSecret"
+        value: $(AzureADConfigurationClientSecret)
+      - name: "AzureADConfiguration.AutoTestClientIdNoRole"
+        value: $(AzureADConfigurationAutoTestClientIdNoRole)
+      - name: "AzureADConfiguration.ClientSecretNoRole"
+        value: $(AzureADConfigurationClientSecretNoRole)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          Environment: "vnextiat"
+          Environment: "vNextIAT"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: ""
+          AzureSubscription: "ShopFacade vNext-IAT - A.011.15.12 (13917923-6e3a-47de-98b6-ea628e469374)"
           Container: ${{variables.Container}} 
           RunTests: false
 
@@ -147,12 +196,29 @@ stages:
     dependsOn:
     - vNextIatdeploy
     displayName: "vNextE2E Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+    variables:
+      - group: "Shop-Facade-vNextE2E"
+      - group: "Shop-Facade-vNextE2E-TF"
+      - group: "Shop-Facade-vNextE2E-KV"
+      - name: "AzureADConfiguration.TenantId"
+        value: $(AzureADConfigurationTenantId)
+      - name: "AzureADConfiguration.ClientId"
+        value: $(AzureADConfigurationClientId)
+      - name: "AzureADConfiguration.AutoTestClientId"
+        value: $(AzureADConfigurationAutoTestClientId)
+      - name: "AzureADConfiguration.ClientSecret"
+        value: $(AzureADConfigurationClientSecret)
+      - name: "AzureADConfiguration.AutoTestClientIdNoRole"
+        value: $(AzureADConfigurationAutoTestClientIdNoRole)
+      - name: "AzureADConfiguration.ClientSecretNoRole"
+        value: $(AzureADConfigurationClientSecretNoRole)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          Environment: "vnexte2e"
+          Environment: "vNextE2E"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: ""
+          AzureSubscription: "ShopFacade vNext-E2E - A.011.15.12 (5c4498ee-67cb-4316-a4b4-f4b8fb8beda9)"
           Container: ${{variables.Container}} 
           RunTests: false
 
@@ -160,12 +226,29 @@ stages:
     dependsOn:
     - Devdeploy
     displayName: "IAT Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    variables:
+      - group: "Shop-Facade-IAT"
+      - group: "Shop-Facade-IAT-TF"
+      - group: "Shop-Facade-IAT-KV"
+      - name: "AzureADConfiguration.TenantId"
+        value: $(AzureADConfigurationTenantId)
+      - name: "AzureADConfiguration.ClientId"
+        value: $(AzureADConfigurationClientId)
+      - name: "AzureADConfiguration.AutoTestClientId"
+        value: $(AzureADConfigurationAutoTestClientId)
+      - name: "AzureADConfiguration.ClientSecret"
+        value: $(AzureADConfigurationClientSecret)
+      - name: "AzureADConfiguration.AutoTestClientIdNoRole"
+        value: $(AzureADConfigurationAutoTestClientIdNoRole)
+      - name: "AzureADConfiguration.ClientSecretNoRole"
+        value: $(AzureADConfigurationClientSecretNoRole)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          Environment: "iat"
+          Environment: "IAT"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: ""
+          AzureSubscription: "ShopFacade IAT - A.011.15.12 (7f278003-0adf-41b2-afed-c67b698f17f7)"
           Container: ${{variables.Container}} 
           RunTests: false
 
@@ -173,12 +256,16 @@ stages:
     dependsOn:
     - IATdeploy
     displayName: "PreProd Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    variables:
+      - group: "Shop-Facade-PreProd"
+      - group: "Shop-Facade-PreProd-TF"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          Environment: "iat"
+          Environment: "PreProd"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: ""
+          AzureSubscription: "ShopFacade PreProd - A.011.15.12 (63614f72-e0ce-4a9b-a3b0-c5d38fc6daf6)"
           Container: ${{variables.Container}} 
           RunTests: false
 
@@ -186,11 +273,15 @@ stages:
     dependsOn:
     - PreProddeploy
     displayName: "Live Deploy (inc terraform, webapp deploy)"
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    variables:
+      - group: "Shop-Facade-Live"
+      - group: "Shop-Facade-Live-TF"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
-          Environment: "iat"
+          Environment: "Live"
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: ""
+          AzureSubscription: "ShopFacade Live - A.011.15.12 (cdd11fe0-f5ac-4f8f-b960-f0bdce684595)"
           Container: ${{variables.Container}} 
           RunTests: false

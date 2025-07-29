@@ -1,0 +1,269 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Headers;
+using System.Reflection;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
+using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Events;
+using UKHO.Logging.EventHubLogProvider;
+using UKHO.ShopFacade.API.Filters;
+using UKHO.ShopFacade.API.Middleware;
+using UKHO.ShopFacade.API.Services;
+using UKHO.ShopFacade.Common.Authentication;
+using UKHO.ShopFacade.Common.ClientProvider;
+using UKHO.ShopFacade.Common.Configuration;
+using UKHO.ShopFacade.Common.Constants;
+using UKHO.ShopFacade.Common.DataProvider;
+using UKHO.ShopFacade.Common.Events;
+using UKHO.ShopFacade.Common.HealthCheck;
+using UKHO.ShopFacade.Common.Policies;
+
+namespace UKHO.ShopFacade.API
+{
+    [ExcludeFromCodeCoverage]
+    internal class Program
+    {
+        private const string EventHubLoggingConfiguration = "EventHubLoggingConfiguration";
+        private const string AzureAdScheme = "AzureAd";
+        private const string AzureAdConfiguration = "AzureAdConfiguration";
+        private const string Ukho = "UKHO";
+        private const string GraphApiConfiguration = "GraphApiConfiguration";
+        private static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
+
+            ConfigureConfiguration(builder);
+            ConfigureServices(builder);
+            ConfigureSwagger(builder);
+
+            // Add services to the container.
+
+            var app = builder.Build();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "UKHO Shop Facade Service APIs");
+                c.RoutePrefix = "swagger";
+            });
+
+            app.UseCorrelationIdMiddleware();
+            app.UseExceptionHandlingMiddleware();
+
+            ConfigureLogging(app);
+            app.MapHealthChecks("/health");
+            app.MapControllers();
+
+            app.Run();
+        }
+
+        private static void ConfigureConfiguration(WebApplicationBuilder builder)
+        {
+            builder.Configuration.AddJsonFile("appsettings.json", false, true);
+#if DEBUG
+            builder.Configuration.AddJsonFile("appsettings.local.overrides.json", true, true);
+#endif
+            builder.Configuration.AddEnvironmentVariables();
+
+            var configuration = builder.Configuration;
+            var kvServiceUri = configuration["KeyVaultSettings:ServiceUri"];
+
+            if (!string.IsNullOrWhiteSpace(kvServiceUri))
+            {
+                var secretClient = new SecretClient(new Uri(kvServiceUri), new DefaultAzureCredential(new DefaultAzureCredentialOptions()));
+                builder.Configuration.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
+            }
+        }
+
+        private static void ConfigureServices(WebApplicationBuilder builder)
+        {
+            RetryPolicyConfiguration retryPolicyConfiguration;
+            var configuration = builder.Configuration;
+
+            builder.Services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddConfiguration(configuration.GetSection("Logging"));
+                loggingBuilder.AddConsole();
+                loggingBuilder.AddDebug();
+#if DEBUG
+                loggingBuilder.AddSerilog(new LoggerConfiguration()
+                    .WriteTo.File("Logs/UKHO.ShopFacade.API-Logs-.txt", rollingInterval: RollingInterval.Day, outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] [{SourceContext}] {Message}{NewLine}{Exception}")
+                    .MinimumLevel.Information()
+                    .MinimumLevel.Override("UKHO", LogEventLevel.Debug)
+                    .CreateLogger(), dispose: true);
+#endif
+                loggingBuilder.AddAzureWebAppDiagnostics();
+            });
+            var options = new ApplicationInsightsServiceOptions { ConnectionString = configuration.GetValue<string>("ApplicationInsights:ConnectionString") };
+            builder.Services.AddApplicationInsightsTelemetry(options);
+            builder.Services.Configure<EventHubLoggingConfiguration>(configuration.GetSection(EventHubLoggingConfiguration));
+            builder.Services.Configure<GraphApiConfiguration>(configuration.GetSection(GraphApiConfiguration));
+            builder.Services.Configure<RetryPolicyConfiguration>(configuration.GetSection("RetryPolicyConfiguration"));
+
+            builder.Services.AddControllers();
+            builder.Services.AddDistributedMemoryCache();
+
+            builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            builder.Services.Configure<AzureAdConfiguration>(configuration.GetSection(AzureAdConfiguration));
+            var azureAdConfiguration = builder.Configuration.GetSection(AzureAdConfiguration).Get<AzureAdConfiguration>();
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(AzureAdScheme, options =>
+                {
+                    options.Audience = azureAdConfiguration?.ClientId;
+                    options.Authority = $"{azureAdConfiguration?.MicrosoftOnlineLoginUrl}{azureAdConfiguration?.TenantId}";
+                });
+
+            builder.Services.AddAuthorizationBuilder()
+                .SetDefaultPolicy(new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .AddAuthenticationSchemes(AzureAdScheme)
+                    .Build())
+                .AddPolicy(ShopFacadeConstants.ShopFacadeUpnPolicy,
+                    policy => policy.RequireRole(ShopFacadeConstants.ShopFacadeUpnPolicy))
+                .AddPolicy(ShopFacadeConstants.ShopFacadePermitPolicy,
+                policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePermitPolicy));
+
+
+            builder.Services.AddScoped<IUpnService, UpnService>();
+            builder.Services.AddScoped<IPermitService, PermitService>();
+            builder.Services.AddScoped<IUpnDataProvider, UpnDataProvider>();
+            builder.Services.AddScoped<IGraphClient, GraphClient>();
+            builder.Services.AddScoped<IAuthenticationProvider, ManagedIdentityGraphAuthProvider>();
+            builder.Services.AddHealthChecks().AddCheck<GraphApiHealthCheck>("GraphApiHealthCheck");
+
+            builder.Services.Configure<SalesCatalogueConfiguration>(builder.Configuration.GetSection("SalesCatalogue"));
+            builder.Services.AddSingleton<ISalesCatalogueService, SalesCatalogueService>();
+            builder.Services.AddSingleton<IAuthTokenProvider, AuthTokenProvider>();
+            builder.Services.AddSingleton<ICacheProvider, CacheProvider>();
+            builder.Services.AddHttpClient<ISalesCatalogueClient, SalesCatalogueClient>(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["SalesCatalogue:BaseUrl"]);
+                var productHeaderValue = new ProductInfoHeaderValue("ShopFacade",
+                                        Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyFileVersionAttribute>().Single().Version);
+                client.DefaultRequestHeaders.UserAgent.Add(productHeaderValue);
+            });
+
+            builder.Services.Configure<PermitServiceConfiguration>(builder.Configuration.GetSection("PermitServiceConfiguration"));
+            builder.Services.Configure<PermitExpiryDaysConfiguration>(builder.Configuration.GetSection("PermitExpiryDaysConfiguration"));
+            builder.Services.AddHttpClient<IPermitServiceClient, PermitServiceClient>(client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["PermitServiceConfiguration:BaseUrl"]);
+                var productHeaderValue = new ProductInfoHeaderValue("ShopFacade",
+                                        Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyFileVersionAttribute>().Single().Version);
+                client.DefaultRequestHeaders.UserAgent.Add(productHeaderValue);
+            });
+            builder.Services.AddScoped<IS100PermitService, S100PermitService>();
+            builder.Services.AddScoped<RetryPolicyProvider>();
+
+            retryPolicyConfiguration = configuration.GetSection("RetryPolicyConfiguration").Get<RetryPolicyConfiguration>()!;
+
+            builder.Services.AddHttpClient<ISalesCatalogueClient, SalesCatalogueClient>(c =>
+            {
+                c.BaseAddress = new Uri(configuration.GetValue<string>("SalesCatalogue:BaseUrl"));
+            }).AddPolicyHandler((services, request) =>
+            {
+                var retryPolicyProvider = services.GetRequiredService<RetryPolicyProvider>();
+                return retryPolicyProvider.GetRetryPolicy("Sales Catalogue Service", EventIds.RetryAttemptForSalesCatalogueService, retryPolicyConfiguration.RetryCount, retryPolicyConfiguration.Duration);
+            });
+
+            builder.Services.AddHttpClient<IPermitServiceClient, PermitServiceClient>(c =>
+            {
+                c.BaseAddress = new Uri(configuration.GetValue<string>("PermitServiceConfiguration:BaseUrl"));
+            }).AddPolicyHandler((services, request) =>
+            {
+                var retryPolicyProvider = services.GetRequiredService<RetryPolicyProvider>();
+                return retryPolicyProvider.GetRetryPolicy("Permit Service", EventIds.RetryAttemptForPermitService, retryPolicyConfiguration.RetryCount, retryPolicyConfiguration.Duration);
+            });
+        }
+
+        private static void ConfigureLogging(WebApplication webApplication)
+        {
+            var loggerFactory = webApplication.Services.GetRequiredService<ILoggerFactory>();
+            var eventHubLoggingConfiguration = webApplication.Services.GetRequiredService<IOptions<EventHubLoggingConfiguration>>();
+            var httpContextAccessor = webApplication.Services.GetRequiredService<IHttpContextAccessor>();
+
+            if (!string.IsNullOrWhiteSpace(eventHubLoggingConfiguration?.Value.ConnectionString))
+            {
+                void ConfigAdditionalValuesProvider(IDictionary<string, object> additionalValues)
+                {
+                    if (httpContextAccessor.HttpContext != null)
+                    {
+                        additionalValues["_RemoteIPAddress"] = httpContextAccessor.HttpContext.Connection.RemoteIpAddress!.ToString();
+                        additionalValues["_User-Agent"] = httpContextAccessor.HttpContext.Request.Headers.UserAgent.FirstOrDefault() ?? string.Empty;
+                        additionalValues["_AssemblyVersion"] = Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyFileVersionAttribute>().Single().Version;
+                        additionalValues["_X-Correlation-ID"] = httpContextAccessor.HttpContext.Request.Headers?[ApiHeaderKeys.XCorrelationIdHeaderKey].FirstOrDefault() ?? string.Empty;
+                    }
+                }
+
+                loggerFactory.AddEventHub(config =>
+                {
+                    config.Environment = eventHubLoggingConfiguration.Value.Environment;
+                    config.DefaultMinimumLogLevel =
+                        (LogLevel)Enum.Parse(typeof(LogLevel), eventHubLoggingConfiguration.Value.MinimumLoggingLevel!, true);
+                    config.MinimumLogLevels["UKHO"] =
+                        (LogLevel)Enum.Parse(typeof(LogLevel), eventHubLoggingConfiguration.Value.UkhoMinimumLoggingLevel!, true);
+                    config.EventHubConnectionString = eventHubLoggingConfiguration.Value.ConnectionString;
+                    config.EventHubEntityPath = eventHubLoggingConfiguration.Value.EntityPath;
+                    config.System = eventHubLoggingConfiguration.Value.System;
+                    config.Service = eventHubLoggingConfiguration.Value.Service;
+                    config.NodeName = eventHubLoggingConfiguration.Value.NodeName;
+                    config.AdditionalValuesProvider = ConfigAdditionalValuesProvider;
+                });
+            }
+        }
+
+        public static void ConfigureSwagger(WebApplicationBuilder builder)
+        {
+            var swaggerConfiguration = new SwaggerConfiguration();
+            builder.Configuration.Bind("Swagger", swaggerConfiguration);
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = swaggerConfiguration.Version,
+                    Title = swaggerConfiguration.Title,
+                    Description = swaggerConfiguration.Description,
+                    Contact = new OpenApiContact
+                    {
+                        Name = Ukho,
+                        Email = swaggerConfiguration.Email
+                    }
+                });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+                c.EnableAnnotations();
+                c.OperationFilter<AddHeaderOperationFilter>();
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Please Enter Token",
+                    Name = "Authorization"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            });
+        }
+    }
+}
