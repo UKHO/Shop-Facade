@@ -1,0 +1,19 @@
+{
+  "stryker-config": {
+
+    "reporters": [
+      "html",
+      "progress"
+    ],
+    "thresholds": {
+      "high": 75,
+      "low": 60,
+      "break": 55
+    },
+
+    "project": "UKHO.ShopFacade.API.csproj",
+
+    "solution": "../../ShopFacade.sln"
+
+  }
+}

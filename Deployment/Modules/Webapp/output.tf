@@ -1,0 +1,31 @@
+output "webapp_name" {
+  value = azurerm_linux_web_app.webapp_service.name
+}
+
+output "web_app_object_id" {
+  value = azurerm_linux_web_app.webapp_service.identity.0.principal_id
+}
+
+output "web_app_tenant_id" {
+  value = azurerm_linux_web_app.webapp_service.identity.0.tenant_id
+}
+
+output "slot_object_id" {
+  value = azurerm_linux_web_app_slot.staging.identity.0.principal_id
+}
+
+output "slot_default_site_hostname" {
+  value = azurerm_linux_web_app_slot.staging.default_hostname
+}
+
+output "slot_name" {
+  value = azurerm_linux_web_app_slot.staging.name
+}
+
+output "adds_mock_web_app_object_id" {
+  value = var.env_name == "dev" ? azurerm_linux_web_app.adds_mock_webapp_service.0.identity.0.principal_id : null
+}
+
+output "addsmock_slot_default_site_hostname" {
+  value = var.env_name == "dev" ? azurerm_linux_web_app.adds_mock_webapp_service[0].default_hostname : null
+}
