@@ -224,9 +224,9 @@ stages:
 
   - stage: IATdeploy
     dependsOn:
-    - Devdeploy
+    - BuildTestPublish
     displayName: "IAT Deploy (inc terraform, webapp deploy)"
-    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    # condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
       - group: "Shop-Facade-IAT"
       - group: "Shop-Facade-IAT-TF"
