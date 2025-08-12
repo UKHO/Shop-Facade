@@ -71,3 +71,8 @@ module "key_vault" {
   }
   tags                                                          = local.tags
 }
+
+module "identity" {
+  source   = "./Modules/Identity"
+  env_name = local.env_name
+}
