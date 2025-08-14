@@ -224,7 +224,7 @@ stages:
 
   - stage: IATdeploy
     dependsOn:
-    - Devdeploy
+    - BuildTestPublish
     displayName: "IAT Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
@@ -254,7 +254,7 @@ stages:
 
   - stage: PreProddeploy
     dependsOn:
-    - IATdeploy
+    - BuildTestPublish
     displayName: "PreProd Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
@@ -271,7 +271,7 @@ stages:
 
   - stage: Livedeploy
     dependsOn:
-    - PreProddeploy
+    - BuildTestPublish
     displayName: "Live Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
