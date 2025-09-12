@@ -73,6 +73,15 @@ stages:
       steps:
         - checkout: self
           submodules: true
+        - task: PowerShell@2
+          displayName: "Install Microsoft.Management.Infrastructure"
+          inputs:
+            targetType: 'inline'
+            pwsh: true
+            script: |
+              Install-PackageProvider -Name NuGet -Force
+              Install-Module -Name Microsoft.Management.Infrastructure -Force -Scope CurrentUser
+              Write-Host "Installed Microsoft.Management.Infrastructure module"
         - task: UseDotNet@2
           displayName: 'Use .NET SDK'
           inputs:
