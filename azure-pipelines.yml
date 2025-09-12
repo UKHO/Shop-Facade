@@ -224,9 +224,9 @@ stages:
 
   - stage: IATdeploy
     dependsOn:
-    - BuildTestPublish
+    - Devdeploy
     displayName: "IAT Deploy (inc terraform, webapp deploy)"
-    # condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
       - group: "Shop-Facade-IAT"
       - group: "Shop-Facade-IAT-TF"
@@ -254,9 +254,9 @@ stages:
 
   - stage: PreProddeploy
     dependsOn:
-    - BuildTestPublish
+    - IATdeploy
     displayName: "PreProd Deploy (inc terraform, webapp deploy)"
-    # condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
       - group: "Shop-Facade-PreProd"
       - group: "Shop-Facade-PreProd-TF"
@@ -271,9 +271,9 @@ stages:
 
   - stage: Livedeploy
     dependsOn:
-    - BuildTestPublish
+    - PreProddeploy
     displayName: "Live Deploy (inc terraform, webapp deploy)"
-    # condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
       - group: "Shop-Facade-Live"
       - group: "Shop-Facade-Live-TF"

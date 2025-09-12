@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Headers;
 using System.Reflection;
+using Azure.Core;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
@@ -39,8 +40,10 @@ namespace UKHO.ShopFacade.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            ConfigureConfiguration(builder);
-            ConfigureServices(builder);
+            TokenCredential sharedCredential = new DefaultAzureCredential();
+
+            ConfigureConfiguration(builder, sharedCredential);
+            ConfigureServices(builder, sharedCredential);
             ConfigureSwagger(builder);
 
             // Add services to the container.
@@ -64,7 +67,7 @@ namespace UKHO.ShopFacade.API
             app.Run();
         }
 
-        private static void ConfigureConfiguration(WebApplicationBuilder builder)
+        private static void ConfigureConfiguration(WebApplicationBuilder builder, TokenCredential credential)
         {
             builder.Configuration.AddJsonFile("appsettings.json", false, true);
 #if DEBUG
@@ -77,12 +80,12 @@ namespace UKHO.ShopFacade.API
 
             if (!string.IsNullOrWhiteSpace(kvServiceUri))
             {
-                var secretClient = new SecretClient(new Uri(kvServiceUri), new DefaultAzureCredential(new DefaultAzureCredentialOptions()));
+                var secretClient = new SecretClient(new Uri(kvServiceUri), credential);
                 builder.Configuration.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
             }
         }
 
-        private static void ConfigureServices(WebApplicationBuilder builder)
+        private static void ConfigureServices(WebApplicationBuilder builder, TokenCredential credential)
         {
             RetryPolicyConfiguration retryPolicyConfiguration;
             var configuration = builder.Configuration;
@@ -130,6 +133,7 @@ namespace UKHO.ShopFacade.API
                 .AddPolicy(ShopFacadeConstants.ShopFacadePermitPolicy,
                 policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePermitPolicy));
 
+            builder.Services.AddSingleton<TokenCredential>(credential);
 
             builder.Services.AddScoped<IUpnService, UpnService>();
             builder.Services.AddScoped<IPermitService, PermitService>();
