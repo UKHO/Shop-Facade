@@ -12,7 +12,7 @@ namespace UKHO.ShopFacade.Common.Authentication
     public class ManagedIdentityGraphAuthProvider : IAuthenticationProvider
     {
         private readonly IOptions<GraphApiConfiguration> _graphApiConfiguration;
-        TokenCredential _credential;
+        private readonly TokenCredential _credential;
 
         public ManagedIdentityGraphAuthProvider(IOptions<GraphApiConfiguration> graphApiConfiguration, TokenCredential credential)
         {
