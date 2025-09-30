@@ -2,6 +2,6 @@
 {
     public interface IAuthTokenProvider
     {
-        Task<string> GetManagedIdentityAuthAsync(string resource, string scope);
+        Task<string> GetManagedIdentityAuthAsync(string resource, string scope, string correlationId = null);
     }
 }

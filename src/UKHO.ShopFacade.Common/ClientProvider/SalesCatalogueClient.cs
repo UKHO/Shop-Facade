@@ -19,7 +19,7 @@ namespace UKHO.ShopFacade.Common.ClientProvider
             var uri = $"/{_salesCatalogueConfig.Value.Version}/catalogues/{_salesCatalogueConfig.Value.ProductType}/basic";
             using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
-            var authToken = _tokenProvider.GetManagedIdentityAuthAsync(_salesCatalogueConfig.Value.ResourceId!, _salesCatalogueConfig.Value.PublisherScope!).Result;
+            var authToken = _tokenProvider.GetManagedIdentityAuthAsync(_salesCatalogueConfig.Value.ResourceId!, _salesCatalogueConfig.Value.PublisherScope!, correlationId).Result;
             httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
             httpRequestMessage.Headers.Add(ApiHeaderKeys.XCorrelationIdHeaderKey, correlationId);

@@ -10,14 +10,14 @@ using Microsoft.Extensions.Logging;
 namespace UKHO.ShopFacade.Common.Authentication
 {
     [ExcludeFromCodeCoverage] ////Excluded from code coverage as it has AD interaction
-    public class AuthTokenProvider(IOptions<AzureAdConfiguration> azureAdConfiguration, ICacheProvider cacheProvider, TokenCredential credential, ILogger logger) : IAuthTokenProvider
+    public class AuthTokenProvider(IOptions<AzureAdConfiguration> azureAdConfiguration, ICacheProvider cacheProvider, TokenCredential credential, ILogger<AuthTokenProvider> logger) : IAuthTokenProvider
     {
         static AuthTokenProvider()
         {
             AzureEventSourceListener.CreateConsoleLogger();
         }
 
-        public async Task<string> GetManagedIdentityAuthAsync(string resource, string scope)
+        public async Task<string> GetManagedIdentityAuthAsync(string resource, string scope, string correlationId = null)
         {
             var accessToken = cacheProvider.GetAuthTokenFromCache(resource);
             if (accessToken != null && accessToken.AccessToken != null && accessToken.ExpiresIn > DateTime.UtcNow)
@@ -30,7 +30,7 @@ namespace UKHO.ShopFacade.Common.Authentication
             cacheProvider.AddAuthTokenToCache(resource, newAccessToken, azureAdConfiguration.Value.DeductTokenExpiryMinutes);
 
             // TEMPORARY LOGGING - REMOVE AFTER DEBUGGING
-            logger.LogDebug($"Access Token for resource {resource}/{scope}: {newAccessToken.AccessToken}");
+            logger.LogInformation($"Access Token for resource {resource}/{scope}: {newAccessToken.AccessToken}");
             return newAccessToken.AccessToken;
         }
 
