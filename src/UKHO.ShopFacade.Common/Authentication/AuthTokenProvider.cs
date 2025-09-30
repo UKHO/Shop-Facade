@@ -1,26 +1,36 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Azure.Core;
 using Azure.Identity;
+using Azure.Core.Diagnostics;
 using Microsoft.Extensions.Options;
 using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Models.Authentication;
+using Microsoft.Extensions.Logging;
 
 namespace UKHO.ShopFacade.Common.Authentication
 {
     [ExcludeFromCodeCoverage] ////Excluded from code coverage as it has AD interaction
-    public class AuthTokenProvider(IOptions<AzureAdConfiguration> azureAdConfiguration, ICacheProvider cacheProvider, TokenCredential credential) : IAuthTokenProvider
+    public class AuthTokenProvider(IOptions<AzureAdConfiguration> azureAdConfiguration, ICacheProvider cacheProvider, TokenCredential credential, ILogger logger) : IAuthTokenProvider
     {
+        static AuthTokenProvider()
+        {
+            AzureEventSourceListener.CreateConsoleLogger();
+        }
+
         public async Task<string> GetManagedIdentityAuthAsync(string resource, string scope)
         {
             var accessToken = cacheProvider.GetAuthTokenFromCache(resource);
             if (accessToken != null && accessToken.AccessToken != null && accessToken.ExpiresIn > DateTime.UtcNow)
             {
+                logger.LogDebug("Access Token retrieved from cache");
                 return accessToken.AccessToken;
             }
 
             var newAccessToken = await GetNewAuthToken($"{resource}/{scope}");
             cacheProvider.AddAuthTokenToCache(resource, newAccessToken, azureAdConfiguration.Value.DeductTokenExpiryMinutes);
 
+            // TEMPORARY LOGGING - REMOVE AFTER DEBUGGING
+            logger.LogDebug($"Access Token for resource {resource}/{scope}: {newAccessToken.AccessToken}");
             return newAccessToken.AccessToken;
         }
 
