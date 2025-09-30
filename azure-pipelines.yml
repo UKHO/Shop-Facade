@@ -73,16 +73,6 @@ stages:
       steps:
         - checkout: self
           submodules: true
-        - task: PowerShell@2
-          displayName: "Install Microsoft.Management.Infrastructure"
-          inputs:
-            targetType: 'inline'
-            pwsh: true
-            script: |
-              Import-Module PackageManagement
-              Install-PackageProvider -Name NuGet -Force
-              Install-Module -Name Microsoft.Management.Infrastructure -Force -Scope CurrentUser
-              Write-Host "Installed Microsoft.Management.Infrastructure module"
         - task: UseDotNet@2
           displayName: 'Use .NET SDK'
           inputs:
@@ -176,7 +166,7 @@ stages:
     dependsOn:
     - Devdeploy
     displayName: "vNextIat Deploy (inc terraform, webapp deploy)"
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+    # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
     variables:
       - group: "Shop-Facade-vNextIAT"
       - group: "Shop-Facade-vNextIAT-TF"
