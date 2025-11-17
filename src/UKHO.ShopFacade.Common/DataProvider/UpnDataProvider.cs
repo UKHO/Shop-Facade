@@ -36,7 +36,7 @@ namespace UKHO.ShopFacade.Common.DataProvider
 
             if (s100UpnCollection.Value!.Count > 0)
             {
-                bool isUpnFound = s100UpnCollection.Value.Any(listItem => IsUpnFieldExists(listItem));
+                var isUpnFound = s100UpnCollection.Value.Any(IsUpnFieldExists);
 
                 if (isUpnFound)
                 {
@@ -78,14 +78,17 @@ namespace UKHO.ShopFacade.Common.DataProvider
 
         private static string GetFieldValue(ListItem item, string fieldName)
         {
-            return item.Fields.AdditionalData.TryGetValue(fieldName, out var fieldValue) ? fieldValue?.ToString() ?? string.Empty : string.Empty;
+            return item.Fields!.AdditionalData.TryGetValue(fieldName, out var fieldValue) ? fieldValue?.ToString() ?? string.Empty : string.Empty;
         }
 
         // The IsUpnFieldExists method is used to check whether the UPN field is exist in sharePointList data.
-        private bool IsUpnFieldExists(ListItem listItem)
+        private static bool IsUpnFieldExists(ListItem listItem)
         {
             if (listItem.Fields == null)
+            {
                 return false;
+            }
+
             return listItem.Fields.AdditionalData
                 .Any(y => y.Key.Contains(UpnDataProviderConstants.UpnFieldFilter, StringComparison.OrdinalIgnoreCase));
         }

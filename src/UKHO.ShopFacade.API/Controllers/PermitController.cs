@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -13,16 +12,11 @@ namespace UKHO.ShopFacade.API.Controllers
 {
     [ApiController]
     [Authorize]
-    public class PermitController : BaseController<PermitController>
+    [Route("v1/licences")]
+    public class PermitController(IHttpContextAccessor httpContextAccessor, ILogger<PermitController> logger, IPermitService permitService) : BaseController<PermitController>(httpContextAccessor)
     {
-        private readonly ILogger<PermitController> _logger;
-        private readonly IPermitService _permitService;
-
-        public PermitController(IHttpContextAccessor httpContextAccessor, ILogger<PermitController> logger, IPermitService permitService) : base(httpContextAccessor)
-        {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _permitService = permitService ?? throw new ArgumentNullException(nameof(permitService));
-        }
+        private readonly ILogger<PermitController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        private readonly IPermitService _permitService = permitService ?? throw new ArgumentNullException(nameof(permitService));
 
         /// <summary>
         /// Get a zip file containing all the S-100 permit file(s) of the requested licence.
@@ -32,8 +26,7 @@ namespace UKHO.ShopFacade.API.Controllers
         /// <response code="200">OK - Returns a zip containing permit files</response>
         /// <response code="401">Unauthorized - either you have not provided valid token, or your token is not recognized.</response>
         /// <response code="403">Forbidden - you have no permission to use this API.</response>
-        [HttpGet]
-        [Route("/v1/licences/{licenceId}/{productType}/permits")]
+        [HttpGet("{licenceId}/{productType}/permits")]
         [Authorize(Policy = ShopFacadeConstants.ShopFacadePermitPolicy)]
         [SwaggerOperation(Tags = new[] { "Licensing" }, Description = "<p>Returns a zip file containing all the S-100 permit file(s) of the requested licence.</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, type: typeof(string), description: "<p>OK - Returns a zip containing permit files</p>")]
