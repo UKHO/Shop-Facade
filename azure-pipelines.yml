@@ -285,3 +285,4 @@ stages:
           AzureSubscription: "ShopFacade Live - A.011.15.12 (cdd11fe0-f5ac-4f8f-b960-f0bdce684595)"
           Container: ${{variables.Container}} 
           RunTests: false
+          RetainPipeline: true

@@ -14,6 +14,9 @@ parameters:
 - name: RunTests
   type: boolean
   default: false
+- name: RetainPipeline
+  type: boolean
+  default: false
 
 jobs:
 - deployment: DevDeployTerraform
@@ -63,12 +66,12 @@ jobs:
             parameters:
               AzureSubscription: ${{parameters.AzureSubscription}}
 
+- ${{ if eq(parameters.RunFunctionalTests, true) }}: 
 - deployment: FunctionalTests
   dependsOn:  DeployApp
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool: $(DeploymentPool)
-  condition: and(succeeded('DeployApp'), eq( ${{parameters.RunTests}} , 'true'))
   workspace:
    clean: all
   strategy:
@@ -80,3 +83,14 @@ jobs:
           - template: continuous-testing.yml
             parameters:
               AzureSubscription: ${{parameters.AzureSubscription}}
+
+- ${{ if eq(parameters.RetainPipeline, true) }}:
+  - job: ${{ parameters.ShortName }}RetainPipeline
+    displayName: ${{ upper(parameters.ShortName) }} - retain pipeline
+    dependsOn:
+    - ${{ parameters.ShortName }}DeployApp
+    steps:
+    - checkout: UKHOTemplates
+    - template: retain-pipelinerun/retain-pipelinerun.yml@UKHOTemplates
+      parameters:
+        DaysValid: 365
