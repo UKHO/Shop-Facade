@@ -101,6 +101,9 @@ namespace UKHO.ShopFacade.API
 #endif
                 loggingBuilder.AddAzureWebAppDiagnostics();
             });
+
+            builder.Services.AddAllElasticApm();
+
             var options = new ApplicationInsightsServiceOptions { ConnectionString = configuration.GetValue<string>("ApplicationInsights:ConnectionString") };
             builder.Services.AddApplicationInsightsTelemetry(options);
             builder.Services.Configure<EventHubLoggingConfiguration>(configuration.GetSection(EventHubLoggingConfiguration));
