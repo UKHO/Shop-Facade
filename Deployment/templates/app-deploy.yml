@@ -39,7 +39,7 @@ jobs:
                     ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
                     AzureSubscription: ${{parameters.AzureSubscription}}
                        
-- deployment: ${{parameters.Environment}}DeployApp
+- deployment: DeployApp
   dependsOn: DevDeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Dotnet App"
   environment: "ShopFacade-${{parameters.Environment}}"
@@ -94,4 +94,4 @@ jobs:
       serviceConnection: 'addse2eauto Test - A.011.13'
       environment: ${{ parameters.RunAddsTests }}
       dependsOn:
-      - ${{parameters.Environment}}DeployApp
+      - DeployApp
