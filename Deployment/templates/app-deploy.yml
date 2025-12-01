@@ -14,6 +14,13 @@ parameters:
 - name: RunTests
   type: boolean
   default: false
+- name: RunAddsTests
+  type: string
+  default: 'skip'
+  values:
+  - 'skip'
+  - 'vNextIAT'
+  - 'IAT'
 
 jobs:
 - deployment: DevDeployTerraform
@@ -80,3 +87,11 @@ jobs:
           - template: continuous-testing.yml
             parameters:
               AzureSubscription: ${{parameters.AzureSubscription}}
+
+- ${{ if ne(parameters.RunAddsTests, 'skip') }}:
+  - template:  template.yml@TriggerADDSAutoTestsPipeline
+    parameters:
+      serviceConnection: 'addse2eauto Test - A.011.13'
+      environment: ${{ parameters.RunAddsTests }}
+      dependsOn:
+      - ${{parameters.Environment}} - Deploy Dotnet App
