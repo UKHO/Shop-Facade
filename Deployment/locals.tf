@@ -12,4 +12,8 @@ locals {
     CALLOUT_TEAM              = "On-Call_N/A"
     COST_CENTRE               = "A.011.15.12"
     }
+  pe_identity                  = "${local.service_name}${local.env_name}"
+  vnet_link                    = "${local.service_name}${local.env_name}"
+  private_connection           = "/subscriptions/${var.subscription_id}/resourceGroups/ps-${local.env_name}-rg/providers/Microsoft.Web/sites/shopfacade-${local.env_name}-api-webapp"
+  
 }

@@ -31,3 +31,19 @@ variable "spoke_vnet_name" {
 variable "spoke_subnet_name" {
   type = string
 }
+
+variable "pe_vnet_name" {
+  type = string
+}
+
+variable "pe_subnet_name" {
+  type = string
+}
+
+variable "pe_rg" {
+  type = string
+}
+
+variable "subscription_id" {
+  type = string
+}

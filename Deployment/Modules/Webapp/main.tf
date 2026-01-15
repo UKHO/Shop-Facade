@@ -7,6 +7,19 @@ resource "azurerm_service_plan" "app_service_plan" {
   tags                = var.tags
 }
 
+// VNet Integration for outbound connectivity
+resource "azurerm_app_service_virtual_network_swift_connection" "webapp_vnet_integration" {
+  app_service_id = azurerm_linux_web_app.webapp_service.id
+  subnet_id      = var.subnet_id
+}
+
+// If you have staging slot, include this too
+resource "azurerm_app_service_slot_virtual_network_swift_connection" "slot_vnet_integration" {
+  app_service_id = azurerm_linux_web_app.webapp_service.id
+  subnet_id      = var.subnet_id
+  slot_name      = azurerm_linux_web_app_slot.staging.name
+}
+
 resource "azurerm_linux_web_app" "webapp_service" {
   name                      = var.name
   location                  = var.location
@@ -14,6 +27,7 @@ resource "azurerm_linux_web_app" "webapp_service" {
   service_plan_id           = azurerm_service_plan.app_service_plan.id
   tags                      = var.tags
   virtual_network_subnet_id = var.subnet_id
+  public_network_access_enabled = false
 
   site_config {
     application_stack {    
