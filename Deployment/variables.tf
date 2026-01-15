@@ -47,3 +47,7 @@ variable "pe_rg" {
 variable "subscription_id" {
   type = string
 }
+
+variable "hub_subscription_id" {
+  type = string
+}
