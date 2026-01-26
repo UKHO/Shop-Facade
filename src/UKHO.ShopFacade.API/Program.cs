@@ -151,7 +151,7 @@ namespace UKHO.ShopFacade.API
             builder.Services.AddSingleton<ICacheProvider, CacheProvider>();
             builder.Services.AddHttpClient<ISalesCatalogueClient, SalesCatalogueClient>(client =>
             {
-                client.BaseAddress = new Uri(builder.Configuration["SalesCatalogue:BaseUrl"]);
+                client.BaseAddress = new Uri(builder.Configuration["SalesCatalogue:BaseUrl"]!);
                 var productHeaderValue = new ProductInfoHeaderValue("ShopFacade",
                                         Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyFileVersionAttribute>().Single().Version);
                 client.DefaultRequestHeaders.UserAgent.Add(productHeaderValue);
@@ -161,7 +161,7 @@ namespace UKHO.ShopFacade.API
             builder.Services.Configure<PermitExpiryDaysConfiguration>(builder.Configuration.GetSection("PermitExpiryDaysConfiguration"));
             builder.Services.AddHttpClient<IPermitServiceClient, PermitServiceClient>(client =>
             {
-                client.BaseAddress = new Uri(builder.Configuration["PermitServiceConfiguration:BaseUrl"]);
+                client.BaseAddress = new Uri(builder.Configuration["PermitServiceConfiguration:BaseUrl"]!);
                 var productHeaderValue = new ProductInfoHeaderValue("ShopFacade",
                                         Assembly.GetExecutingAssembly().GetCustomAttributes<AssemblyFileVersionAttribute>().Single().Version);
                 client.DefaultRequestHeaders.UserAgent.Add(productHeaderValue);
@@ -173,7 +173,7 @@ namespace UKHO.ShopFacade.API
 
             builder.Services.AddHttpClient<ISalesCatalogueClient, SalesCatalogueClient>(c =>
             {
-                c.BaseAddress = new Uri(configuration.GetValue<string>("SalesCatalogue:BaseUrl"));
+                c.BaseAddress = new Uri(configuration.GetValue<string>("SalesCatalogue:BaseUrl")!);
             }).AddPolicyHandler((services, request) =>
             {
                 var retryPolicyProvider = services.GetRequiredService<RetryPolicyProvider>();
@@ -182,7 +182,7 @@ namespace UKHO.ShopFacade.API
 
             builder.Services.AddHttpClient<IPermitServiceClient, PermitServiceClient>(c =>
             {
-                c.BaseAddress = new Uri(configuration.GetValue<string>("PermitServiceConfiguration:BaseUrl"));
+                c.BaseAddress = new Uri(configuration.GetValue<string>("PermitServiceConfiguration:BaseUrl")!);
             }).AddPolicyHandler((services, request) =>
             {
                 var retryPolicyProvider = services.GetRequiredService<RetryPolicyProvider>();
