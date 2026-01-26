@@ -48,7 +48,7 @@ namespace UKHO.ShopFacade.Common.Tests.HealthCheck
         public async Task CheckHealthAsync_ReturnsUnhealthy_WhenGraphApiThrowsException()
         {
             // Arrange
-            A.CallTo(() => _graphClient.GetListItemCollectionResponse(A<string>.Ignored, A<string>.Ignored))
+            A.CallTo(() => _graphClient.HealthCheck())
                 .Throws<Exception>();
 
             // Act
