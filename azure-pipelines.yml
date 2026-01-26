@@ -60,6 +60,11 @@ resources:
     name: UKHO/devops-pipelinetemplates
     endpoint: UKHO
     ref: refs/heads/main
+  - repository: TriggerADDSAutoTestsPipeline
+    type: github
+    endpoint: ukho
+    name: ukho/devops-trigger-adds-autotest-pipeline
+    ref: refs/heads/main 
 
 stages:
   - stage: Stryker_Mutator
@@ -192,6 +197,7 @@ stages:
           AzureSubscription: "ShopFacade vNext-IAT - A.011.15.12 (13917923-6e3a-47de-98b6-ea628e469374)"
           Container: ${{variables.Container}} 
           RunTests: false
+          RunAddsTests: 'vNextIAT'
 
   - stage: vNextE2Edeploy
     dependsOn:
@@ -252,6 +258,7 @@ stages:
           AzureSubscription: "ShopFacade IAT - A.011.15.12 (7f278003-0adf-41b2-afed-c67b698f17f7)"
           Container: ${{variables.Container}} 
           RunTests: false
+          RunAddsTests: 'IAT'
 
   - stage: PreProddeploy
     dependsOn:
