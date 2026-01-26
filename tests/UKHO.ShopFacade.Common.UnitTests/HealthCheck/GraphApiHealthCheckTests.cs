@@ -12,14 +12,14 @@ namespace UKHO.ShopFacade.Common.Tests.HealthCheck
     [TestFixture]
     public class GraphApiHealthCheckTests
     {
-        private ILogger<UpnDataProvider> _logger;
+        private ILogger<GraphApiHealthCheck> _logger;
         private IGraphClient _graphClient;
         private GraphApiHealthCheck _healthCheck;
 
         [SetUp]
         public void SetUp()
         {
-            _logger = A.Fake<ILogger<UpnDataProvider>>();
+            _logger = A.Fake<ILogger<GraphApiHealthCheck>>();
             _graphClient = A.Fake<IGraphClient>();
             _healthCheck = new GraphApiHealthCheck(_logger, _graphClient);
         }

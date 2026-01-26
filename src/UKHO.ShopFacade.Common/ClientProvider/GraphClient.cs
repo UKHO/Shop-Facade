@@ -19,6 +19,27 @@ namespace UKHO.ShopFacade.Common.ClientProvider
             _graphApiConfiguration = graphApiConfiguration;
         }
 
+        /// <summary>
+        /// Run a health check against Graph API by attempting to get one item from the configured SharePoint list
+        /// If the list is empty this will still return a 200 response
+        /// </summary>
+        /// <returns></returns>
+        public async Task HealthCheck()
+        {
+            var graphClient = new GraphServiceClient(_authenticationProvider, _graphApiConfiguration.Value.GraphApiBaseUrl);
+            await graphClient
+                    .Sites[_graphApiConfiguration.Value.SiteId]
+                    .Lists[_graphApiConfiguration.Value.ListId]
+                    .Items
+                    .GetAsync(rc =>
+                    {
+                        rc.QueryParameters.Top = 1;
+                        rc.QueryParameters.Select = ["id"];
+                    });
+
+            //Any 200 response is acceptable, if not exception is thrown
+        }
+
         public async Task<ListItemCollectionResponse> GetListItemCollectionResponse(string expandFields, string filterCondition)
         {
             var graphClient = new GraphServiceClient(_authenticationProvider, _graphApiConfiguration.Value.GraphApiBaseUrl);
