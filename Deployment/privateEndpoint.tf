@@ -22,7 +22,6 @@ module "private_endpoint_link" {
     azurerm.hub   = azurerm.hub
     azurerm.spoke   = azurerm.shopfacade
   }
-  vnet_link           = local.vnet_link
   private_connection  = [local.private_connection]
   zone_group          = local.zone_group 
   pe_identity         = [local.pe_identity]
