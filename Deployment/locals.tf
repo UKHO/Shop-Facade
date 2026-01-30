@@ -15,5 +15,6 @@ locals {
   pe_identity                  = "${local.service_name}${local.env_name}"
   vnet_link                    = "${local.service_name}${local.env_name}"
   private_connection           = "/subscriptions/${var.subscription_id}/resourceGroups/ps-${local.env_name}-rg/providers/Microsoft.Web/sites/shopfacade-${local.env_name}-api-webapp"
-  
+  zone_group                   = "${local.service_name}${local.env_name}zone"
+  dns_resource_group           = "${var.dns_zone_rg}"
 }
