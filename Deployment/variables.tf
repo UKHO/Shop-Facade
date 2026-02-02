@@ -53,5 +53,6 @@ variable "hub_subscription_id" {
 }
 
 variable "dns_zone_rg" {
-  type = string  
+  type        = string  
+  default     = null
 }
