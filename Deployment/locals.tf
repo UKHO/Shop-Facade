@@ -17,7 +17,4 @@ locals {
   private_connection           = "/subscriptions/${var.subscription_id}/resourceGroups/ps-${local.env_name}-rg/providers/Microsoft.Web/sites/shopfacade-${local.env_name}-api-webapp"
   zone_group                   = "${local.service_name}${local.env_name}zone"
   dns_resource_group           = "${var.dns_zone_rg}"
-  dns_zone_rg = var.dns_zone_rg != null ? var.dns_zone_rg : (
-    local.env_name == "prod" ? "business-rg" : "engineering-rg")
-
 }
