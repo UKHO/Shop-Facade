@@ -21,6 +21,9 @@ parameters:
   - 'skip'
   - 'vNextIAT'
   - 'IAT'
+- name: appPool
+  type: string
+  default: "Private Link Deployments (ENG)"
 
 jobs:
 - deployment: DevDeployTerraform
@@ -43,7 +46,7 @@ jobs:
   dependsOn: DevDeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Dotnet App"
   environment: "ShopFacade-${{parameters.Environment}}"
-  pool: $(DeploymentPool)
+  pool: ${{parameters.appPool}}
   container: ${{parameters.Container}}
   workspace:
    clean: all
@@ -74,7 +77,7 @@ jobs:
   dependsOn:  DeployApp
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
-  pool: $(DeploymentPool)
+  pool: ${{parameters.appPool}}
   condition: and(succeeded('DeployApp'), eq( ${{parameters.RunTests}} , 'true'))
   workspace:
    clean: all

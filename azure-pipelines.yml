@@ -52,6 +52,10 @@ variables:
     value: "90"
   - name: SdkVersion
     value: "8.x"
+  - name: DeploymentPoolPE
+    value: "Private Link Deployments (ENG)"
+  - name: DeploymentPoolPD
+    value: "Private Link Deployments (BUS)"
 
 resources:
   repositories:
@@ -275,6 +279,7 @@ stages:
           AzureSubscription: "ShopFacade PreProd - A.011.15.12 (63614f72-e0ce-4a9b-a3b0-c5d38fc6daf6)"
           Container: ${{variables.Container}} 
           RunTests: false
+          appPool: ${{ variables.DeploymentPoolPD }}
 
   - stage: Livedeploy
     dependsOn:
@@ -292,3 +297,4 @@ stages:
           AzureSubscription: "ShopFacade Live - A.011.15.12 (cdd11fe0-f5ac-4f8f-b960-f0bdce684595)"
           Container: ${{variables.Container}} 
           RunTests: false
+          appPool: ${{ variables.DeploymentPoolPD }}
