@@ -5,7 +5,7 @@ terraform {
       version = "=4.14.0"
     }
   }
-  required_version = "=1.10.4"
+  required_version = "=1.9.2"
   backend "azurerm" {
     key                  = "terraform.deployment.tfplan"
     container_name       = "tfstate"
