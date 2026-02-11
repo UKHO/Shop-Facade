@@ -38,6 +38,13 @@ steps:
       slotName: $(WEB_APP_SLOT_NAME)
 
   - task: PowerShell@2
+    displayName: "Verify agent can reach staging slot endpoint"
+    inputs:
+      targetType: filePath
+      filePath: "$(Pipeline.Workspace)/terraformartifact/test_network_connectivity.ps1"
+      arguments: "-targetUrl $(WEB_APP_SLOT_HOST_NAME)"
+
+  - task: PowerShell@2
     displayName: "Check the status of staging slot"
     inputs:
       targetType: filePath
@@ -53,6 +60,13 @@ steps:
       action: "Swap Slots"
       swapWithProduction: true
       sourceSlot: $(WEB_APP_SLOT_NAME)
+
+  - task: PowerShell@2
+    displayName: "Verify agent can reach production endpoint"
+    inputs:
+      targetType: filePath
+      filePath: "$(Pipeline.Workspace)/terraformartifact/test_network_connectivity.ps1"
+      arguments: "-targetUrl $(ShopFacadeConfiguration.BaseUrl)"
 
   - task: PowerShell@2
     displayName: "Check the status of production slot"
