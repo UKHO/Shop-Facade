@@ -15,5 +15,5 @@ variable "tags" {
 }
 # this variable we are not using anywhere 
 variable "env_name" {
-  type  = string
+  type = string
 }
