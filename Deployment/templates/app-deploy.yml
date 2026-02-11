@@ -79,7 +79,9 @@ jobs:
   dependsOn:  DeployApp
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
-  pool: ${{parameters.appPool}}
+  pool: 
+    name: Tiberius
+    demands: ENVIRONMENT -equals ${{parameters.appPoolEnvironement}}
   condition: and(succeeded('DeployApp'), eq( ${{parameters.RunTests}} , 'true'))
   workspace:
    clean: all
