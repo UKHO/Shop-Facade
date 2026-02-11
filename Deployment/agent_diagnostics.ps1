@@ -1,12 +1,29 @@
+Param(
+    [Parameter(Mandatory=$false)][string]$poolName = "Unknown",
+    [Parameter(Mandatory=$false)][string]$poolDemands = "None"
+)
+
 Write-Host "========================================="
 Write-Host "AGENT DIAGNOSTICS"
 Write-Host "========================================="
+
+Write-Host "`n=== Agent Pool Configuration ==="
+Write-Host "Pool Name: $poolName"
+Write-Host "Pool Demands: $poolDemands"
 
 Write-Host "`n=== Agent Information ==="
 Write-Host "Agent Name: $env:AGENT_NAME"
 Write-Host "Agent Machine Name: $env:AGENT_MACHINENAME"
 Write-Host "Agent OS: $env:AGENT_OS"
-Write-Host "Agent Pool: $env:AGENT_POOL"
+Write-Host "Agent Pool: $poolName"
+Write-Host "Agent ID: $env:AGENT_ID"
+Write-Host "Agent Job Name: $env:AGENT_JOBNAME"
+Write-Host "Agent Working Directory: $env:AGENT_WORKFOLDER"
+
+Write-Host "`n=== Pipeline Environment Variables ==="
+Get-ChildItem env: | Where-Object { $_.Name -like "AGENT_*" -or $_.Name -like "BUILD_*" -or $_.Name -like "SYSTEM_*" } | 
+    Sort-Object Name | 
+    ForEach-Object { Write-Host "$($_.Name) = $($_.Value)" }
 
 Write-Host "`n=== Network Information ==="
 # Get hostname

@@ -1,6 +1,12 @@
 parameters:
   - name: AzureSubscription
     type: string
+  - name: PoolName
+    type: string
+    default: "Unknown"
+  - name: PoolDemands
+    type: string
+    default: "None"
 
 steps:
   - task: FileTransform@2
@@ -42,6 +48,7 @@ steps:
     inputs:
       targetType: filePath
       filePath: "$(Pipeline.Workspace)/terraformartifact/agent_diagnostics.ps1"
+      arguments: "-poolName '${{ parameters.PoolName }}' -poolDemands '${{ parameters.PoolDemands }}'"
 
   - task: PowerShell@2
     displayName: "Verify agent can reach staging slot endpoint"

@@ -74,6 +74,8 @@ jobs:
           - template: continuous-deployment-app.yml
             parameters:
               AzureSubscription: ${{parameters.AzureSubscription}}
+              PoolName: "Tiberius"
+              PoolDemands: "ENVIRONMENT -equals ${{parameters.appPoolEnvironement}}"
 
 - deployment: FunctionalTests
   dependsOn:  DeployApp
