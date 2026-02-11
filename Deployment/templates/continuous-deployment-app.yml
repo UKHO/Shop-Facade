@@ -38,6 +38,12 @@ steps:
       slotName: $(WEB_APP_SLOT_NAME)
 
   - task: PowerShell@2
+    displayName: "Diagnostics: Agent network configuration"
+    inputs:
+      targetType: filePath
+      filePath: "$(Pipeline.Workspace)/terraformartifact/agent_diagnostics.ps1"
+
+  - task: PowerShell@2
     displayName: "Verify agent can reach staging slot endpoint"
     inputs:
       targetType: filePath
