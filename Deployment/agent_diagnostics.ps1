@@ -42,25 +42,50 @@ try {
 if ($IsLinux) {
     Write-Host "`n=== Network Routes ==="
     try {
-        # Get all routes
-        $allRoutes = ip route show
-        Write-Host "All Routes:"
-        Write-Host $allRoutes
-        
-        # Highlight default route
-        $defaultRoute = $allRoutes | Select-String "default"
-        if ($defaultRoute) {
-            Write-Host "`nDefault Gateway: $defaultRoute"
+        # Try using ip command
+        if (Get-Command ip -ErrorAction SilentlyContinue) {
+            $allRoutes = ip route show
+            Write-Host "All Routes:"
+            Write-Host $allRoutes
+            
+            # Highlight default route
+            $defaultRoute = $allRoutes | Select-String "default"
+            if ($defaultRoute) {
+                Write-Host "`nDefault Gateway: $defaultRoute"
+            }
+            
+            # Check for specific subnet routes
+            Write-Host "`nChecking for VNet/subnet routes..."
+            $vnetRoutes = $allRoutes | Select-String "10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\."
+            if ($vnetRoutes) {
+                Write-Host "Private network routes found:"
+                Write-Host $vnetRoutes
+            } else {
+                Write-Warning "⚠ No private network routes detected - agent may not have VNet connectivity"
+            }
+        } 
+        # Try reading /proc/net/route directly
+        elseif (Test-Path /proc/net/route) {
+            Write-Host "Reading from /proc/net/route:"
+            $routes = Get-Content /proc/net/route
+            Write-Host $routes
+            
+            # Parse for private networks (basic check)
+            if ($routes -match "0A|AC1|C0A8") {
+                Write-Host "`nPrivate network routes detected (hex format)"
+            } else {
+                Write-Warning "⚠ No obvious private network routes detected"
+            }
         }
-        
-        # Check for specific subnet routes
-        Write-Host "`nChecking for VNet/subnet routes..."
-        $vnetRoutes = $allRoutes | Select-String "10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\."
-        if ($vnetRoutes) {
-            Write-Host "Private network routes found:"
-            Write-Host $vnetRoutes
-        } else {
-            Write-Warning "⚠ No private network routes detected - agent may not have VNet connectivity"
+        # Try netstat
+        elseif (Get-Command netstat -ErrorAction SilentlyContinue) {
+            Write-Host "Using netstat for routing table:"
+            $routes = netstat -rn
+            Write-Host $routes
+        }
+        else {
+            Write-Warning "⚠ No route inspection tools available (ip, netstat, or /proc/net/route)"
+            Write-Host "This is likely a minimal container - route information unavailable"
         }
     } catch {
         Write-Host "Could not retrieve routes: $($_.Exception.Message)"
@@ -76,6 +101,7 @@ if ($IsLinux) {
             Write-Host "`n✓ Azure DNS (168.63.129.16) detected - Private DNS zones may be accessible"
         } else {
             Write-Warning "⚠ Azure DNS not detected - Private DNS zones may not resolve correctly"
+            Write-Host "  Container DNS: $(($dnsConfig | Select-String 'nameserver').Line)"
         }
     } catch {
         Write-Host "Could not read DNS config: $($_.Exception.Message)"
