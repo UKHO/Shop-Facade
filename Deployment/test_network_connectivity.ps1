@@ -13,6 +13,24 @@ try {
     $ipAddresses = [System.Net.Dns]::GetHostAddresses($hostname)
     if ($ipAddresses) {
         Write-Host "✓ DNS resolved to: $($ipAddresses.IPAddressToString -join ', ')"
+        
+        # Check if resolved to private IP (RFC1918)
+        foreach ($ip in $ipAddresses) {
+            $ipString = $ip.IPAddressToString
+            $isPrivate = $false
+            
+            if ($ipString -match '^10\.' -or 
+                $ipString -match '^172\.(1[6-9]|2[0-9]|3[0-1])\.' -or 
+                $ipString -match '^192\.168\.') {
+                $isPrivate = $true
+            }
+            
+            if ($isPrivate) {
+                Write-Host "  ✓ $ipString is a PRIVATE IP (Private Endpoint detected)"
+            } else {
+                Write-Warning "  ⚠ $ipString is a PUBLIC IP (Private Endpoint may not be configured or DNS not resolving correctly)"
+            }
+        }
     } else {
         throw "No IP addresses returned"
     }
