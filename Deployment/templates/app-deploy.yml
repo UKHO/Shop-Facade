@@ -21,7 +21,7 @@ parameters:
   - 'skip'
   - 'vNextIAT'
   - 'IAT'
-- name: appPoolEnvironement
+- name: AgentPoolDemands
   type: string
   default: ""
 - name: agentPoolNameAppDeploy
@@ -48,10 +48,10 @@ jobs:
   dependsOn: DevDeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Dotnet App"
   environment: "ShopFacade-${{parameters.Environment}}"
-  ${{ if ne(parameters.appPoolEnvironement, '') }}:
+  ${{ if ne(parameters.AgentPoolDemands, '') }}:
     pool: 
       name: ${{parameters.agentPoolNameAppDeploy}}
-      demands: ENVIRONMENT -equals ${{parameters.appPoolEnvironement}}
+      demands: ${{parameters.AgentPoolDemands}}
   ${{ else }}:
     pool: ${{parameters.agentPoolNameAppDeploy}}
   container: ${{parameters.Container}}
@@ -84,10 +84,10 @@ jobs:
   dependsOn:  DeployApp
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
-  ${{ if ne(parameters.appPoolEnvironement, '') }}:
+  ${{ if ne(parameters.AgentPoolDemands, '') }}:
     pool: 
       name: ${{parameters.agentPoolNameAppDeploy}}
-      demands: ENVIRONMENT -equals ${{parameters.appPoolEnvironement}}
+      demands: ${{parameters.AgentPoolDemands}}
   ${{ else }}:
     pool: ${{parameters.agentPoolNameAppDeploy}}
   condition: and(succeeded('DeployApp'), eq( ${{parameters.RunTests}} , 'true'))

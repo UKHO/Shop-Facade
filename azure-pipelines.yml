@@ -54,8 +54,8 @@ variables:
     value: "8.x"
   - name: AgentPoolNameAppDeploy
     value: "Azure-UKHO-Engineering"
-  - name: DeploymentPoolPEEnvirnonment
-    value: "ENG"
+  - name: AgentPoolDemands
+    value: "ImageOverride -equals ubuntu-latest"
 
 resources:
   repositories:
@@ -171,7 +171,7 @@ stages:
           Container: ${{variables.Container}} 
           RunTests: true
           AgentPoolNameAppDeploy: ${{ variables.AgentPoolNameAppDeploy }}
-          appPoolEnvironement: ${{ variables.DeploymentPoolPEEnvirnonment }}          
+          AgentPoolDemands: ${{ variables.AgentPoolDemands }}          
 
   - stage: vNextIatdeploy
     dependsOn:
@@ -204,7 +204,7 @@ stages:
           RunTests: false
           RunAddsTests: 'vNextIAT'
           AgentPoolNameAppDeploy: ${{ variables.AgentPoolNameAppDeploy }}
-          appPoolEnvironement: ${{ variables.DeploymentPoolPEEnvirnonment }}
+          AgentPoolDemands: ${{ variables.AgentPoolDemands }}
 
   - stage: vNextE2Edeploy
     dependsOn:
@@ -236,7 +236,7 @@ stages:
           Container: ${{variables.Container}} 
           RunTests: false
           AgentPoolNameAppDeploy: ${{ variables.AgentPoolNameAppDeploy }}
-          appPoolEnvironement: ${{ variables.DeploymentPoolPEEnvirnonment }}
+          AgentPoolDemands: ${{ variables.AgentPoolDemands }}
 
   - stage: IATdeploy
     dependsOn:
@@ -269,7 +269,7 @@ stages:
           RunTests: false
           RunAddsTests: 'IAT'
           AgentPoolNameAppDeploy: ${{ variables.AgentPoolNameAppDeploy }}
-          appPoolEnvironement: ${{ variables.DeploymentPoolPEEnvirnonment }}
+          AgentPoolDemands: ${{ variables.AgentPoolDemands }}
 
   - stage: PreProddeploy
     dependsOn:
