@@ -23,7 +23,9 @@ parameters:
   - 'IAT'
 - name: appPoolEnvironement
   type: string
-  default: "ENG"
+  default: ""
+- name: agentPoolNameAppDeploy
+  type: string
 
 jobs:
 - deployment: DevDeployTerraform
@@ -46,9 +48,12 @@ jobs:
   dependsOn: DevDeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Dotnet App"
   environment: "ShopFacade-${{parameters.Environment}}"
-  pool: 
-    name: Tiberius
-    demands: ENVIRONMENT -equals ${{parameters.appPoolEnvironement}}
+  ${{ if ne(parameters.appPoolEnvironement, '') }}:
+    pool: 
+      name: ${{parameters.agentPoolNameAppDeploy}}
+      demands: ENVIRONMENT -equals ${{parameters.appPoolEnvironement}}
+  ${{ else }}:
+    pool: ${{parameters.agentPoolNameAppDeploy}}
   container: ${{parameters.Container}}
   workspace:
    clean: all
@@ -74,16 +79,17 @@ jobs:
           - template: continuous-deployment-app.yml
             parameters:
               AzureSubscription: ${{parameters.AzureSubscription}}
-              PoolName: "Tiberius"
-              PoolDemands: "ENVIRONMENT -equals ${{parameters.appPoolEnvironement}}"
 
 - deployment: FunctionalTests
   dependsOn:  DeployApp
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
-  pool: 
-    name: Tiberius
-    demands: ENVIRONMENT -equals ${{parameters.appPoolEnvironement}}
+  ${{ if ne(parameters.appPoolEnvironement, '') }}:
+    pool: 
+      name: ${{parameters.agentPoolNameAppDeploy}}
+      demands: ENVIRONMENT -equals ${{parameters.appPoolEnvironement}}
+  ${{ else }}:
+    pool: ${{parameters.agentPoolNameAppDeploy}}
   condition: and(succeeded('DeployApp'), eq( ${{parameters.RunTests}} , 'true'))
   workspace:
    clean: all
