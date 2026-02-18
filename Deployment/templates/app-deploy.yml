@@ -31,7 +31,12 @@ jobs:
 - deployment: DevDeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Terraform"
   environment: "ShopFacade-${{parameters.Environment}}"
-  pool: $(DeploymentPool)
+  ${{ if ne(parameters.AgentPoolDemands, '') }}:
+    pool: 
+      name: ${{parameters.agentPoolNameAppDeploy}}
+      demands: ${{parameters.AgentPoolDemands}}
+  ${{ else }}:
+    pool: ${{parameters.agentPoolNameAppDeploy}}
   container: ${{parameters.Container}}
   workspace:
     clean: all
