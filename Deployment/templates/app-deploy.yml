@@ -37,7 +37,9 @@ jobs:
       demands: ${{parameters.AgentPoolDemands}}
   ${{ else }}:
     pool: ${{parameters.agentPoolNameAppDeploy}}
-  container: ${{parameters.Container}}
+  container:
+    image: ${{parameters.Container}}
+    options: --network=host
   workspace:
     clean: all
   strategy:
@@ -59,7 +61,9 @@ jobs:
       demands: ${{parameters.AgentPoolDemands}}
   ${{ else }}:
     pool: ${{parameters.agentPoolNameAppDeploy}}
-  container: ${{parameters.Container}}
+  container:
+    image: ${{parameters.Container}}
+    options: --network=host
   workspace:
    clean: all
   variables:
