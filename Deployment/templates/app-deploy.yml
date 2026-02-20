@@ -37,7 +37,7 @@ jobs:
       demands: ${{parameters.AgentPoolDemands}}
   ${{ else }}:
     pool: ${{parameters.agentPoolNameAppDeploy}}
-  # container: ${{parameters.Container}}
+  container: ${{parameters.Container}}
   workspace:
     clean: all
   strategy:
