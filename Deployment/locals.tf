@@ -12,8 +12,10 @@ locals {
     CALLOUT_TEAM     = "On-Call_N/A"
     COST_CENTRE      = "A.011.15.12"
   }
-  pe_identity = "${local.service_name}${local.env_name}"
-  vnet_link   = "${local.service_name}${local.env_name}"
+  pe_identity       = "${local.service_name}${local.env_name}"
+  vnet_link         = "${local.service_name}${local.env_name}"
+  pe_resource_group = "m-spokeconnect-rg"
+  pe_location       = "uksouth"
 
   # Private endpoint connections
   private_connection_webapp      = "/subscriptions/${var.subscription_id}/resourceGroups/shopfacade-${local.env_name}-rg/providers/Microsoft.Web/sites/shopfacade-${local.env_name}-api-webapp"
