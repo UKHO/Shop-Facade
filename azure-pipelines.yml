@@ -143,6 +143,7 @@ stages:
     - BuildTestPublish
     displayName: "Dev - Enable Public Access"
     variables:
+      - group: "Shop-Facade-Dev-TF"
       - name: DeploymentKeyVaultName
         value: "shopfacadedev-kv"
       - name: DeploymentStorageAccountName
@@ -159,8 +160,21 @@ stages:
             inputs:
               azureSubscription: "ShopFacade-Dev-A.011.15.12"
               scriptType: 'pscore'
-              scriptLocation: 'scriptPath'
-              scriptPath: '$(Pipeline.Workspace)/terraformartifact/enable_public_access.ps1'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                param(
+                    [string]$keyVaultName,
+                    [string]$storageAccountName,
+                    [string]$resourceGroupName
+                )
+                
+                Write-Host "Enabling public network access on Key Vault: $keyVaultName"
+                az keyvault update --name $keyVaultName --resource-group $resourceGroupName --public-network-access Enabled --default-action Allow
+                
+                Write-Host "Enabling public network access on Storage Account: $storageAccountName"
+                az storage account update --name $storageAccountName --resource-group $resourceGroupName --public-network-access Enabled --default-action Allow
+                
+                Write-Host "Public access enabled successfully"
               arguments: '-keyVaultName $(DeploymentKeyVaultName) -storageAccountName $(DeploymentStorageAccountName) -resourceGroupName $(DeploymentResourceGroupName)'
 
   - stage: Devdeploy
