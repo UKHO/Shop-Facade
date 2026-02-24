@@ -150,8 +150,7 @@ stages:
       - job: DeployPrivateEndpoints
         displayName: "Deploy Private Endpoints (Local State)"
         pool:
-          name: NautilusBuild
-        container: ${{ variables.Container }}
+          name: Mare Nectaris
         steps:
           - download: current
             artifact: terraformartifact
