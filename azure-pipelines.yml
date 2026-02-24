@@ -147,6 +147,8 @@ stages:
         value: "shopfacadedev-kv"
       - name: DeploymentStorageAccountName
         value: "shopfacadedevsa"
+      - name: DeploymentResourceGroupName
+        value: "m-spokeconnect-rg"
     jobs:
       - job: EnablePublicAccess
         displayName: "Enable Public Access on KV and Storage"
@@ -161,20 +163,17 @@ stages:
               scriptType: 'pscore'
               scriptLocation: 'inlineScript'
               inlineScript: |
-                param(
-                    [string]$keyVaultName,
-                    [string]$storageAccountName,
-                    [string]$resourceGroupName
-                )
+                $keyVaultName = "$(DeploymentKeyVaultName)"
+                $storageAccountName = "$(DeploymentStorageAccountName)"
+                $resourceGroupName = "$(DeploymentResourceGroupName)"
                 
-                Write-Host "Enabling public network access on Key Vault: $keyVaultName"
+                Write-Host "Enabling public network access on Key Vault: $keyVaultName in RG: $resourceGroupName"
                 az keyvault update --name $keyVaultName --resource-group $resourceGroupName --public-network-access Enabled --default-action Allow
                 
-                Write-Host "Enabling public network access on Storage Account: $storageAccountName"
+                Write-Host "Enabling public network access on Storage Account: $storageAccountName in RG: $resourceGroupName"
                 az storage account update --name $storageAccountName --resource-group $resourceGroupName --public-network-access Enabled --default-action Allow
                 
                 Write-Host "Public access enabled successfully"
-              arguments: '-keyVaultName $(DeploymentKeyVaultName) -storageAccountName $(DeploymentStorageAccountName) -resourceGroupName $(DeploymentResourceGroupName)'
 
   - stage: Devdeploy
     dependsOn:
