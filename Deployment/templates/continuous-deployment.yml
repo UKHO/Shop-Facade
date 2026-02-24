@@ -6,18 +6,7 @@ parameters:
     type: string
   
 steps:
-   # Step 1: Temporarily enable public access to KV and Storage Account
-   - task: AzureCLI@2
-     displayName: "Enable Public Access (Temporary)"
-     inputs:
-       azureSubscription: ${{parameters.AzureSubscription}}
-       scriptType: 'pscore'
-       scriptLocation: 'scriptPath'
-       scriptPath: '$(Pipeline.Workspace)/terraformartifact/enable_public_access.ps1'
-       arguments: '-keyVaultName $(DeploymentKeyVaultName) -storageAccountName $(DeploymentStorageAccountName) -resourceGroupName $(DeploymentResourceGroupName)'
-     continueOnError: false
-
-   # Step 2: Deploy Terraform (now KV and SA are accessible)
+   # Deploy Terraform (public access already enabled by previous job)
    - task: PowerShell@2
      displayName: "Terraform deployment"
      name: TerraformDeploy
@@ -43,7 +32,7 @@ steps:
        TF_VAR_autotest_object_id: $(EntraID.AutoTest.ObjectIdentifier)
        TF_VAR_dns_zone_rg: $(dnsZoneRG)
 
-   # Step 3: Disable public access (lock down to private endpoints only)
+   # Lock down to private endpoints only
    - task: AzureCLI@2
      displayName: "Disable Public Access (Private Endpoint Only)"
      inputs:
@@ -52,4 +41,4 @@ steps:
        scriptLocation: 'scriptPath'
        scriptPath: '$(Pipeline.Workspace)/terraformartifact/disable_public_access.ps1'
        arguments: '-keyVaultName $(DeploymentKeyVaultName) -storageAccountName $(DeploymentStorageAccountName) -resourceGroupName $(DeploymentResourceGroupName)'
-     condition: always() # Run even if Terraform fails, to ensure lockdown
+     condition: always() # Run even if Terraform fails

@@ -28,7 +28,28 @@ parameters:
   type: string
 
 jobs:
+# Job 1: Enable public access (no KV variable groups needed)
+- job: EnablePublicAccess
+  displayName: "${{parameters.Environment}} - Enable Public Access"
+  ${{ if ne(parameters.AgentPoolDemands, '') }}:
+    pool: 
+      name: ${{parameters.agentPoolNameAppDeploy}}
+      demands: ${{parameters.AgentPoolDemands}}
+  ${{ else }}:
+    pool: ${{parameters.agentPoolNameAppDeploy}}
+  steps:
+    - task: AzureCLI@2
+      displayName: "Enable Public Access on KV and Storage"
+      inputs:
+        azureSubscription: ${{parameters.AzureSubscription}}
+        scriptType: 'pscore'
+        scriptLocation: 'scriptPath'
+        scriptPath: '$(Pipeline.Workspace)/terraformartifact/enable_public_access.ps1'
+        arguments: '-keyVaultName $(DeploymentKeyVaultName) -storageAccountName $(DeploymentStorageAccountName) -resourceGroupName $(DeploymentResourceGroupName)'
+
+# Job 2: Deploy Terraform (KV variable groups can now load)
 - deployment: DevDeployTerraform
+  dependsOn: EnablePublicAccess
   displayName: "${{parameters.Environment}} - Deploy Terraform"
   environment: "ShopFacade-${{parameters.Environment}}"
   ${{ if ne(parameters.AgentPoolDemands, '') }}:
