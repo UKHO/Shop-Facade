@@ -141,39 +141,39 @@ stages:
   - stage: DevPreDeploy
     dependsOn:
     - BuildTestPublish
-    displayName: "Dev - Enable Public Access"
+    displayName: "Dev - Deploy Private Endpoints"
     variables:
-      - name: DeploymentKeyVaultName
-        value: "shopfacadedev-kv"
-      - name: DeploymentStorageAccountName
-        value: "shopfacadedevsa"
-      - name: DeploymentResourceGroupName
-        value: "m-spokeconnect-rg"
+      - group: "Shop-Facade-Dev-TF"  # Contains non-KV variables for Terraform
+      # Note: TERRAFORM-CLIENT-SECRET should be stored as a pipeline variable or library variable
+      # NOT from Key Vault, since we can't access KV until PEs are deployed
     jobs:
-      - job: EnablePublicAccess
-        displayName: "Enable Public Access on KV and Storage"
+      - job: DeployPrivateEndpoints
+        displayName: "Deploy Private Endpoints (Local State)"
         pool:
-          name: ${{ variables.AgentPoolNameAppDeploy }}
-          demands: ${{ variables.AgentPoolDemands }}
+          name: Mare Nectaris
+        container: ${{ variables.Container }}
         steps:
-          - task: AzureCLI@2
-            displayName: "Enable Public Access"
+          - download: current
+            artifact: terraformartifact
+          
+          - task: PowerShell@2
+            displayName: "Deploy Private Endpoints with Local State"
             inputs:
-              azureSubscription: "ShopFacade-Dev-A.011.15.12"
-              scriptType: 'pscore'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                $keyVaultName = "$(DeploymentKeyVaultName)"
-                $storageAccountName = "$(DeploymentStorageAccountName)"
-                $resourceGroupName = "$(DeploymentResourceGroupName)"
-                
-                Write-Host "Enabling public network access on Key Vault: $keyVaultName in RG: $resourceGroupName"
-                az keyvault update --name $keyVaultName --resource-group $resourceGroupName --public-network-access Enabled --default-action Allow
-                
-                Write-Host "Enabling public network access on Storage Account: $storageAccountName in RG: $resourceGroupName"
-                az storage account update --name $storageAccountName --resource-group $resourceGroupName --public-network-access Enabled --default-action Allow
-                
-                Write-Host "Public access enabled successfully"
+              targetType: filePath
+              filePath: '$(Pipeline.Workspace)/terraformartifact/deploy_private_endpoints_first.ps1'
+              arguments: '-workSpace Dev'
+              workingDirectory: '$(Pipeline.Workspace)/terraformartifact'
+            env:
+              ARM_CLIENT_ID: $(TERRAFORM-CLIENT-ID)
+              ARM_CLIENT_SECRET: $(TERRAFORM-CLIENT-SECRET)
+              ARM_TENANT_ID: $(TERRAFORM-TENANT-ID)
+              ARM_SUBSCRIPTION_ID: $(TERRAFORM-SUBSCRIPTION-ID)
+              TF_VAR_spoke_rg: $(spokeRG)
+              TF_VAR_pe_vnet_name: $(peVnetName)
+              TF_VAR_pe_subnet_name: $(peSubnetName)
+              TF_VAR_subscription_id: $(subscriptionId)
+              TF_VAR_hub_subscription_id: $(hubSubscriptionId)
+              TF_VAR_dns_zone_rg: $(dnsZoneRG)
 
   - stage: Devdeploy
     dependsOn:

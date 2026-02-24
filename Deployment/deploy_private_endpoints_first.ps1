@@ -31,10 +31,9 @@ try {
         terraform workspace new $workSpace
     }
 
-    # Deploy ONLY the private endpoints
-    Write-Host "Deploying private endpoints only..."
+    # Deploy ONLY the KV and Storage Account private endpoints (not webapp)
+    Write-Host "Deploying Key Vault and Storage Account private endpoints only..."
     terraform apply `
-        -target=module.private_endpoint_webapp `
         -target=module.private_endpoint_keyvault `
         -target=module.private_endpoint_keyvault_ex `
         -target=module.private_endpoint_storage `
