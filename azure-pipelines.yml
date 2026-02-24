@@ -138,9 +138,35 @@ stages:
       parameters:
         Container: ${{ variables.Container }}
 
-  - stage: Devdeploy
+  - stage: DevPreDeploy
     dependsOn:
     - BuildTestPublish
+    displayName: "Dev - Enable Public Access"
+    variables:
+      - group: "Shop-Facade-Dev-TF"
+      - name: DeploymentKeyVaultName
+        value: "shopfacadedev-kv"
+      - name: DeploymentStorageAccountName
+        value: "shopfacadedevsa"
+    jobs:
+      - job: EnablePublicAccess
+        displayName: "Enable Public Access on KV and Storage"
+        pool:
+          name: ${{ variables.AgentPoolNameAppDeploy }}
+          demands: ${{ variables.AgentPoolDemands }}
+        steps:
+          - task: AzureCLI@2
+            displayName: "Enable Public Access"
+            inputs:
+              azureSubscription: "ShopFacade-Dev-A.011.15.12"
+              scriptType: 'pscore'
+              scriptLocation: 'scriptPath'
+              scriptPath: '$(Pipeline.Workspace)/terraformartifact/enable_public_access.ps1'
+              arguments: '-keyVaultName $(DeploymentKeyVaultName) -storageAccountName $(DeploymentStorageAccountName) -resourceGroupName $(DeploymentResourceGroupName)'
+
+  - stage: Devdeploy
+    dependsOn:
+    - DevPreDeploy
     displayName: "Dev deploy (inc terraform, webapp deploy)"
     variables:
       - group: "Shop-Facade-Dev"
