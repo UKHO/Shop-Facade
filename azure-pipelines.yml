@@ -143,7 +143,6 @@ stages:
     - BuildTestPublish
     displayName: "Dev - Enable Public Access"
     variables:
-      - group: "Shop-Facade-Dev-TF"
       - name: DeploymentKeyVaultName
         value: "shopfacadedev-kv"
       - name: DeploymentStorageAccountName
