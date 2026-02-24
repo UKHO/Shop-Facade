@@ -162,6 +162,10 @@ stages:
         value: '/home/site/wwwroot/override-configurations'
       - name: "Port"
         value: '8080'
+      - name: DeploymentKeyVaultName
+        value: "shopfacadedev-kv"
+      - name: DeploymentStorageAccountName
+        value: "shopfacadedevsa"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
