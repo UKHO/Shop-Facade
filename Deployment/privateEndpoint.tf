@@ -47,7 +47,7 @@ module "private_endpoint_keyvault" {
   }
   private_connection          = [local.private_connection_keyvault]
   zone_group                  = local.zone_group_keyvault
-  pe_identity                 = ["${local.pe_identity}-kv-tf"]
+  pe_identity                 = ["${local.pe_identity}-kv"]
   pe_environment              = local.env_name
   pe_vnet_rg                  = var.spoke_rg
   pe_vnet_name                = var.pe_vnet_name
