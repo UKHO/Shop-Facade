@@ -34,6 +34,7 @@ module "private_endpoint_webapp" {
   pe_resource_group           = [azurerm_resource_group.rg.name]
   dns_resource_group          = local.dns_resource_group
   pe_resource_group_locations = [azurerm_resource_group.rg.location]
+  dns_zone                    = "privatelink.azurewebsites.net"
 }
 
 # Key Vault Private Endpoint
@@ -55,6 +56,7 @@ module "private_endpoint_keyvault" {
   dns_resource_group          = local.dns_resource_group
   pe_resource_group_locations = [local.pe_location]
   subresource_names           = ["vault"]
+  dns_zone                    = "privatelink.vaultcore.azure.net"
 }
 
 # Key Vault External Private Endpoint
@@ -76,6 +78,7 @@ module "private_endpoint_keyvault_ex" {
   dns_resource_group          = local.dns_resource_group
   pe_resource_group_locations = [local.pe_location]
   subresource_names           = ["vault"]
+  dns_zone                    = "privatelink.vaultcore.azure.net"
 }
 
 # Storage Account Private Endpoint
@@ -97,4 +100,5 @@ module "private_endpoint_storage" {
   dns_resource_group          = local.dns_resource_group
   pe_resource_group_locations = [local.pe_location]
   subresource_names           = ["blob"]
+  dns_zone                    = "privatelink.blob.core.windows.net"
 }
