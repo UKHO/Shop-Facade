@@ -5,7 +5,33 @@ parameters:
   - name: AzureSubscription
     type: string
   
-steps:  
+steps:
+   # Phase 1: Deploy Private Endpoints with local state (no storage account access needed)
+   - task: PowerShell@2
+     displayName: "Deploy Private Endpoints (Local State)"
+     name: DeployPrivateEndpoints
+     inputs:
+       targetType: filePath
+       filePath: '$(Pipeline.Workspace)/terraformartifact/deploy_private_endpoints_first.ps1'
+       arguments: '-workSpace $(Environment)'
+       workingDirectory: '$(Pipeline.Workspace)/terraformartifact'
+     env:
+       ARM_CLIENT_ID: $(TERRAFORM-CLIENT-ID)
+       ARM_CLIENT_SECRET: $(TERRAFORM-CLIENT-SECRET)
+       ARM_TENANT_ID: $(TERRAFORM-TENANT-ID)
+       ARM_SUBSCRIPTION_ID: $(TERRAFORM-SUBSCRIPTION-ID)
+       TF_VAR_ARM_OBJECT_ID: $(TERRAFORM-CLIENT-OBJECT-ID)
+       TF_VAR_spoke_rg: $(spokeRG)
+       TF_VAR_spoke_vnet_name: $(spokeVnetName)
+       TF_VAR_spoke_subnet_name: $(spokeSubnetName)
+       TF_VAR_subscription_id: $(subscriptionId)
+       TF_VAR_hub_subscription_id: $(hubSubscriptionId)
+       TF_VAR_pe_vnet_name: $(peVnetName)
+       TF_VAR_pe_subnet_name: $(peSubnetName)
+       TF_VAR_pe_rg: $(peRG)
+       TF_VAR_dns_zone_rg: $(dnsZoneRG)
+       
+   # Phase 2: Deploy everything with remote state (storage account now accessible)
    - task: PowerShell@2
      displayName: "Terraform deployment"
      name: TerraformDeploy
