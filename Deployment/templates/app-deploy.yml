@@ -3,9 +3,6 @@ parameters:
   type: string
 - name: AzureSubscription
   type: string
-- name: LiveOrNonLive
-  type: string
-  default: "NonLive"  
 - name: ContinueEvenIfResourcesAreGettingDestroyed
   type: boolean
   default: false
@@ -21,14 +18,9 @@ parameters:
   - 'skip'
   - 'vNextIAT'
   - 'IAT'
-- name: AgentPoolDemands
-  type: string
-  default: ""
-- name: agentPoolNameAppDeploy
-  type: string
 - name: AgentPoolNameTerraform
   type: string
-  default: "Mare Nectaris"
+  default: "NautilusBuild"
 - name: AgentPoolNameHealthCheck
   type: string
   default: "Azure-UKHO-Engineering"
@@ -66,8 +58,6 @@ jobs:
   variables:
     - name  : WEB_APP_NAME
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
-    - name  : "KeyVaultSettings.ServiceUri" 
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
     - name  : ResourceGroup
       value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ResourceGroup'] ]
     - name  : WEB_APP_SLOT_NAME
@@ -116,13 +106,10 @@ jobs:
   dependsOn:  HealthCheck
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
-  ${{ if ne(parameters.AgentPoolDemands, '') }}:
-    pool: 
-      name: ${{parameters.agentPoolNameAppDeploy}}
-      demands: ${{parameters.AgentPoolDemands}}
-  ${{ else }}:
-    pool: ${{parameters.agentPoolNameAppDeploy}}
-  condition: and(succeeded('DeployApp'), eq( ${{parameters.RunTests}} , 'true'))
+  pool:
+    name: ${{parameters.AgentPoolNameTerraform}}
+  container: ${{parameters.Container}}
+  condition: and(succeeded('HealthCheck'), eq( ${{parameters.RunTests}} , 'true'))
   workspace:
    clean: all
   strategy:
