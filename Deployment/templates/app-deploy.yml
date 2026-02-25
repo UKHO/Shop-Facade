@@ -21,6 +21,9 @@ parameters:
 - name: AgentPoolNameTerraform
   type: string
   default: "NautilusBuild"
+- name: AgentPoolNameApp
+  type: string
+  default: "Mare Nectaris"
 - name: AgentPoolNameHealthCheck
   type: string
   default: "Azure-UKHO-Engineering"
@@ -51,7 +54,7 @@ jobs:
   displayName: "${{parameters.Environment}} - Deploy Dotnet App"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool:
-    name: ${{parameters.DeploymentPool}}
+    name: ${{parameters.AgentPoolNameApp}}
   container: ${{parameters.Container}}
   workspace:
    clean: all
