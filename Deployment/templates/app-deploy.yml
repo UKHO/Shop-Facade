@@ -28,7 +28,7 @@ parameters:
   type: string
 - name: AgentPoolNameTerraform
   type: string
-  default: "NautilusBuild"
+  default: "Mare Nectaris"
 - name: AgentPoolNameHealthCheck
   type: string
   default: "Azure-UKHO-Engineering"
