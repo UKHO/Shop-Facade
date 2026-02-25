@@ -57,15 +57,15 @@ jobs:
    clean: all
   variables:
     - name  : WEB_APP_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
     - name  : ResourceGroup
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ResourceGroup'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.ResourceGroup'] ]
     - name  : WEB_APP_SLOT_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
     - name  : WEB_APP_SLOT_HOST_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
     - name  : ADDS_MOCK_WEB_APP_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ADDS_MOCK_WEB_APP_NAME'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.ADDS_MOCK_WEB_APP_NAME'] ]
   strategy:
     runOnce:
       deploy:
@@ -87,13 +87,13 @@ jobs:
    clean: all
   variables:
     - name  : WEB_APP_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
     - name  : ResourceGroup
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ResourceGroup'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.ResourceGroup'] ]
     - name  : WEB_APP_SLOT_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
     - name  : WEB_APP_SLOT_HOST_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
   strategy:
     runOnce:
       deploy:
