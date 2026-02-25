@@ -31,14 +31,3 @@ steps:
        TF_VAR_pe_rg: $(peRG)
        TF_VAR_autotest_object_id: $(EntraID.AutoTest.ObjectIdentifier)
        TF_VAR_dns_zone_rg: $(dnsZoneRG)
-
-   # Lock down to private endpoints only
-   - task: AzureCLI@2
-     displayName: "Disable Public Access (Private Endpoint Only)"
-     inputs:
-       azureSubscription: ${{parameters.AzureSubscription}}
-       scriptType: 'pscore'
-       scriptLocation: 'scriptPath'
-       scriptPath: '$(Pipeline.Workspace)/terraformartifact/disable_public_access.ps1'
-       arguments: '-keyVaultName $(DeploymentKeyVaultName) -storageAccountName $(DeploymentStorageAccountName) -resourceGroupName $(DeploymentResourceGroupName)'
-     condition: always() # Run even if Terraform fails
