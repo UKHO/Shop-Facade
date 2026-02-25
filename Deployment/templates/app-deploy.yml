@@ -26,17 +26,22 @@ parameters:
   default: ""
 - name: agentPoolNameAppDeploy
   type: string
+- name: AgentPoolNameTerraform
+  type: string
+  default: "NautilusBuild"
+- name: AgentPoolNameHealthCheck
+  type: string
+  default: "Azure-UKHO-Engineering"
+- name: AgentPoolDemandsHealthCheck
+  type: string
+  default: "ImageOverride -equals ubuntu-latest"
 
 jobs:
 - deployment: DevDeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Terraform"
   environment: "ShopFacade-${{parameters.Environment}}"
-  ${{ if ne(parameters.AgentPoolDemands, '') }}:
-    pool: 
-      name: ${{parameters.agentPoolNameAppDeploy}}
-      demands: ${{parameters.AgentPoolDemands}}
-  ${{ else }}:
-    pool: ${{parameters.agentPoolNameAppDeploy}}
+  pool:
+    name: ${{parameters.AgentPoolNameTerraform}}
   container: ${{parameters.Container}}
   workspace:
     clean: all
@@ -53,12 +58,8 @@ jobs:
   dependsOn: DevDeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Dotnet App"
   environment: "ShopFacade-${{parameters.Environment}}"
-  ${{ if ne(parameters.AgentPoolDemands, '') }}:
-    pool: 
-      name: ${{parameters.agentPoolNameAppDeploy}}
-      demands: ${{parameters.AgentPoolDemands}}
-  ${{ else }}:
-    pool: ${{parameters.agentPoolNameAppDeploy}}
+  pool:
+    name: ${{parameters.AgentPoolNameTerraform}}
   container: ${{parameters.Container}}
   workspace:
    clean: all
@@ -85,8 +86,34 @@ jobs:
             parameters:
               AzureSubscription: ${{parameters.AzureSubscription}}
 
-- deployment: FunctionalTests
+- deployment: HealthCheck
   dependsOn:  DeployApp
+  displayName: "${{parameters.Environment}} - Health Check & Slot Swap"
+  environment: "ShopFacade-${{parameters.Environment}}"
+  pool:
+    name: ${{parameters.AgentPoolNameHealthCheck}}
+    demands: ${{parameters.AgentPoolDemandsHealthCheck}}
+  workspace:
+   clean: all
+  variables:
+    - name  : WEB_APP_NAME
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
+    - name  : ResourceGroup
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ResourceGroup'] ]
+    - name  : WEB_APP_SLOT_NAME
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
+    - name  : WEB_APP_SLOT_HOST_NAME
+      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          - template: health-check.yml
+            parameters:
+              AzureSubscription: ${{parameters.AzureSubscription}}
+
+- deployment: FunctionalTests
+  dependsOn:  HealthCheck
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
   ${{ if ne(parameters.AgentPoolDemands, '') }}:

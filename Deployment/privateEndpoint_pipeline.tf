@@ -21,9 +21,11 @@ data "azurerm_subnet" "pesn" {
 }
 
 # Key Vault Private Endpoint
-# Note: Deployed in DevPreDeploy stage (before secrets download) for pipeline agent access
+# Note: Disabled to allow pipeline agent access via public endpoint
+# Re-enable when agents have proper private DNS/network access
 module "private_endpoint_keyvault" {
-  count  = contains(["prod", "pre"], local.env_name) ? 0 : 1
+  count  = 0  # Disabled
+  # count  = contains(["prod", "pre"], local.env_name) ? 0 : 1
   source = "github.com/UKHO/tfmodule-azure-private-endpoint-private-link?ref=0.7.1"
   providers = {
     azurerm.hub   = azurerm.hub
@@ -44,9 +46,11 @@ module "private_endpoint_keyvault" {
 }
 
 # Key Vault External Private Endpoint
-# Note: Deployed in DevPreDeploy stage (before secrets download) for pipeline agent access
+# Note: Disabled to allow pipeline agent access via public endpoint
+# Re-enable when agents have proper private DNS/network access
 module "private_endpoint_keyvault_ex" {
-  count  = contains(["prod", "pre"], local.env_name) ? 0 : 1
+  count  = 0  # Disabled
+  # count  = contains(["prod", "pre"], local.env_name) ? 0 : 1
   source = "github.com/UKHO/tfmodule-azure-private-endpoint-private-link?ref=0.7.1"
   providers = {
     azurerm.hub   = azurerm.hub
@@ -67,9 +71,11 @@ module "private_endpoint_keyvault_ex" {
 }
 
 # Storage Account Private Endpoint
-# Note: Deployed in DevPreDeploy stage (before backend init) for pipeline agent access to remote state
+# Note: Disabled to allow pipeline agent access via public endpoint
+# Re-enable when agents have proper private DNS/network access
 module "private_endpoint_storage" {
-  count  = contains(["prod", "pre"], local.env_name) ? 0 : 1
+  count  = 0  # Disabled
+  # count  = contains(["prod", "pre"], local.env_name) ? 0 : 1
   source = "github.com/UKHO/tfmodule-azure-private-endpoint-private-link?ref=0.7.1"
   providers = {
     azurerm.hub   = azurerm.hub

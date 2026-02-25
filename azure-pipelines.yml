@@ -137,46 +137,9 @@ stages:
     - template: Deployment/templates/build-test-publish.yml  
       parameters:
         Container: ${{ variables.Container }}
-
-  - stage: DevPreDeploy
-    dependsOn:
-    - BuildTestPublish
-    displayName: "Dev - Deploy Private Endpoints"
-    variables:
-      - group: "Shop-Facade-Dev-TF"  # Contains non-KV variables for Terraform
-      # Note: TERRAFORM-CLIENT-SECRET should be stored as a pipeline variable or library variable
-      # NOT from Key Vault, since we can't access KV until PEs are deployed
-    jobs:
-      - job: DeployPrivateEndpoints
-        displayName: "Deploy Private Endpoints (Local State)"
-        pool:
-          name: NautilusBuild
-        steps:
-          - download: current
-            artifact: terraformartifact
-          
-          - task: PowerShell@2
-            displayName: "Deploy Private Endpoints with Local State"
-            inputs:
-              targetType: filePath
-              filePath: '$(Pipeline.Workspace)/terraformartifact/deploy_private_endpoints_first.ps1'
-              arguments: '-workSpace Dev'
-              workingDirectory: '$(Pipeline.Workspace)/terraformartifact'
-            env:
-              ARM_CLIENT_ID: $(TERRAFORM-CLIENT-ID)
-              ARM_CLIENT_SECRET: $(TERRAFORM-CLIENT-SECRET)
-              ARM_TENANT_ID: $(TERRAFORM-TENANT-ID)
-              ARM_SUBSCRIPTION_ID: $(TERRAFORM-SUBSCRIPTION-ID)
-              TF_VAR_spoke_rg: $(spokeRG)
-              TF_VAR_pe_vnet_name: $(peVnetName)
-              TF_VAR_pe_subnet_name: $(peSubnetName)
-              TF_VAR_subscription_id: $(subscriptionId)
-              TF_VAR_hub_subscription_id: $(hubSubscriptionId)
-              TF_VAR_dns_zone_rg: $(dnsZoneRG)
-
   - stage: Devdeploy
     dependsOn:
-    - DevPreDeploy
+    - BuildTestPublish
     displayName: "Dev deploy (inc terraform, webapp deploy)"
     variables:
       - group: "Shop-Facade-Dev"
