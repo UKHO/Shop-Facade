@@ -168,9 +168,7 @@ stages:
           ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
           AzureSubscription: "ShopFacade-Dev-A.011.15.12"
           Container: ${{variables.Container}} 
-          RunTests: true
-          AgentPoolNameAppDeploy: ${{ variables.AgentPoolNameAppDeploy }}
-          AgentPoolDemands: ${{ variables.AgentPoolDemands }}          
+          RunTests: true          
 
   - stage: vNextIatdeploy
     dependsOn:
@@ -202,8 +200,6 @@ stages:
           Container: ${{variables.Container}} 
           RunTests: false
           RunAddsTests: 'vNextIAT'
-          AgentPoolNameAppDeploy: ${{ variables.AgentPoolNameAppDeploy }}
-          AgentPoolDemands: ${{ variables.AgentPoolDemands }}
 
   - stage: vNextE2Edeploy
     dependsOn:
@@ -234,8 +230,6 @@ stages:
           AzureSubscription: "ShopFacade vNext-E2E - A.011.15.12 (5c4498ee-67cb-4316-a4b4-f4b8fb8beda9)"
           Container: ${{variables.Container}} 
           RunTests: false
-          AgentPoolNameAppDeploy: ${{ variables.AgentPoolNameAppDeploy }}
-          AgentPoolDemands: ${{ variables.AgentPoolDemands }}
 
   - stage: IATdeploy
     dependsOn:
@@ -267,8 +261,6 @@ stages:
           Container: ${{variables.Container}} 
           RunTests: false
           RunAddsTests: 'IAT'
-          AgentPoolNameAppDeploy: ${{ variables.AgentPoolNameAppDeploy }}
-          AgentPoolDemands: ${{ variables.AgentPoolDemands }}
 
   - stage: PreProddeploy
     dependsOn:
@@ -286,7 +278,6 @@ stages:
           AzureSubscription: "ShopFacade PreProd - A.011.15.12 (63614f72-e0ce-4a9b-a3b0-c5d38fc6daf6)"
           Container: ${{variables.Container}} 
           RunTests: false
-          AgentPoolNameAppDeploy: ${{ variables.DeploymentPool }}
 
   - stage: Livedeploy
     dependsOn:
@@ -304,4 +295,3 @@ stages:
           AzureSubscription: "ShopFacade Live - A.011.15.12 (cdd11fe0-f5ac-4f8f-b960-f0bdce684595)"
           Container: ${{variables.Container}} 
           RunTests: false
-          AgentPoolNameAppDeploy: ${{ variables.DeploymentPool }}
