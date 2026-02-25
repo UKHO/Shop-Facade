@@ -18,9 +18,6 @@ parameters:
   - 'skip'
   - 'vNextIAT'
   - 'IAT'
-- name: AgentPoolNameTerraform
-  type: string
-  default: "NautilusBuild"
 - name: AgentPoolNameApp
   type: string
   default: "Mare Nectaris"
@@ -32,11 +29,11 @@ parameters:
   default: "ImageOverride -equals ubuntu-latest"
 
 jobs:
-- deployment: DevDeployTerraform
+- deployment: DeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Terraform"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool:
-    name: ${{parameters.AgentPoolNameTerraform}}
+    name: ${{parameters.AgentPoolNameApp}}
   container: ${{parameters.Container}}
   workspace:
     clean: all
@@ -50,7 +47,7 @@ jobs:
                     AzureSubscription: ${{parameters.AzureSubscription}}
                        
 - deployment: DeployApp
-  dependsOn: DevDeployTerraform
+  dependsOn: DeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Dotnet App"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool:
@@ -110,7 +107,7 @@ jobs:
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool:
-    name: ${{parameters.AgentPoolNameTerraform}}
+    name: ${{parameters.AgentPoolNameApp}}
   container: ${{parameters.Container}}
   condition: and(succeeded('HealthCheck'), eq( ${{parameters.RunTests}} , 'true'))
   workspace:
