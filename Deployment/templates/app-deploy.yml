@@ -86,7 +86,9 @@ jobs:
               AzureSubscription: ${{parameters.AzureSubscription}}
 
 - deployment: HealthCheck
-  dependsOn:  DeployApp
+  dependsOn:  
+    - DeployTerraform
+    - DeployApp
   displayName: "${{parameters.Environment}} - Health Check & Slot Swap"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool:
