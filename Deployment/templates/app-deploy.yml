@@ -51,7 +51,7 @@ jobs:
   displayName: "${{parameters.Environment}} - Deploy Dotnet App"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool:
-    name: ${{parameters.AgentPoolNameTerraform}}
+    name: ${{parameters.DeploymentPool}}
   container: ${{parameters.Container}}
   workspace:
    clean: all
