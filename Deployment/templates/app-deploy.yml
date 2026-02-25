@@ -97,6 +97,7 @@ jobs:
   workspace:
    clean: all
   variables:
+    - group: "Shop-Facade-${{parameters.Environment}}"
     - name  : WEB_APP_NAME
       value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
     - name  : ResourceGroup
