@@ -140,9 +140,6 @@ stages:
     - BuildTestPublish
     displayName: "Dev deploy (inc terraform, webapp deploy)"
     variables:
-      - group: "Shop-Facade-Dev"
-      - group: "Shop-Facade-Dev-TF"
-      - group: "Shop-Facade-Dev-KV"
       - name: "AzureADConfiguration.TenantId"
         value: $(AzureADConfigurationTenantId)
       - name: "AzureADConfiguration.ClientId"
@@ -175,9 +172,6 @@ stages:
     displayName: "vNextIat Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
     variables:
-      - group: "Shop-Facade-vNextIAT"
-      - group: "Shop-Facade-vNextIAT-TF"
-      - group: "Shop-Facade-vNextIAT-KV"
       - name: "AzureADConfiguration.TenantId"
         value: $(AzureADConfigurationTenantId)
       - name: "AzureADConfiguration.ClientId"
@@ -207,9 +201,6 @@ stages:
     displayName: "vNextE2E Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
     variables:
-      - group: "Shop-Facade-vNextE2E"
-      - group: "Shop-Facade-vNextE2E-TF"
-      - group: "Shop-Facade-vNextE2E-KV"
       - name: "AzureADConfiguration.TenantId"
         value: $(AzureADConfigurationTenantId)
       - name: "AzureADConfiguration.ClientId"
@@ -238,9 +229,6 @@ stages:
     displayName: "IAT Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
-      - group: "Shop-Facade-IAT"
-      - group: "Shop-Facade-IAT-TF"
-      - group: "Shop-Facade-IAT-KV"
       - name: "AzureADConfiguration.TenantId"
         value: $(AzureADConfigurationTenantId)
       - name: "AzureADConfiguration.ClientId"
@@ -269,9 +257,6 @@ stages:
     - IATdeploy
     displayName: "PreProd Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
-    variables:
-      - group: "Shop-Facade-PreProd"
-      - group: "Shop-Facade-PreProd-TF"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -287,9 +272,6 @@ stages:
     - PreProddeploy
     displayName: "Live Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
-    variables:
-      - group: "Shop-Facade-Live"
-      - group: "Shop-Facade-Live-TF"
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:

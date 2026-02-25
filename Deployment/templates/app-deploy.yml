@@ -35,6 +35,10 @@ jobs:
   pool:
     name: ${{parameters.AgentPoolNameApp}}
   container: ${{parameters.Container}}
+  variables:
+    - group: "Shop-Facade-${{parameters.Environment}}"
+    - group: "Shop-Facade-${{parameters.Environment}}-TF"
+    - group: "Shop-Facade-${{parameters.Environment}}-KV"
   workspace:
     clean: all
   strategy:
@@ -56,6 +60,9 @@ jobs:
   workspace:
    clean: all
   variables:
+    - group: "Shop-Facade-${{parameters.Environment}}"
+    - group: "Shop-Facade-${{parameters.Environment}}-TF"
+    - group: "Shop-Facade-${{parameters.Environment}}-KV"
     - name  : WEB_APP_NAME
       value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
     - name  : ResourceGroup

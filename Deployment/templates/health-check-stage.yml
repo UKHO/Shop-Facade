@@ -1,0 +1,55 @@
+parameters:
+- name: Environment
+  type: string
+- name: AzureSubscription
+  type: string
+- name: AgentPoolNameHealthCheck
+  type: string
+  default: "Azure-UKHO-Engineering"
+- name: AgentPoolDemandsHealthCheck
+  type: string
+  default: "ImageOverride -equals ubuntu-latest"
+- name: DependsOn
+  type: object
+  default: []
+- name: WebAppName
+  type: string
+- name: ResourceGroup
+  type: string
+- name: WebAppSlotName
+  type: string
+- name: WebAppSlotHostName
+  type: string
+
+stages:
+- stage: ${{ parameters.Environment }}HealthCheck
+  dependsOn: ${{ parameters.DependsOn }}
+  displayName: "${{ parameters.Environment }} - Health Check & Slot Swap"
+  jobs:
+  - deployment: HealthCheck
+    displayName: "Health Check & Slot Swap"
+    environment: "ShopFacade-${{ parameters.Environment }}"
+    pool:
+      name: ${{ parameters.AgentPoolNameHealthCheck }}
+      demands: ${{ parameters.AgentPoolDemandsHealthCheck }}
+    workspace:
+     clean: all
+    variables:
+      - name: WEB_APP_NAME
+        value: ${{ parameters.WebAppName }}
+      - name: ResourceGroup
+        value: ${{ parameters.ResourceGroup }}
+      - name: WEB_APP_SLOT_NAME
+        value: ${{ parameters.WebAppSlotName }}
+      - name: WEB_APP_SLOT_HOST_NAME
+        value: ${{ parameters.WebAppSlotHostName }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              artifact: terraformartifact
+            
+            - template: health-check.yml
+              parameters:
+                AzureSubscription: ${{ parameters.AzureSubscription }}
