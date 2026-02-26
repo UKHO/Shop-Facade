@@ -124,6 +124,9 @@ jobs:
   condition: and(succeeded('HealthCheck'), eq( ${{parameters.RunTests}} , 'true'))
   workspace:
    clean: all
+  variables:
+    - group: "Shop-Facade-${{parameters.Environment}}"
+    - group: "Shop-Facade-${{parameters.Environment}}-KV"
   strategy:
     runOnce:
       deploy:
