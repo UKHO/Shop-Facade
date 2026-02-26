@@ -86,6 +86,11 @@ jobs:
               AzureSubscription: ${{parameters.AzureSubscription}}
           - pwsh: |
               Write-Host "##vso[task.setvariable variable=AzureADConfigurationAutoTestClientId;isOutput=true]$(AzureADConfigurationAutoTestClientId)"
+              Write-Host "##vso[task.setvariable variable=AzureADConfigurationClientSecret;isOutput=true;issecret=true]$(AzureADConfigurationClientSecret)"
+              Write-Host "##vso[task.setvariable variable=AzureADConfigurationAutoTestClientIdNoRole;isOutput=true]$(AzureADConfigurationAutoTestClientIdNoRole)"
+              Write-Host "##vso[task.setvariable variable=AzureADConfigurationClientSecretNoRole;isOutput=true;issecret=true]$(AzureADConfigurationClientSecretNoRole)"
+              Write-Host "##vso[task.setvariable variable=AzureADConfigurationClientId;isOutput=true]$(AzureADConfigurationClientId)"
+              Write-Host "##vso[task.setvariable variable=AzureADConfigurationTenantId;isOutput=true]$(AzureADConfigurationTenantId)"
             name: SetOutputVariables
 
 - deployment: HealthCheck
