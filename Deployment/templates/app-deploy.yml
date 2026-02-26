@@ -84,6 +84,9 @@ jobs:
           - template: continuous-deployment-app.yml
             parameters:
               AzureSubscription: ${{parameters.AzureSubscription}}
+          - pwsh: |
+              Write-Host "##vso[task.setvariable variable=AzureADConfigurationAutoTestClientId;isOutput=true]$(AzureADConfigurationAutoTestClientId)"
+            name: SetOutputVariables
 
 - deployment: HealthCheck
   dependsOn:  
@@ -115,7 +118,9 @@ jobs:
               AzureSubscription: ${{parameters.AzureSubscription}}
 
 - deployment: FunctionalTests
-  dependsOn:  HealthCheck
+  dependsOn:  
+    - HealthCheck
+    - DeployApp
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool:
@@ -127,6 +132,20 @@ jobs:
    clean: all
   variables:
     - group: "Shop-Facade-${{parameters.Environment}}"
+    - ${{ if notIn(parameters.Environment, 'PreProd', 'Live') }}:
+      - group: "Shop-Facade-${{parameters.Environment}}-KV"
+    - name  : AzureADConfigurationAutoTestClientId
+      value : $[ dependencies.DeployApp.outputs['DeployApp.SetOutputVariables.AzureADConfigurationAutoTestClientId'] ]
+    - name  : AzureADConfigurationAutoTestClientIdNoRole
+      value : $[ dependencies.DeployApp.outputs['DeployApp.SetOutputVariables.AzureADConfigurationAutoTestClientIdNoRole'] ]
+    - name  : AzureADConfigurationClientId
+      value : $[ dependencies.DeployApp.outputs['DeployApp.SetOutputVariables.AzureADConfigurationClientId'] ]
+    - name  : AzureADConfigurationClientSecret
+      value : $[ dependencies.DeployApp.outputs['DeployApp.SetOutputVariables.AzureADConfigurationClientSecret'] ]
+    - name  : AzureADConfigurationClientSecretNoRole
+      value : $[ dependencies.DeployApp.outputs['DeployApp.SetOutputVariables.AzureADConfigurationClientSecretNoRole'] ]
+    - name  : AzureADConfigurationTenantId
+      value : $[ dependencies.DeployApp.outputs['DeployApp.SetOutputVariables.AzureADConfigurationTenantId'] ]
   strategy:
     runOnce:
       deploy:
