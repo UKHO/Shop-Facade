@@ -119,15 +119,14 @@ jobs:
   displayName: "${{parameters.Environment}} - Functional Automated Tests"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool:
-    name: ${{parameters.AgentPoolNameApp}}
+    name: ${{parameters.AgentPoolNameHealthCheck}}
+    demands: ${{parameters.AgentPoolDemandsHealthCheck}}
   container: ${{parameters.Container}}
   condition: and(succeeded('HealthCheck'), eq( ${{parameters.RunTests}} , 'true'))
   workspace:
    clean: all
   variables:
     - group: "Shop-Facade-${{parameters.Environment}}"
-    - ${{ if notIn(parameters.Environment, 'PreProd', 'Live') }}:
-      - group: "Shop-Facade-${{parameters.Environment}}-KV"
   strategy:
     runOnce:
       deploy:
