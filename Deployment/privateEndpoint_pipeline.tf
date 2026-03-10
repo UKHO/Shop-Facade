@@ -24,8 +24,7 @@ data "azurerm_subnet" "pesn" {
 # Note: Disabled to allow pipeline agent access via public endpoint
 # Re-enable when agents have proper private DNS/network access
 module "private_endpoint_keyvault" {
-  count  = var.enablePrivateEndpoint ? 1 : 0
-  # count  = 0  # Disabled
+  count  = 0  # Disabled
   source = "github.com/UKHO/tfmodule-azure-private-endpoint-private-link?ref=0.7.1"
   providers = {
     azurerm.hub   = azurerm.hub
@@ -49,8 +48,7 @@ module "private_endpoint_keyvault" {
 # Note: Disabled to allow pipeline agent access via public endpoint
 # Re-enable when agents have proper private DNS/network access
 module "private_endpoint_keyvault_ex" {
-  count  = var.enablePrivateEndpoint ? 1 : 0
-  # count  = 0  # Disabled
+   count  = 0  # Disabled
   source = "github.com/UKHO/tfmodule-azure-private-endpoint-private-link?ref=0.7.1"
   providers = {
     azurerm.hub   = azurerm.hub
@@ -74,8 +72,7 @@ module "private_endpoint_keyvault_ex" {
 # Note: Disabled to allow pipeline agent access via public endpoint
 # Re-enable when agents have proper private DNS/network access
 module "private_endpoint_storage" {
-  count  = var.enablePrivateEndpoint ? 1 : 0
-  # count  = 0  # Disabled
+  count  = 0  # Disabled
   source = "github.com/UKHO/tfmodule-azure-private-endpoint-private-link?ref=0.7.1"
   providers = {
     azurerm.hub   = azurerm.hub
