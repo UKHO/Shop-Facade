@@ -4,7 +4,7 @@
 
 # Web App Private Endpoint
 module "private_endpoint_webapp" {
-  count  = contains(["prod", "pre"], local.env_name) ? 0 : 1
+  count  = var.enablePrivateEndpoint ? 1 : 0
   source = "github.com/UKHO/tfmodule-azure-private-endpoint-private-link?ref=0.7.1"
   providers = {
     azurerm.hub   = azurerm.hub

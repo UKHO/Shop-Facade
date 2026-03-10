@@ -56,3 +56,9 @@ variable "dns_zone_rg" {
   type    = string
   default = null
 }
+
+variable "enablePrivateEndpoint" {
+  type        = bool
+  default     = true
+  description = "Enable or disable private endpoint deployment. Set to false to skip private endpoint creation."
+}
