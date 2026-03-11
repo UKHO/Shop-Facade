@@ -31,3 +31,4 @@ steps:
        TF_VAR_pe_rg: $(peRG)
        TF_VAR_autotest_object_id: $(EntraID.AutoTest.ObjectIdentifier)
        TF_VAR_dns_zone_rg: $(dnsZoneRG)
+       TF_VAR_enablePrivateEndpoint: $(enablePrivateEndpoint)
