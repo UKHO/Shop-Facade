@@ -42,3 +42,8 @@ variable "adds_mock_webapp_name" {
 variable "adds_mock_app_settings" {
   type = map(string)
 }
+
+variable "enable_private_endpoint" {
+  type        = bool
+  description = "Whether private endpoint is enabled. Controls public network access."
+}

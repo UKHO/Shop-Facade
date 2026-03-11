@@ -29,7 +29,8 @@ module "webapp_service" {
     "WEBSITE_RUN_FROM_PACKAGE"        = "1"
     "WEBSITE_ENABLE_SYNC_UPDATE_SITE" = "true"
   }
-  tags = local.tags
+  tags                    = local.tags
+  enable_private_endpoint = var.enablePrivateEndpoint
 }
 
 locals {

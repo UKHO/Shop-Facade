@@ -14,7 +14,7 @@ resource "azurerm_linux_web_app" "webapp_service" {
   service_plan_id               = azurerm_service_plan.app_service_plan.id
   tags                          = var.tags
   virtual_network_subnet_id     = var.subnet_id
-  public_network_access_enabled = false
+  public_network_access_enabled = !var.enable_private_endpoint
 
   site_config {
     application_stack {
