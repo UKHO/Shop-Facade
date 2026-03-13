@@ -101,8 +101,11 @@ jobs:
   displayName: "${{parameters.Environment}} - Health Check & Slot Swap"
   environment: "ShopFacade-${{parameters.Environment}}"
   pool:
-    name: ${{parameters.AgentPoolNameHealthCheck}}
-    demands: ${{parameters.AgentPoolDemandsHealthCheck}}
+    ${{ if in(parameters.Environment, 'PreProd', 'Live') }}:
+      name: ${{parameters.AgentPoolNameApp}}
+    ${{ else }}:
+      name: ${{parameters.AgentPoolNameHealthCheck}}
+      demands: ${{parameters.AgentPoolDemandsHealthCheck}}
   workspace:
    clean: all
   variables:
