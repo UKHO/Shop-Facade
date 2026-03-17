@@ -12,7 +12,7 @@ Write-Host "`n=== DNS Resolution Test ==="
 try {
     $ipAddresses = [System.Net.Dns]::GetHostAddresses($hostname)
     if ($ipAddresses) {
-        Write-Host "✓ DNS resolved to: $($ipAddresses.IPAddressToString -join ', ')"
+        Write-Host "[OK] DNS resolved to: $($ipAddresses.IPAddressToString -join ', ')"
         
         # Check if resolved to private IP (RFC1918)
         foreach ($ip in $ipAddresses) {
@@ -26,16 +26,16 @@ try {
             }
             
             if ($isPrivate) {
-                Write-Host "  ✓ $ipString is a PRIVATE IP (Private Endpoint detected)"
+                Write-Host "  [OK] $ipString is a PRIVATE IP (Private Endpoint detected)"
             } else {
-                Write-Warning "  ⚠ $ipString is a PUBLIC IP (Private Endpoint may not be configured or DNS not resolving correctly)"
+                Write-Warning "  [WARNING] $ipString is a PUBLIC IP (Private Endpoint may not be configured or DNS not resolving correctly)"
             }
         }
     } else {
         throw "No IP addresses returned"
     }
 } catch {
-    Write-Error "✗ DNS resolution failed: $($_.Exception.Message)"
+    Write-Error "[ERROR] DNS resolution failed: $($_.Exception.Message)"
     throw "DNS resolution failed for $hostname"
 }
 
@@ -49,16 +49,16 @@ try {
     if ($wait) {
         $tcpClient.EndConnect($connection)
         $tcpClient.Close()
-        Write-Host "✓ TCP port 443 is reachable"
+        Write-Host "[OK] TCP port 443 is reachable"
     } else {
         $tcpClient.Close()
-        Write-Error "✗ Cannot reach TCP port 443 - Connection timeout"
+        Write-Error "[ERROR] Cannot reach TCP port 443 - Connection timeout"
         throw "TCP connectivity timeout for $hostname on port 443"
     }
 } catch {
-    Write-Error "✗ Cannot reach TCP port 443 - Check NSG rules and private endpoint configuration"
+    Write-Error "[ERROR] Cannot reach TCP port 443 - Check NSG rules and private endpoint configuration"
     Write-Error "Error details: $($_.Exception.Message)"
     throw "TCP connectivity failed for $hostname on port 443"
 }
 
-Write-Host "`n✓ Network connectivity verified successfully"
+Write-Host "`n[SUCCESS] Network connectivity verified successfully"
