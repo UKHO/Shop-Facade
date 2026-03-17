@@ -102,7 +102,7 @@ jobs:
   environment: "ShopFacade-${{parameters.Environment}}"
   pool:
     ${{ if in(parameters.Environment, 'PreProd', 'Live') }}:
-      name: ${{parameters.AgentPoolNameApp}}
+      name: NautilusBuild
     ${{ else }}:
       name: ${{parameters.AgentPoolNameHealthCheck}}
       demands: ${{parameters.AgentPoolDemandsHealthCheck}}
