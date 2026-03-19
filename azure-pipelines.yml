@@ -170,7 +170,7 @@ stages:
     dependsOn:
     - Devdeploy
     displayName: "vNextIat Deploy (inc terraform, webapp deploy)"
-    # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
     variables:
       - name: "AzureADConfiguration.TenantId"
         value: $(AzureADConfigurationTenantId)
@@ -227,7 +227,7 @@ stages:
     dependsOn:
     - Devdeploy
     displayName: "IAT Deploy (inc terraform, webapp deploy)"
-    # condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     variables:
       - name: "AzureADConfiguration.TenantId"
         value: $(AzureADConfigurationTenantId)
@@ -256,7 +256,7 @@ stages:
     dependsOn:
     - IATdeploy
     displayName: "PreProd Deploy (inc terraform, webapp deploy)"
-    # condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -271,7 +271,7 @@ stages:
     dependsOn:
     - PreProddeploy
     displayName: "Live Deploy (inc terraform, webapp deploy)"
-    # condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
