@@ -1,12 +1,6 @@
 parameters:
   - name: AzureSubscription
     type: string
-  - name: PoolName
-    type: string
-    default: "Unknown"
-  - name: PoolDemands
-    type: string
-    default: "None"
 
 steps:
   - task: FileTransform@2
