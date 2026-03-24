@@ -5,7 +5,8 @@ parameters:
   - name: AzureSubscription
     type: string
   
-steps:  
+steps:
+   # Deploy Terraform (public access already enabled by previous job)
    - task: PowerShell@2
      displayName: "Terraform deployment"
      name: TerraformDeploy
@@ -23,3 +24,11 @@ steps:
        TF_VAR_spoke_rg: $(spokeRG)
        TF_VAR_spoke_vnet_name: $(spokeVnetName)
        TF_VAR_spoke_subnet_name: $(spokeSubnetName)
+       TF_VAR_subscription_id: $(subscriptionId)
+       TF_VAR_hub_subscription_id: $(hubSubscriptionId)
+       TF_VAR_pe_vnet_name: $(peVnetName)
+       TF_VAR_pe_subnet_name: $(peSubnetName)
+       TF_VAR_pe_rg: $(peRG)
+       TF_VAR_autotest_object_id: $(EntraID.AutoTest.ObjectIdentifier)
+       TF_VAR_dns_zone_rg: $(dnsZoneRG)
+       TF_VAR_enablePrivateEndpoint: $(enablePrivateEndpoint)

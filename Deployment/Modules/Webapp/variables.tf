@@ -2,10 +2,10 @@ variable "name" {
   type = string
 }
 
-variable "service_name"{
-   type = string
+variable "service_name" {
+  type = string
 
- }
+}
 
 variable "resource_group_name" {
   type = string
@@ -24,7 +24,7 @@ variable "tags" {
 }
 
 variable "sku_name" {
- 
+
 }
 
 variable "env_name" {
@@ -41,4 +41,9 @@ variable "adds_mock_webapp_name" {
 
 variable "adds_mock_app_settings" {
   type = map(string)
+}
+
+variable "enable_private_endpoint" {
+  type        = bool
+  description = "Whether private endpoint is enabled. Controls public network access."
 }
