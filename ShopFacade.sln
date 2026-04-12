@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.12.35514.174
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11620.152 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E82252E7-E4F3-4D0B-A8FC-AE93C3B01D6D}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mock", "mock", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADDSMock", "mock\UKHO.ADDS-Mock\src\ADDSMock\ADDSMock.csproj", "{FD14106D-62F6-3DC5-0758-64A0E0B6A264}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKHO.ADDS.Mocks.ShopFacade", "src\UKHO.ADDS.Mocks.ShopFacade\UKHO.ADDS.Mocks.ShopFacade.csproj", "{36895B2C-502C-87B2-2714-2ABFE08225F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{FD14106D-62F6-3DC5-0758-64A0E0B6A264}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD14106D-62F6-3DC5-0758-64A0E0B6A264}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD14106D-62F6-3DC5-0758-64A0E0B6A264}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36895B2C-502C-87B2-2714-2ABFE08225F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36895B2C-502C-87B2-2714-2ABFE08225F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36895B2C-502C-87B2-2714-2ABFE08225F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36895B2C-502C-87B2-2714-2ABFE08225F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{0BFC380C-B77A-41AD-BA5F-0F30647B4C04} = {3A291465-A94F-4E66-ADB0-C49EB6004D74}
 		{F846C90A-5A00-4480-8D25-92F57AF7EFCA} = {3A291465-A94F-4E66-ADB0-C49EB6004D74}
 		{FD14106D-62F6-3DC5-0758-64A0E0B6A264} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{36895B2C-502C-87B2-2714-2ABFE08225F0} = {E82252E7-E4F3-4D0B-A8FC-AE93C3B01D6D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {52136940-4B85-4A52-AFEC-19E607700E78}

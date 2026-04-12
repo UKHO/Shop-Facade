@@ -152,32 +152,18 @@ jobs:
       displayName: ".Net Core - NuGet restore for non test projects only"
       inputs:
         command: "restore"
-        projects: '**/*ADDSMock.csproj'
+        projects: '**/*UKHO.ADDS.Mocks.ShopFacade.csproj'
         feedsToUse: config
         noCache: true
-        nugetConfigPath: '$(Build.SourcesDirectory)\mock\UKHO.ADDS-Mock\BuildNuget.config'
-        workingDirectory: '$(Build.SourcesDirectory)\mock\UKHO.ADDS-Mock\src\ADDSMock'
+        nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
+        workingDirectory: '$(Build.SourcesDirectory)\src'
         packagesDirectory: '$(Build.SourcesDirectory)\ADDSMock\packages'
-
-    - task: CopyFiles@2
-      displayName: "Copy additional configuration directories - Override Configuration"
-      inputs:
-        SourceFolder: '$(Build.SourcesDirectory)\mock\UKHO.ADDS-Mock\override-configuration'
-        Contents: '**'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\override-configuration'
-
-    - task: CopyFiles@2
-      displayName: "Copy additional configuration directories - Service Configuration"
-      inputs:
-        SourceFolder: '$(Build.SourcesDirectory)\mock\UKHO.ADDS-Mock\service-configuration'
-        Contents: '**'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
 
     - task: DotNetCoreCLI@2
       displayName: "dotnet build task"
       inputs:
         command: "build"
-        projects: '**/*ADDSMock.csproj'
+        projects: '**/*UKHO.ADDS.Mocks.ShopFacade.csproj'
         arguments: '--configuration $(BuildConfiguration)'
 
     - task: DotNetCoreCLI@2
@@ -185,7 +171,7 @@ jobs:
       inputs:
         command: "publish"
         publishWebProjects: false
-        projects: '**/*ADDSMock.csproj'
+        projects: '**/*UKHO.ADDS.Mocks.ShopFacade.csproj'
         arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService'
         zipAfterPublish: false
         modifyOutputPath: false
@@ -223,7 +209,7 @@ jobs:
         command: "restore"
         projects: |
           **/*.csproj
-          !**/UKHO.ShopFacade.MockService.csproj
+          !**/UKHO.ADDS.Mocks.ShopFacade.csproj
         feedsToUse: config
         noCache: true
         nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
