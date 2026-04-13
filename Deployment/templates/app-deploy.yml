@@ -3,9 +3,6 @@ parameters:
   type: string
 - name: AzureSubscription
   type: string
-- name: LiveOrNonLive
-  type: string
-  default: "NonLive"  
 - name: ContinueEvenIfResourcesAreGettingDestroyed
   type: boolean
   default: false
@@ -21,13 +18,28 @@ parameters:
   - 'skip'
   - 'vNextIAT'
   - 'IAT'
+- name: AgentPoolNameApp
+  type: string
+  default: "Mare Nectaris"
+- name: AgentPoolNameHealthCheck
+  type: string
+  default: "Azure-UKHO-Engineering"
+- name: AgentPoolDemandsHealthCheck
+  type: string
+  default: "ImageOverride -equals ubuntu-latest"
 
 jobs:
-- deployment: DevDeployTerraform
+- deployment: DeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Terraform"
   environment: "ShopFacade-${{parameters.Environment}}"
-  pool: $(DeploymentPool)
+  pool:
+    name: ${{parameters.AgentPoolNameApp}}
   container: ${{parameters.Container}}
+  variables:
+    - group: "Shop-Facade-${{parameters.Environment}}"
+    - group: "Shop-Facade-${{parameters.Environment}}-TF"
+    - ${{ if notIn(parameters.Environment, 'PreProd', 'Live') }}:
+      - group: "Shop-Facade-${{parameters.Environment}}-KV"
   workspace:
     clean: all
   strategy:
@@ -40,26 +52,29 @@ jobs:
                     AzureSubscription: ${{parameters.AzureSubscription}}
                        
 - deployment: DeployApp
-  dependsOn: DevDeployTerraform
+  dependsOn: DeployTerraform
   displayName: "${{parameters.Environment}} - Deploy Dotnet App"
   environment: "ShopFacade-${{parameters.Environment}}"
-  pool: $(DeploymentPool)
+  pool:
+    name: ${{parameters.AgentPoolNameApp}}
   container: ${{parameters.Container}}
   workspace:
    clean: all
   variables:
+    - group: "Shop-Facade-${{parameters.Environment}}"
+    - group: "Shop-Facade-${{parameters.Environment}}-TF"
+    - ${{ if notIn(parameters.Environment, 'PreProd', 'Live') }}:
+      - group: "Shop-Facade-${{parameters.Environment}}-KV"
     - name  : WEB_APP_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
-    - name  : "KeyVaultSettings.ServiceUri" 
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.keyvaulturi'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
     - name  : ResourceGroup
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ResourceGroup'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.ResourceGroup'] ]
     - name  : WEB_APP_SLOT_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
     - name  : WEB_APP_SLOT_HOST_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
     - name  : ADDS_MOCK_WEB_APP_NAME
-      value : $[ dependencies.DevDeployTerraform.outputs['DevDeployTerraform.TerraformDeploy.ADDS_MOCK_WEB_APP_NAME'] ]
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.ADDS_MOCK_WEB_APP_NAME'] ]
   strategy:
     runOnce:
       deploy:
@@ -69,15 +84,77 @@ jobs:
           - template: continuous-deployment-app.yml
             parameters:
               AzureSubscription: ${{parameters.AzureSubscription}}
+          - ${{ if eq(parameters.RunTests, true) }}:
+            - pwsh: |
+                Write-Host "##vso[task.setvariable variable=AzureADConfigurationAutoTestClientId;isOutput=true]$(AzureADConfigurationAutoTestClientId)"
+                Write-Host "##vso[task.setvariable variable=AzureADConfigurationClientSecret;isOutput=true;issecret=true]$(AzureADConfigurationClientSecret)"
+                Write-Host "##vso[task.setvariable variable=AzureADConfigurationAutoTestClientIdNoRole;isOutput=true]$(AzureADConfigurationAutoTestClientIdNoRole)"
+                Write-Host "##vso[task.setvariable variable=AzureADConfigurationClientSecretNoRole;isOutput=true;issecret=true]$(AzureADConfigurationClientSecretNoRole)"
+                Write-Host "##vso[task.setvariable variable=AzureADConfigurationClientId;isOutput=true]$(AzureADConfigurationClientId)"
+                Write-Host "##vso[task.setvariable variable=AzureADConfigurationTenantId;isOutput=true]$(AzureADConfigurationTenantId)"
+              name: SetOutputVariables
 
-- deployment: FunctionalTests
-  dependsOn:  DeployApp
-  displayName: "${{parameters.Environment}} - Functional Automated Tests"
+- deployment: HealthCheck
+  dependsOn:  
+    - DeployTerraform
+    - DeployApp
+  displayName: "${{parameters.Environment}} - Health Check & Slot Swap"
   environment: "ShopFacade-${{parameters.Environment}}"
-  pool: $(DeploymentPool)
-  condition: and(succeeded('DeployApp'), eq( ${{parameters.RunTests}} , 'true'))
+  pool:
+    ${{ if in(parameters.Environment, 'PreProd', 'Live') }}:
+      name: NautilusBuild
+    ${{ else }}:
+      name: ${{parameters.AgentPoolNameHealthCheck}}
+      demands: ${{parameters.AgentPoolDemandsHealthCheck}}
   workspace:
    clean: all
+  variables:
+    - group: "Shop-Facade-${{parameters.Environment}}"
+    - name  : WEB_APP_NAME
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
+    - name  : ResourceGroup
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.ResourceGroup'] ]
+    - name  : WEB_APP_SLOT_NAME
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_SLOT_NAME'] ]
+    - name  : WEB_APP_SLOT_HOST_NAME
+      value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+          - template: health-check.yml
+            parameters:
+              AzureSubscription: ${{parameters.AzureSubscription}}
+
+- deployment: FunctionalTests
+  dependsOn:  
+    - HealthCheck
+    - DeployApp
+  displayName: "${{parameters.Environment}} - Functional Automated Tests"
+  environment: "ShopFacade-${{parameters.Environment}}"
+  pool:
+    name: ${{parameters.AgentPoolNameHealthCheck}}
+    demands: ${{parameters.AgentPoolDemandsHealthCheck}}
+  container: ${{parameters.Container}}
+  condition: and(succeeded('HealthCheck'), eq( ${{parameters.RunTests}} , 'true'))
+  workspace:
+   clean: all
+  variables:
+    - group: "Shop-Facade-${{parameters.Environment}}"
+    - ${{ if notIn(parameters.Environment, 'PreProd', 'Live') }}:
+      - group: "Shop-Facade-${{parameters.Environment}}-KV"
+    - name  : AzureADConfigurationAutoTestClientId
+      value : $[ dependencies.DeployApp.outputs['DeployApp.SetOutputVariables.AzureADConfigurationAutoTestClientId'] ]
+    - name  : AzureADConfigurationAutoTestClientIdNoRole
+      value : $[ dependencies.DeployApp.outputs['DeployApp.SetOutputVariables.AzureADConfigurationAutoTestClientIdNoRole'] ]
+    - name  : AzureADConfigurationClientId
+      value : $[ dependencies.DeployApp.outputs['DeployApp.SetOutputVariables.AzureADConfigurationClientId'] ]
+    - name  : AzureADConfigurationClientSecret
+      value : $[ dependencies.DeployApp.outputs['DeployApp.SetOutputVariables.AzureADConfigurationClientSecret'] ]
+    - name  : AzureADConfigurationClientSecretNoRole
+      value : $[ dependencies.DeployApp.outputs['DeployApp.SetOutputVariables.AzureADConfigurationClientSecretNoRole'] ]
+    - name  : AzureADConfigurationTenantId
+      value : $[ dependencies.DeployApp.outputs['DeployApp.SetOutputVariables.AzureADConfigurationTenantId'] ]
   strategy:
     runOnce:
       deploy:

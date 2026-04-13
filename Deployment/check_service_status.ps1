@@ -28,10 +28,18 @@ do
             Write-Host "Service not yet Up. Status code: $HttpStatus re-checking after $sleepTimeInSecond sec ..."
         }
     }
-    catch [System.Net.WebException]
+    catch
     {
-        $HttpStatus = $_.Exception.Response.StatusCode
-        Write-Host "Service not yet Up.Status: $HttpStatus re-checking after $sleepTimeInSecond sec ..."
+        $HttpStatus = $null
+        $errorMessage = $_.Exception.Message
+        
+        if ($_.Exception -is [System.Net.WebException] -and $null -ne $_.Exception.Response) {
+            $HttpStatus = [int]$_.Exception.Response.StatusCode
+            Write-Host "Service not yet Up. Status: $HttpStatus ($($_.Exception.Response.StatusDescription)) re-checking after $sleepTimeInSecond sec ..."
+        }
+        else {
+            Write-Host "Service not yet Up. Error: $errorMessage - re-checking after $sleepTimeInSecond sec ..."
+        }
     }    
     
     Start-Sleep -Seconds $sleepTimeInSecond
@@ -39,7 +47,7 @@ do
 until ($stopWatch.Elapsed -ge $timeSpan)
 
 
-If ($HttpResponse -ne $null) { 
+If ($null -ne $HttpResponse) { 
     $HttpResponse.Close() 
 }
 
@@ -47,6 +55,6 @@ if ($isServiceActive -eq 'true' ) {
     Write-Host "Service is up returning from script ..."
 }
 Else { 
-    Write-Error "Service was not up in $waitTimeInMinute, error while deployment ..."
+    Write-Error "Service was not up in $waitTimeInMinute minutes, error while deployment ..."
     throw "Error"
 }
