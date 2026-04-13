@@ -1,0 +1,64 @@
+Param(
+    [Parameter(Mandatory=$true)][string]$targetUrl
+)
+
+# Remove protocol prefix if present
+$hostname = $targetUrl -replace 'https?://', ''
+
+Write-Host "Testing connectivity to: $hostname"
+
+# DNS Resolution Test (Cross-platform)
+Write-Host "`n=== DNS Resolution Test ==="
+try {
+    $ipAddresses = [System.Net.Dns]::GetHostAddresses($hostname)
+    if ($ipAddresses) {
+        Write-Host "[OK] DNS resolved to: $($ipAddresses.IPAddressToString -join ', ')"
+        
+        # Check if resolved to private IP (RFC1918)
+        foreach ($ip in $ipAddresses) {
+            $ipString = $ip.IPAddressToString
+            $isPrivate = $false
+            
+            if ($ipString -match '^10\.' -or 
+                $ipString -match '^172\.(1[6-9]|2[0-9]|3[0-1])\.' -or 
+                $ipString -match '^192\.168\.') {
+                $isPrivate = $true
+            }
+            
+            if ($isPrivate) {
+                Write-Host "  [OK] $ipString is a PRIVATE IP (Private Endpoint detected)"
+            } else {
+                Write-Warning "  [WARNING] $ipString is a PUBLIC IP (Private Endpoint may not be configured or DNS not resolving correctly)"
+            }
+        }
+    } else {
+        throw "No IP addresses returned"
+    }
+} catch {
+    Write-Error "[ERROR] DNS resolution failed: $($_.Exception.Message)"
+    throw "DNS resolution failed for $hostname"
+}
+
+# TCP Connectivity Test (Cross-platform using .NET)
+Write-Host "`n=== TCP Connectivity Test (Port 443) ==="
+try {
+    $tcpClient = New-Object System.Net.Sockets.TcpClient
+    $connection = $tcpClient.BeginConnect($hostname, 443, $null, $null)
+    $wait = $connection.AsyncWaitHandle.WaitOne(5000, $false)
+    
+    if ($wait) {
+        $tcpClient.EndConnect($connection)
+        $tcpClient.Close()
+        Write-Host "[OK] TCP port 443 is reachable"
+    } else {
+        $tcpClient.Close()
+        Write-Error "[ERROR] Cannot reach TCP port 443 - Connection timeout"
+        throw "TCP connectivity timeout for $hostname on port 443"
+    }
+} catch {
+    Write-Error "[ERROR] Cannot reach TCP port 443 - Check NSG rules and private endpoint configuration"
+    Write-Error "Error details: $($_.Exception.Message)"
+    throw "TCP connectivity failed for $hostname on port 443"
+}
+
+Write-Host "`n[SUCCESS] Network connectivity verified successfully"
