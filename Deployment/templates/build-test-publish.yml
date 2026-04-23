@@ -10,7 +10,7 @@ jobs:
   displayName: "Dotnet Test and Publish Code Coverage"
   steps:
     - task: UseDotNet@2
-      displayName: 'Use .NET 8.0.x sdk'
+      displayName: 'Use .NET 9.0.x sdk'
       inputs:
         packagetype: sdk
         useglobaljson: true
@@ -77,7 +77,7 @@ jobs:
         arguments: '-buildNumber "$(Build.BuildNumber)" -solutionDirectory "$(Build.SourcesDirectory)\src\UKHO.ShopFacade.API\" -UKHOAssemblyCompany "$env:UKHOAssemblyCompany" -UKHOAssemblyCopyright "$(UKHOAssemblyCopyright)" -UKHOAssemblyVersionPrefix "$env:UKHOAssemblyVersionPrefix" -UKHOAssemblyProduct "$env:UKHOAssemblyProduct"'
 
     - task: UseDotNet@2
-      displayName: 'Use .NET 8.0.x sdk'
+      displayName: 'Use .NET 9.0.x sdk'
       inputs:
         packageType: sdk
         useGlobalJson: true
@@ -87,7 +87,9 @@ jobs:
       displayName: ".Net Core - NuGet restore for non test projects only"
       inputs:
         command: "restore"
-        projects: '**/*.csproj'
+        projects: |
+          **/*.csproj
+          !**/UKHO.ADDS.Mocks.ShopFacade.csproj
         feedsToUse: config
         noCache: true
         nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
@@ -136,48 +138,30 @@ jobs:
   workspace:
     clean: all
   displayName: "Dotnet Build publish ADDS Mock Service"
-  steps:
-
-    - checkout: self
-      submodules: true
- 
+  steps: 
     - task: UseDotNet@2
-      displayName: 'Use .NET 8.0.x sdk'
+      displayName: 'Use .NET 9.0.x sdk'
       inputs:
         packageType: sdk
         useGlobalJson: true
         workingDirectory: '$(Build.SourcesDirectory)\src'
               
     - task: DotNetCoreCLI@2
-      displayName: ".Net Core - NuGet restore for non test projects only"
+      displayName: ".Net Core - NuGet restore for mock project only"
       inputs:
         command: "restore"
-        projects: '**/*ADDSMock.csproj'
+        projects: '**/*UKHO.ADDS.Mocks.ShopFacade.csproj'
         feedsToUse: config
         noCache: true
-        nugetConfigPath: '$(Build.SourcesDirectory)\mock\UKHO.ADDS-Mock\BuildNuget.config'
-        workingDirectory: '$(Build.SourcesDirectory)\mock\UKHO.ADDS-Mock\src\ADDSMock'
-        packagesDirectory: '$(Build.SourcesDirectory)\ADDSMock\packages'
-
-    - task: CopyFiles@2
-      displayName: "Copy additional configuration directories - Override Configuration"
-      inputs:
-        SourceFolder: '$(Build.SourcesDirectory)\mock\UKHO.ADDS-Mock\override-configuration'
-        Contents: '**'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\override-configuration'
-
-    - task: CopyFiles@2
-      displayName: "Copy additional configuration directories - Service Configuration"
-      inputs:
-        SourceFolder: '$(Build.SourcesDirectory)\mock\UKHO.ADDS-Mock\service-configuration'
-        Contents: '**'
-        TargetFolder: '$(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService\service-configuration'
+        nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'
+        workingDirectory: '$(Build.SourcesDirectory)\src'
+        packagesDirectory: '$(Build.SourcesDirectory)\src\packages'
 
     - task: DotNetCoreCLI@2
       displayName: "dotnet build task"
       inputs:
         command: "build"
-        projects: '**/*ADDSMock.csproj'
+        projects: '**/*UKHO.ADDS.Mocks.ShopFacade.csproj'
         arguments: '--configuration $(BuildConfiguration)'
 
     - task: DotNetCoreCLI@2
@@ -185,7 +169,7 @@ jobs:
       inputs:
         command: "publish"
         publishWebProjects: false
-        projects: '**/*ADDSMock.csproj'
+        projects: '**/*UKHO.ADDS.Mocks.ShopFacade.csproj'
         arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)\UKHO.ADDS.MockService'
         zipAfterPublish: false
         modifyOutputPath: false
@@ -211,7 +195,7 @@ jobs:
   displayName: "Publish FunctionalTests Artifact"
   steps:
     - task: UseDotNet@2
-      displayName: 'Use .NET 8.0.x sdk'
+      displayName: 'Use .NET 9.0.x sdk'
       inputs:
         packageType: sdk
         useGlobalJson: true
@@ -223,7 +207,7 @@ jobs:
         command: "restore"
         projects: |
           **/*.csproj
-          !**/UKHO.ShopFacade.MockService.csproj
+          !**/UKHO.ADDS.Mocks.ShopFacade.csproj
         feedsToUse: config
         noCache: true
         nugetConfigPath: '$(Build.SourcesDirectory)\BuildNuget.config'

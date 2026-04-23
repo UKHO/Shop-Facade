@@ -1,5 +1,0 @@
-[submodule "mock/UKHO.ADDS-Mock"]
-	path = mock/UKHO.ADDS-Mock
-	url = https://github.com/UKHO/UKHO.ADDS.Mocks.git
-    branch = main
-
