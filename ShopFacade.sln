@@ -17,10 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKHO.ShopFacade.Common.Unit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKHO.ShopFacade.API.FunctionalTests", "tests\UKHO.ShopFacade.API.FunctionalTests\UKHO.ShopFacade.API.FunctionalTests.csproj", "{F846C90A-5A00-4480-8D25-92F57AF7EFCA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mock", "mock", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADDSMock", "mock\UKHO.ADDS-Mock\src\ADDSMock\ADDSMock.csproj", "{FD14106D-62F6-3DC5-0758-64A0E0B6A264}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKHO.ADDS.Mocks.ShopFacade", "src\UKHO.ADDS.Mocks.ShopFacade\UKHO.ADDS.Mocks.ShopFacade.csproj", "{36895B2C-502C-87B2-2714-2ABFE08225F0}"
 EndProject
 Global
