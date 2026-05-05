@@ -1,6 +1,9 @@
 parameters:
   - name: AzureSubscription
-    type: string    
+    type: string
+  - name: SdkVersion
+    type: string
+    default: '9.0.x'
 
 steps:
   - task: DownloadBuildArtifacts@0
@@ -19,11 +22,10 @@ steps:
        jsonTargetFiles: '**/appsettings.json'
 
   - task: UseDotNet@2
-    displayName: 'Use .NET 8.0.x sdk'
+    displayName: 'Use .NET ${{ parameters.SdkVersion }} sdk'
     inputs:
       packageType: sdk
-      useGlobalJson: true
-      workingDirectory: '$(Build.SourcesDirectory)'
+      version: ${{ parameters.SdkVersion }}
 
   - task: DotNetCoreCLI@2
     displayName: "Run Functional tests"

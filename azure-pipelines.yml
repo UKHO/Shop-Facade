@@ -49,7 +49,7 @@ variables:
   - name: CoverageThresholdLimit
     value: "90"
   - name: SdkVersion
-    value: "8.x"
+    value: "9.x"
   - name: AgentPoolNameAppDeploy
     value: "Azure-UKHO-Engineering"
   - name: AgentPoolDemands
@@ -78,8 +78,6 @@ stages:
       workspace:
         clean: all
       steps:
-        - checkout: self
-          submodules: true
         - task: UseDotNet@2
           displayName: 'Use .NET SDK'
           inputs:
@@ -135,6 +133,7 @@ stages:
     - template: Deployment/templates/build-test-publish.yml  
       parameters:
         Container: ${{ variables.Container }}
+        SdkVersion: $(SdkVersion)
   - stage: Devdeploy
     dependsOn:
     - BuildTestPublish
@@ -164,7 +163,8 @@ stages:
           AzureSubscription: "ShopFacade-Dev-A.011.15.12"
           Container: ${{variables.Container}} 
           RunTests: true
-          AgentPoolNameApp: ${{ variables.DeploymentPool }}          
+          AgentPoolNameApp: ${{ variables.DeploymentPool }}
+          SdkVersion: $(SdkVersion)
 
   - stage: vNextIatdeploy
     dependsOn:
@@ -194,6 +194,7 @@ stages:
           RunTests: false
           RunAddsTests: 'vNextIAT'
           AgentPoolNameApp: ${{ variables.DeploymentPool }}
+          SdkVersion: $(SdkVersion)
 
   - stage: vNextE2Edeploy
     dependsOn:
@@ -222,6 +223,7 @@ stages:
           Container: ${{variables.Container}} 
           RunTests: false
           AgentPoolNameApp: ${{ variables.DeploymentPool }}
+          SdkVersion: $(SdkVersion)
 
   - stage: IATdeploy
     dependsOn:
@@ -251,6 +253,7 @@ stages:
           RunTests: false
           RunAddsTests: 'IAT'
           AgentPoolNameApp: ${{ variables.DeploymentPool }}
+          SdkVersion: $(SdkVersion)
 
   - stage: PreProddeploy
     dependsOn:
@@ -266,6 +269,7 @@ stages:
           Container: ${{variables.Container}} 
           RunTests: false
           AgentPoolNameApp: ${{ variables.DeploymentPool }}
+          SdkVersion: $(SdkVersion)
 
   - stage: Livedeploy
     dependsOn:
