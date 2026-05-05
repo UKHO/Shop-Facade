@@ -2,6 +2,9 @@ parameters:
 # The Terraform Azure PowerShell container.
 - name: Container
   type: string
+- name: SdkVersion
+  type: string
+  default: '9.0.x'
 
 jobs:
 - job: UnitTestsAndCodeCoverage
@@ -12,8 +15,10 @@ jobs:
     - task: UseDotNet@2
       displayName: 'Use .NET 9.0.x sdk'
       inputs:
-        packagetype: sdk       
+        packagetype: sdk
+        version: ${{ parameters.SdkVersion }}
         workingdirectory: '$(build.sourcesdirectory)\src'
+       
 
     - task: DotNetCoreCLI@2
       displayName: ".Net Core - NuGet restore test projects only"
@@ -78,7 +83,8 @@ jobs:
     - task: UseDotNet@2
       displayName: 'Use .NET 9.0.x sdk'
       inputs:
-        packageType: sdk        
+        packageType: sdk
+        version: ${{ parameters.SdkVersion }}
         workingDirectory: '$(Build.SourcesDirectory)\src'
               
     - task: DotNetCoreCLI@2
@@ -140,7 +146,8 @@ jobs:
     - task: UseDotNet@2
       displayName: 'Use .NET 9.0.x sdk'
       inputs:
-        packageType: sdk       
+        packageType: sdk
+        version: ${{ parameters.SdkVersion }}
         workingDirectory: '$(Build.SourcesDirectory)\src'
               
     - task: DotNetCoreCLI@2
@@ -194,7 +201,8 @@ jobs:
     - task: UseDotNet@2
       displayName: 'Use .NET 9.0.x sdk'
       inputs:
-        packageType: sdk        
+        packageType: sdk
+        version: ${{ parameters.SdkVersion }}
         workingDirectory: '$(Build.SourcesDirectory)\src'
 
     - task: DotNetCoreCLI@2

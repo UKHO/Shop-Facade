@@ -133,6 +133,7 @@ stages:
     - template: Deployment/templates/build-test-publish.yml  
       parameters:
         Container: ${{ variables.Container }}
+        SdkVersion: $(SdkVersion)
   - stage: Devdeploy
     dependsOn:
     - BuildTestPublish
