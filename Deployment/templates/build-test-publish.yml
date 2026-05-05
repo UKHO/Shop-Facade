@@ -12,8 +12,7 @@ jobs:
     - task: UseDotNet@2
       displayName: 'Use .NET 9.0.x sdk'
       inputs:
-        packagetype: sdk
-        useglobaljson: true
+        packagetype: sdk       
         workingdirectory: '$(build.sourcesdirectory)\src'
 
     - task: DotNetCoreCLI@2
@@ -79,8 +78,7 @@ jobs:
     - task: UseDotNet@2
       displayName: 'Use .NET 9.0.x sdk'
       inputs:
-        packageType: sdk
-        useGlobalJson: true
+        packageType: sdk        
         workingDirectory: '$(Build.SourcesDirectory)\src'
               
     - task: DotNetCoreCLI@2
@@ -142,8 +140,7 @@ jobs:
     - task: UseDotNet@2
       displayName: 'Use .NET 9.0.x sdk'
       inputs:
-        packageType: sdk
-        useGlobalJson: true
+        packageType: sdk       
         workingDirectory: '$(Build.SourcesDirectory)\src'
               
     - task: DotNetCoreCLI@2
@@ -197,8 +194,7 @@ jobs:
     - task: UseDotNet@2
       displayName: 'Use .NET 9.0.x sdk'
       inputs:
-        packageType: sdk
-        useGlobalJson: true
+        packageType: sdk        
         workingDirectory: '$(Build.SourcesDirectory)\src'
 
     - task: DotNetCoreCLI@2
