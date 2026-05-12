@@ -76,25 +76,31 @@ sequenceDiagram
     participant US as UpnService
     participant DP as UpnDataProvider
     participant GC as GraphClient
-    participant Graph as 📋 Microsoft Graph API<br/>(SharePoint List)
+    participant Graph as 📋 Microsoft Graph API (SharePoint List)
+
+    C->>+UC: GET v1/licences/{licenceId}/s100/userPermits (Bearer JWT, X-Correlation-ID)
 
     rect rgb(21, 101, 192)
-        note over UC,US: API Layer (UKHO.ShopFacade.API)
-    end
-    rect rgb(106, 27, 154)
-        note over DP,GC: Common Layer (UKHO.ShopFacade.Common)
+        note over UC,US: 🔵 API Layer — UKHO.ShopFacade.API
+        UC->>UC: validate licenceId > 0
+        UC->>+US: GetUpnDetails(licenceId, correlationId)
     end
 
-    C->>+UC: GET v1/licences/{licenceId}/s100/userPermits<br/>Bearer JWT · X-Correlation-ID
-    UC->>UC: validate licenceId > 0
-    UC->>+US: GetUpnDetails(licenceId, correlationId)
-    US->>+DP: GetUpnDetailsByLicenseId(licenceId, correlationId)
-    DP->>+GC: GetListItemCollectionResponse(expandFields, filter)
-    GC->>+Graph: OData query — fields/Title eq '{licenceId}'
-    Graph-->>-GC: ListItemCollectionResponse
-    GC-->>-DP: ListItemCollectionResponse
-    DP-->>-US: UpnDataProviderResult
-    US-->>-UC: UpnServiceResult
+    rect rgb(106, 27, 154)
+        note over DP,GC: 🟣 Common Layer — UKHO.ShopFacade.Common
+        US->>+DP: GetUpnDetailsByLicenseId(licenceId, correlationId)
+        DP->>+GC: GetListItemCollectionResponse(expandFields, filter)
+        GC->>Graph: OData query — fields/Title eq licenceId
+        Graph-->>GC: ListItemCollectionResponse
+        GC-->>-DP: ListItemCollectionResponse
+        DP-->>-US: UpnDataProviderResult
+    end
+
+    rect rgb(21, 101, 192)
+        note over UC,US: 🔵 API Layer — response propagation
+        US-->>-UC: UpnServiceResult
+    end
+
     UC-->>-C: 200 OK / 204 No Content / 404 Not Found / 500
 ```
 
@@ -107,32 +113,50 @@ sequenceDiagram
     participant PS as PermitService
     participant US as UpnService
     participant SCS as SalesCatalogueService
+    participant SCC as SalesCatalogueClient
     participant S100 as S100PermitService
+    participant PSC as PermitServiceClient
     participant Ext as ☁️ External Services
 
+    C->>+PC: GET /v1/licences/{licenceId}/{productType}/permits (Bearer JWT, X-Correlation-ID)
+
     rect rgb(21, 101, 192)
-        note over PC,S100: API Layer (UKHO.ShopFacade.API) — short-circuits on any non-OK result
+        note over PC,S100: 🔵 API Layer — UKHO.ShopFacade.API (short-circuits on any non-OK result)
+        PC->>+PS: GetPermitDetails(licenceId, correlationId)
+        PS->>+US: GetUpnDetails(licenceId, correlationId)
+        US-->>-PS: UpnServiceResult — short-circuits if non-OK
+        PS->>+SCS: GetProductsCatalogueAsync(correlationId)
     end
 
-    C->>+PC: GET /v1/licences/{licenceId}/{productType}/permits<br/>Bearer JWT · X-Correlation-ID
-    PC->>+PS: GetPermitDetails(licenceId, correlationId)
+    rect rgb(106, 27, 154)
+        note over SCC,PSC: 🟣 Common Layer — UKHO.ShopFacade.Common (HTTP clients + Polly retry)
+        SCS->>+SCC: CallSalesCatalogueServiceApi(correlationId)
+        SCC->>Ext: HTTP GET Sales Catalogue Service
+        Ext-->>SCC: List of Products
+        SCC-->>-SCS: HttpResponseMessage
+    end
 
-    PS->>+US: GetUpnDetails(licenceId, correlationId)
-    US-->>-PS: UpnServiceResult ⚠️ short-circuits if non-OK
+    rect rgb(21, 101, 192)
+        note over PS,S100: 🔵 API Layer — response propagation + permit orchestration
+        SCS-->>-PS: SalesCatalogueResult — short-circuits if non-OK
+        PS->>PS: PermitRequestMapper.MapToPermitRequest(products, upns, expiryDays)
+        PS->>+S100: GetS100PermitZipFileAsync(permitRequest, correlationId)
+    end
 
-    PS->>+SCS: GetProductsCatalogueAsync(correlationId)
-    SCS->>+Ext: Sales Catalogue Service HTTP + Polly retry
-    Ext-->>-SCS: List&lt;Products&gt;
-    SCS-->>-PS: SalesCatalogueResult ⚠️ short-circuits if non-OK
+    rect rgb(106, 27, 154)
+        note over SCC,PSC: 🟣 Common Layer — UKHO.ShopFacade.Common (HTTP clients + Polly retry)
+        S100->>+PSC: CallPermitServiceApiAsync(permitRequest, correlationId)
+        PSC->>Ext: HTTP POST S100 Permit Service
+        Ext-->>PSC: zip stream
+        PSC-->>-S100: HttpResponseMessage
+    end
 
-    PS->>PS: PermitRequestMapper.MapToPermitRequest(products, upns, expiryDays)
+    rect rgb(21, 101, 192)
+        note over PS,PC: 🔵 API Layer — final response
+        S100-->>-PS: S100PermitServiceResult
+        PS-->>-PC: PermitResult
+    end
 
-    PS->>+S100: GetS100PermitZipFileAsync(permitRequest, correlationId)
-    S100->>+Ext: S100 Permit Service HTTP + Polly retry
-    Ext-->>-S100: zip stream
-    S100-->>-PS: S100PermitServiceResult
-
-    PS-->>-PC: PermitResult
     PC-->>-C: 200 OK (application/zip) / 204 / 404 / 500
 ```
 
