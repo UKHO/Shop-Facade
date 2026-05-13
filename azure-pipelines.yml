@@ -164,7 +164,7 @@ stages:
           Container: ${{variables.Container}} 
           RunTests: true
           AgentPoolNameApp: ${{ variables.DeploymentPool }}
-          SdkVersion: $(SdkVersion)
+          SdkVersion: $(SdkVersion)          
 
   - stage: vNextIatdeploy
     dependsOn:
@@ -285,3 +285,4 @@ stages:
           Container: ${{variables.Container}} 
           RunTests: false
           AgentPoolNameApp: ${{ variables.DeploymentPool }}
+          RetainPipeline: true
