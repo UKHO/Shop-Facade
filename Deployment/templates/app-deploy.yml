@@ -30,6 +30,10 @@ parameters:
 - name: SdkVersion
   type: string
   default: '9.0.x'
+# Set the pipeline retention period. Typically used after a successful live deployment.
+- name: RetainPipeline
+  type: boolean
+  default: false
 
 jobs:
 - deployment: DeployTerraform
@@ -172,3 +176,15 @@ jobs:
       environment: ${{ parameters.RunAddsTests }}
       dependsOn:
       - DeployApp
+
+- ${{ if eq(parameters.RetainPipeline, true) }}:
+  - job: ${{ parameters.Environment }}RetainPipeline
+    displayName: ${{ parameters.Environment }} - Retain pipeline
+    dependsOn:
+    - HealthCheck
+    - DeployApp
+    steps:
+    - checkout: UKHOTemplates
+    - template: retain-pipelinerun/retain-pipelinerun.yml@UKHOTemplates
+      parameters:
+        DaysValid: 365
