@@ -116,23 +116,36 @@ namespace UKHO.ShopFacade.API
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.Configure<AzureAdConfiguration>(configuration.GetSection(AzureAdConfiguration));
             var azureAdConfiguration = builder.Configuration.GetSection(AzureAdConfiguration).Get<AzureAdConfiguration>();
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(AzureAdScheme, options =>
-                {
-                    options.Audience = azureAdConfiguration?.ClientId;
-                    options.Authority = $"{azureAdConfiguration?.MicrosoftOnlineLoginUrl}{azureAdConfiguration?.TenantId}";
-                });
 
-            builder.Services.AddAuthorizationBuilder()
-                .SetDefaultPolicy(new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .AddAuthenticationSchemes(AzureAdScheme)
-                    .Build())
-                .AddPolicy(ShopFacadeConstants.ShopFacadeUpnPolicy,
-                    policy => policy.RequireRole(ShopFacadeConstants.ShopFacadeUpnPolicy))
-                .AddPolicy(ShopFacadeConstants.ShopFacadePermitPolicy,
-                policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePermitPolicy));
+            if (builder.Environment.IsDevelopment())
+            {
+                // Local only: bypass auth for Swagger/testing
+                builder.Services.AddAuthorizationBuilder()
+                    .SetDefaultPolicy(new AuthorizationPolicyBuilder()
+                        .RequireAssertion(_ => true)
+                        .Build())
+                    .AddPolicy(ShopFacadeConstants.ShopFacadeUpnPolicy, policy => policy.RequireAssertion(_ => true))
+                    .AddPolicy(ShopFacadeConstants.ShopFacadePermitPolicy, policy => policy.RequireAssertion(_ => true));
+            }
+            else
+            {
+                builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer(AzureAdScheme, options =>
+               {
+                   options.Audience = azureAdConfiguration?.ClientId;
+                   options.Authority = $"{azureAdConfiguration?.MicrosoftOnlineLoginUrl}{azureAdConfiguration?.TenantId}";
+               });
 
+                builder.Services.AddAuthorizationBuilder()
+                    .SetDefaultPolicy(new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .AddAuthenticationSchemes(AzureAdScheme)
+                        .Build())
+                    .AddPolicy(ShopFacadeConstants.ShopFacadeUpnPolicy,
+                        policy => policy.RequireRole(ShopFacadeConstants.ShopFacadeUpnPolicy))
+                    .AddPolicy(ShopFacadeConstants.ShopFacadePermitPolicy,
+                    policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePermitPolicy));
+            }
 
             builder.Services.AddScoped<IUpnService, UpnService>();
             builder.Services.AddScoped<IPermitService, PermitService>();
@@ -246,26 +259,29 @@ namespace UKHO.ShopFacade.API
                 c.EnableAnnotations();
                 c.OperationFilter<AddHeaderOperationFilter>();
 
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                if (!builder.Environment.IsDevelopment())
                 {
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = ParameterLocation.Header,
-                    Description = "Please Enter Token",
-                    Name = "Authorization"
-                });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
+                    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                     {
-                        new OpenApiSecurityScheme
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "Bearer",
+                        BearerFormat = "JWT",
+                        In = ParameterLocation.Header,
+                        Description = "Please Enter Token",
+                        Name = "Authorization"
+                    });
+
+                    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
                         {
-                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-                        },
-                        Array.Empty<string>()
-                    }
-                });
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                            },
+                            Array.Empty<string>()
+                        }
+                    });
+                }
             });
         }
     }

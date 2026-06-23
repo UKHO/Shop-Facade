@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using UKHO.ShopFacade.Common.Authentication;
 using UKHO.ShopFacade.Common.Configuration;
 using UKHO.ShopFacade.Common.Constants;
+using static Microsoft.Azure.Amqp.CbsConstants;
 
 namespace UKHO.ShopFacade.Common.ClientProvider
 {
@@ -19,8 +20,8 @@ namespace UKHO.ShopFacade.Common.ClientProvider
             var uri = $"/{_salesCatalogueConfig.Value.Version}/catalogues/{_salesCatalogueConfig.Value.ProductType}/basic";
             using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
 
-            var authToken = _tokenProvider.GetManagedIdentityAuthAsync(_salesCatalogueConfig.Value.ResourceId!, _salesCatalogueConfig.Value.PublisherScope!).Result;
-            httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+            //var authToken = _tokenProvider.GetManagedIdentityAuthAsync(_salesCatalogueConfig.Value.ResourceId!, _salesCatalogueConfig.Value.PublisherScope!).Result;
+            //httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
             httpRequestMessage.Headers.Add(ApiHeaderKeys.XCorrelationIdHeaderKey, correlationId);
 

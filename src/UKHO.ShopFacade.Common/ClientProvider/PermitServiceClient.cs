@@ -22,8 +22,8 @@ namespace UKHO.ShopFacade.Common.ClientProvider
             var uri = $"/{_permitServiceConfig.Value.Version}/permits/s100";
             using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri);
 
-            var authToken = await _tokenProvider.GetManagedIdentityAuthAsync(_permitServiceConfig.Value.ResourceId!, _permitServiceConfig.Value.PublisherScope!);
-            httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+            //var authToken = await _tokenProvider.GetManagedIdentityAuthAsync(_permitServiceConfig.Value.ResourceId!, _permitServiceConfig.Value.PublisherScope!);
+            //httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
             httpRequestMessage.Headers.Add(ApiHeaderKeys.XCorrelationIdHeaderKey, correlationId);
             httpRequestMessage.Content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
 
