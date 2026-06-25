@@ -115,23 +115,23 @@ namespace UKHO.ShopFacade.API
 
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             builder.Services.Configure<AzureAdConfiguration>(configuration.GetSection(AzureAdConfiguration));
-            var azureAdConfiguration = builder.Configuration.GetSection(AzureAdConfiguration).Get<AzureAdConfiguration>();
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(AzureAdScheme, options =>
-                {
-                    options.Audience = azureAdConfiguration?.ClientId;
-                    options.Authority = $"{azureAdConfiguration?.MicrosoftOnlineLoginUrl}{azureAdConfiguration?.TenantId}";
-                });
+            //var azureAdConfiguration = builder.Configuration.GetSection(AzureAdConfiguration).Get<AzureAdConfiguration>();
+            //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(AzureAdScheme, options =>
+            //    {
+            //        options.Audience = azureAdConfiguration?.ClientId;
+            //        options.Authority = $"{azureAdConfiguration?.MicrosoftOnlineLoginUrl}{azureAdConfiguration?.TenantId}";
+            //    });
 
-            builder.Services.AddAuthorizationBuilder()
-                .SetDefaultPolicy(new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .AddAuthenticationSchemes(AzureAdScheme)
-                    .Build())
-                .AddPolicy(ShopFacadeConstants.ShopFacadeUpnPolicy,
-                    policy => policy.RequireRole(ShopFacadeConstants.ShopFacadeUpnPolicy))
-                .AddPolicy(ShopFacadeConstants.ShopFacadePermitPolicy,
-                policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePermitPolicy));
+            //builder.Services.AddAuthorizationBuilder()
+            //    .SetDefaultPolicy(new AuthorizationPolicyBuilder()
+            //        .RequireAuthenticatedUser()
+            //        .AddAuthenticationSchemes(AzureAdScheme)
+            //        .Build())
+            //    .AddPolicy(ShopFacadeConstants.ShopFacadeUpnPolicy,
+            //        policy => policy.RequireRole(ShopFacadeConstants.ShopFacadeUpnPolicy))
+            //    .AddPolicy(ShopFacadeConstants.ShopFacadePermitPolicy,
+            //    policy => policy.RequireRole(ShopFacadeConstants.ShopFacadePermitPolicy));
 
 
             builder.Services.AddScoped<IUpnService, UpnService>();

@@ -12,7 +12,7 @@ using UKHO.ShopFacade.Common.Models.Response.Permit;
 namespace UKHO.ShopFacade.API.Controllers
 {
     [ApiController]
-    [Authorize]
+   // [Authorize]
     public class PermitController : BaseController<PermitController>
     {
         private readonly ILogger<PermitController> _logger;
@@ -34,7 +34,7 @@ namespace UKHO.ShopFacade.API.Controllers
         /// <response code="403">Forbidden - you have no permission to use this API.</response>
         [HttpGet]
         [Route("/v1/licences/{licenceId}/{productType}/permits")]
-        [Authorize(Policy = ShopFacadeConstants.ShopFacadePermitPolicy)]
+        //[Authorize(Policy = ShopFacadeConstants.ShopFacadePermitPolicy)]
         [SwaggerOperation(Tags = new[] { "Licensing" }, Description = "<p>Returns a zip file containing all the S-100 permit file(s) of the requested licence.</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, type: typeof(string), description: "<p>OK - Returns a zip containing permit files</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.Unauthorized, description: "<p>Unauthorized - either you have not provided valid token, or your token is not recognized.</p>")]

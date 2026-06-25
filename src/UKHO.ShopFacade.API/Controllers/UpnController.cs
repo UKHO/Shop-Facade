@@ -11,7 +11,7 @@ using UKHO.ShopFacade.Common.Models.Response.Upn;
 namespace UKHO.ShopFacade.API.Controllers
 {
     [ApiController]
-    [Authorize]
+  //  [Authorize]
     public class UpnController : BaseController<UpnController>
     {
         private readonly ILogger<UpnController> _logger;
@@ -36,7 +36,7 @@ namespace UKHO.ShopFacade.API.Controllers
         /// <response code="500">Internal Server Error.</response>
         [HttpGet]
         [Route("v1/licences/{licenceId}/s100/userPermits")]
-        [Authorize(Policy = ShopFacadeConstants.ShopFacadeUpnPolicy)]
+        //[Authorize(Policy = ShopFacadeConstants.ShopFacadeUpnPolicy)]
         [Produces("application/json")]
         [SwaggerOperation(Tags = new[] { "Licensing" }, Description = "<p>Returns all S-100 User Permit Numbers (UPNs) associated with the requested licence. There can be one or more S-100 UPNs for a licence.</p>")]
         [SwaggerResponse(statusCode: (int)HttpStatusCode.OK, type: typeof(List<UserPermit>), description: "<p>OK - Returns UPNs for the licence.</p>")]

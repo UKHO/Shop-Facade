@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Azure.Core;
 using Azure.Identity;
 using Microsoft.Extensions.Options;
@@ -22,8 +23,11 @@ namespace UKHO.ShopFacade.Common.Authentication
         {
             var credential = new DefaultAzureCredential();
             var scopes = new[] { _graphApiConfiguration.Value.GraphApiScope! };
-            var accessToken = await credential.GetTokenAsync(new TokenRequestContext(scopes), cancellationToken);
-            request.Headers.Add("Authorization", $"Bearer {accessToken.Token}");
+            //var accessToken = await credential.GetTokenAsync(new TokenRequestContext(scopes), cancellationToken);
+            var accessToken="abc";
+            request.Headers.Add("Authorization", $"Bearer {accessToken}");
+
+            //request.Headers.Add("Authorization", $"Bearer {accessToken.Token}");
         }
     }
 }
