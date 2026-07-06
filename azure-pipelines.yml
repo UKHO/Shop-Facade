@@ -12,7 +12,6 @@ parameters:
 
 trigger:
   - main
-  - release/*
   - develop
 
 schedules:
