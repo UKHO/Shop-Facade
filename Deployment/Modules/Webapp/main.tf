@@ -26,6 +26,10 @@ resource "azurerm_linux_web_app" "webapp_service" {
 
   app_settings = var.app_settings
 
+  sticky_settings {
+    app_setting_names = [ "WEBJOBS_STOPPED" ]
+  }
+
   identity {
     type = "SystemAssigned"
   }
