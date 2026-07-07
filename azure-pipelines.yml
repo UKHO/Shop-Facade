@@ -9,6 +9,14 @@ parameters:
     displayName: "Disable Stryker"
     type: boolean
     default: false
+  - name: SnykOnlyFailIfFixable
+    displayName: "Snyk - fail only if an issue has an available fix"
+    type: boolean
+    default: false
+  - name: SnykPassOnIssues
+    displayName: "Snyk - don't fail if issues found"
+    type: boolean
+    default: false
 
 trigger:
   - main
@@ -45,6 +53,8 @@ variables:
     value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.10.4"
   - name: DeploymentPool
     value: "Mare Nectaris"
+  - name: WindowsPool
+    value: "Mare Nubium"
   - name: CoverageThresholdLimit
     value: "90"
   - name: SdkVersion
@@ -53,6 +63,8 @@ variables:
     value: "Azure-UKHO-Engineering"
   - name: AgentPoolDemands
     value: "ImageOverride -equals ubuntu-latest"
+  - name: snykAbzuOrganizationId
+    value: aeb7543b-8394-457c-8334-a31493d8910d
 
 resources:
   repositories:
@@ -68,6 +80,15 @@ resources:
     ref: refs/heads/main 
 
 stages:
+  - stage: VulnerabilityChecks
+    displayName: Snyk checks
+    dependsOn: []
+    jobs:
+    - template: Deployment/templates/vulnerability-checks.yml
+      parameters:
+        SnykOnlyFailIfFixable: ${{ parameters.SnykOnlyFailIfFixable }}
+        SnykPassOnIssues: ${{ parameters.SnykPassOnIssues }}
+
   - stage: Stryker_Mutator
     displayName: "Stryker Mutator"
     condition: eq('${{ parameters.DisableStryker }}', false)  
