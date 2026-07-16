@@ -9,7 +9,6 @@ terraform {
   backend "azurerm" {
     key            = "terraform.deployment.tfplan"
     container_name = "tfstate"
-    version              = ">= 4.80.0"
   }
 }
 
