@@ -80,6 +80,8 @@ jobs:
       value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_SLOT_HOST_NAME'] ]
     - name  : ADDS_MOCK_WEB_APP_NAME
       value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.ADDS_MOCK_WEB_APP_NAME'] ]
+    - name: "PermitExpiryDaysConfiguration.PermitExpiryDays"
+      value: $(PermitExpiryDaysConfiguration.PermitExpiryDays)
   strategy:
     runOnce:
       deploy:
