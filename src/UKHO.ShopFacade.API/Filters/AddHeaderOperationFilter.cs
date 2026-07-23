@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Diagnostics.CodeAnalysis;
 
@@ -13,12 +13,12 @@ namespace UKHO.ShopFacade.API.Filters
 
             foreach (var response in operation.Responses)
             {
-                response.Value.Headers.Add("X-Correlation-ID", new OpenApiHeader
+                response.Value?.Headers?.Add("X-Correlation-ID", new OpenApiHeader
                 {
                     Description = "GUID for the request for logging/tracing",
                     Schema = new OpenApiSchema
                     {
-                        Type = "string"
+                        Type = JsonSchemaType.String,
                     }
                 });
             }
