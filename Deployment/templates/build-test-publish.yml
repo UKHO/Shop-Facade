@@ -4,7 +4,7 @@ parameters:
   type: string
 - name: SdkVersion
   type: string
-  default: '10.0.x'
+  default: '9.0.x'
 
 jobs:
 - job: UnitTestsAndCodeCoverage
@@ -13,7 +13,7 @@ jobs:
   displayName: "Dotnet Test and Publish Code Coverage"
   steps:
     - task: UseDotNet@2
-      displayName: 'Use .NET 10.0.x sdk'
+      displayName: 'Use .NET 9.0.x sdk'
       inputs:
         packagetype: sdk
         version: ${{ parameters.SdkVersion }}
@@ -81,7 +81,7 @@ jobs:
         arguments: '-buildNumber "$(Build.BuildNumber)" -solutionDirectory "$(Build.SourcesDirectory)\src\UKHO.ShopFacade.API\" -UKHOAssemblyCompany "$env:UKHOAssemblyCompany" -UKHOAssemblyCopyright "$(UKHOAssemblyCopyright)" -UKHOAssemblyVersionPrefix "$env:UKHOAssemblyVersionPrefix" -UKHOAssemblyProduct "$env:UKHOAssemblyProduct"'
 
     - task: UseDotNet@2
-      displayName: 'Use .NET 10.0.x sdk'
+      displayName: 'Use .NET 9.0.x sdk'
       inputs:
         packageType: sdk
         version: ${{ parameters.SdkVersion }}
@@ -144,7 +144,7 @@ jobs:
   displayName: "Dotnet Build publish ADDS Mock Service"
   steps: 
     - task: UseDotNet@2
-      displayName: 'Use .NET 10.0.x sdk'
+      displayName: 'Use .NET 9.0.x sdk'
       inputs:
         packageType: sdk
         version: ${{ parameters.SdkVersion }}
@@ -199,7 +199,7 @@ jobs:
   displayName: "Publish FunctionalTests Artifact"
   steps:
     - task: UseDotNet@2
-      displayName: 'Use .NET 10.0.x sdk'
+      displayName: 'Use .NET 9.0.x sdk'
       inputs:
         packageType: sdk
         version: ${{ parameters.SdkVersion }}
