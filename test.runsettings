@@ -18,7 +18,15 @@
 				<ModulePath>.*fluentvalidation.dll</ModulePath>				  
               </Exclude>
             </ModulePaths>
-
+            <Sources>
+  <Exclude>
+    <Source>.*\\Microsoft\.AspNetCore\.OpenApi\.Generated\.cs$</Source>
+    <Source>.*\\System\.Runtime\.CompilerServices.*\.cs$</Source>
+    <Source>.*\\obj\\.*</Source>
+    <Source>.*\.g\.cs$</Source>
+    <Source>.*\.Designer\.cs$</Source>
+  </Exclude>
+</Sources>
             <Attributes>
               <Exclude>
                 <Attribute>^System\.Diagnostics\.DebuggerHiddenAttribute$</Attribute>
