@@ -6,6 +6,8 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <ExcludeByFile>**/Microsoft.AspNetCore.OpenApi.Generated.cs,**/System.Runtime.CompilerServices*.cs,**/*.g.cs,**/*.Designer.cs</ExcludeByFile>
+    <ExcludeByAttribute>Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
   </PropertyGroup>
 
   <ItemGroup>
