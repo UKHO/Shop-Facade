@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.Kiota.Abstractions.Authentication;
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
 using UKHO.Logging.EventHubLogProvider;
@@ -255,13 +255,17 @@ namespace UKHO.ShopFacade.API
                     Description = "Please Enter Token",
                     Name = "Authorization"
                 });
-
-                c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                    [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                        },
+                        Array.Empty<string>()
+                    }
                 });
             });
-           
         }
     }
 }
