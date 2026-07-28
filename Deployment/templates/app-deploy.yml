@@ -45,8 +45,7 @@ jobs:
   variables:
     - group: "Shop-Facade-${{parameters.Environment}}"
     - group: "Shop-Facade-${{parameters.Environment}}-TF"
-    - ${{ if notIn(parameters.Environment, 'PreProd', 'Live') }}:
-      - group: "Shop-Facade-${{parameters.Environment}}-KV"
+    - group: "Shop-Facade-${{parameters.Environment}}-KV"
   workspace:
     clean: all
   strategy:
@@ -70,8 +69,7 @@ jobs:
   variables:
     - group: "Shop-Facade-${{parameters.Environment}}"
     - group: "Shop-Facade-${{parameters.Environment}}-TF"
-    - ${{ if notIn(parameters.Environment, 'PreProd', 'Live') }}:
-      - group: "Shop-Facade-${{parameters.Environment}}-KV"
+    - group: "Shop-Facade-${{parameters.Environment}}-KV"
     - name  : WEB_APP_NAME
       value : $[ dependencies.DeployTerraform.outputs['DeployTerraform.TerraformDeploy.WEB_APP_NAME'] ]
     - name  : ResourceGroup
@@ -146,8 +144,7 @@ jobs:
    clean: all
   variables:
     - group: "Shop-Facade-${{parameters.Environment}}"
-    - ${{ if notIn(parameters.Environment, 'PreProd', 'Live') }}:
-      - group: "Shop-Facade-${{parameters.Environment}}-KV"
+    - group: "Shop-Facade-${{parameters.Environment}}-KV"
     - name  : AzureADConfigurationAutoTestClientId
       value : $[ dependencies.DeployApp.outputs['DeployApp.SetOutputVariables.AzureADConfigurationAutoTestClientId'] ]
     - name  : AzureADConfigurationAutoTestClientIdNoRole

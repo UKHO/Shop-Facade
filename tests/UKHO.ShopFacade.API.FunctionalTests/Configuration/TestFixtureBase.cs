@@ -2,7 +2,7 @@
 
 namespace UKHO.ShopFacade.API.FunctionalTests.Configuration
 {
-    public class TestFixtureBase
+    public abstract class TestFixtureBase
     {
         private readonly ServiceProvider _serviceProvider;
 
