@@ -255,7 +255,6 @@ namespace UKHO.ShopFacade.API
                     Description = "Please Enter Token",
                     Name = "Authorization"
                 });
-
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
