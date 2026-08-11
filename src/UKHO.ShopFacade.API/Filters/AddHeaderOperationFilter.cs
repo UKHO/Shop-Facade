@@ -13,7 +13,6 @@ namespace UKHO.ShopFacade.API.Filters
 
             foreach (var response in operation.Responses)
             {
-
                 response.Value.Headers.Add("X-Correlation-ID", new OpenApiHeader
                 {
                     Description = "GUID for the request for logging/tracing",

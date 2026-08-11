@@ -29,7 +29,7 @@ parameters:
   default: "ImageOverride -equals ubuntu-latest"
 - name: SdkVersion
   type: string
-  default: '10.0.x'
+  default: '9.0.x'
 # Set the pipeline retention period. Typically used after a successful live deployment.
 - name: RetainPipeline
   type: boolean
