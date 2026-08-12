@@ -50,7 +50,7 @@ variables:
   - name: UKHOAssemblyCopyright
     value: "Copyright © UK Hydrographic Office"
   - name: Container
-    value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.15.8"
+    value: "ukhydrographicoffice/terraform-azure-powershell-unzip:1.10.4"
   - name: DeploymentPool
     value: "Mare Nectaris"
   - name: WindowsPool
@@ -58,7 +58,7 @@ variables:
   - name: CoverageThresholdLimit
     value: "90"
   - name: SdkVersion
-    value: "10.x"
+    value: "9.x"
   - name: AgentPoolNameAppDeploy
     value: "Azure-UKHO-Engineering"
   - name: AgentPoolDemands
