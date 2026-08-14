@@ -277,9 +277,13 @@ stages:
 
   - stage: PreProddeploy
     dependsOn:
-    - IATdeploy
-    displayName: "PreProd Deploy (inc terraform, webapp deploy)"
-    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    - BuildTestPublish
+    displayName: "PreProd Deploy (inc terraform, webapp deploy)"    
+    variables:
+      - name: "AzureADConfiguration.TenantId"
+        value: $(AzureADConfigurationTenantId)
+      - name: "AzureADConfiguration.ClientId"
+        value: $(AzureADConfigurationClientId)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -291,18 +295,18 @@ stages:
           AgentPoolNameApp: ${{ variables.DeploymentPool }}
           SdkVersion: $(SdkVersion)
 
-  - stage: Livedeploy
-    dependsOn:
-    - PreProddeploy
-    displayName: "Live Deploy (inc terraform, webapp deploy)"
-    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
-    jobs:
-      - template: Deployment/templates/app-deploy.yml
-        parameters:
-          Environment: "Live"
-          ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
-          AzureSubscription: "ShopFacade Live - A.011.15.12 (cdd11fe0-f5ac-4f8f-b960-f0bdce684595)"
-          Container: ${{variables.Container}} 
-          RunTests: false
-          AgentPoolNameApp: ${{ variables.DeploymentPool }}
-          RetainPipeline: true
+  # - stage: Livedeploy
+  #   dependsOn:
+  #   - PreProddeploy
+  #   displayName: "Live Deploy (inc terraform, webapp deploy)"
+  #   condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+  #   jobs:
+  #     - template: Deployment/templates/app-deploy.yml
+  #       parameters:
+  #         Environment: "Live"
+  #         ContinueEvenIfResourcesAreGettingDestroyed: ${{ parameters.ContinueEvenIfResourcesAreGettingDestroyed }}
+  #         AzureSubscription: "ShopFacade Live - A.011.15.12 (cdd11fe0-f5ac-4f8f-b960-f0bdce684595)"
+  #         Container: ${{variables.Container}} 
+  #         RunTests: false
+  #         AgentPoolNameApp: ${{ variables.DeploymentPool }}
+  #         RetainPipeline: true
