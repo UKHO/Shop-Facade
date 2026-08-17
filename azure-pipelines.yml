@@ -58,7 +58,7 @@ variables:
   - name: CoverageThresholdLimit
     value: "90"
   - name: SdkVersion
-    value: "9.x"
+    value: "10.x"
   - name: AgentPoolNameAppDeploy
     value: "Azure-UKHO-Engineering"
   - name: AgentPoolDemands
