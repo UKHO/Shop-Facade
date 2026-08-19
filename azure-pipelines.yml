@@ -280,6 +280,11 @@ stages:
     - IATdeploy
     displayName: "PreProd Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    variables:
+      - name: "AzureADConfiguration.TenantId"
+        value: $(AzureADConfigurationTenantId)
+      - name: "AzureADConfiguration.ClientId"
+        value: $(AzureADConfigurationClientId)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
@@ -296,6 +301,11 @@ stages:
     - PreProddeploy
     displayName: "Live Deploy (inc terraform, webapp deploy)"
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))
+    variables:
+      - name: "AzureADConfiguration.TenantId"
+        value: $(AzureADConfigurationTenantId)
+      - name: "AzureADConfiguration.ClientId"
+        value: $(AzureADConfigurationClientId)
     jobs:
       - template: Deployment/templates/app-deploy.yml
         parameters:
